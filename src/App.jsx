@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Landing from './pages/Landing'
+import Home from './pages/Home'
 import Layout from './pages/Layout'
 import Camera from './pages/Camera'
 import Customise from './pages/Customise'
@@ -8,7 +8,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Landing />} />
+        <Route path="/" element={<Home />} />
         <Route path="/layout" element={<Layout />} />
         <Route path="/camera" element={<Camera />} />
         <Route path="/customise" element={<Customise />} />
