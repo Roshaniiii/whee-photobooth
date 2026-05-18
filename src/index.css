@@ -16,6 +16,7 @@ body {
   src: url('./assets/Networkand.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 
 /* Y2K Scrollbar */

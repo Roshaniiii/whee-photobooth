@@ -9,7 +9,7 @@ import frame4 from '../assets/frame_4.png'
 import frame5 from '../assets/frame_5.png'
 import frame6 from '../assets/frame_6.png'
 
-export default function Home() {
+export default function () {
   const navigate = useNavigate()
 
   return (
