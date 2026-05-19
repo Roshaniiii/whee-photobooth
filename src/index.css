@@ -11,12 +11,12 @@ body {
   min-height: 100vh;
 }
 
+
 @font-face {
-  font-family: 'Networkand';
-  src: url('./assets/Networkand.ttf') format('truetype');
+  font-family: 'Unkempt';
+  src: url('./assets/Unkempt-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
-  font-display: swap;
 }
 
 /* Y2K Scrollbar */
@@ -38,7 +38,7 @@ body::after {
     rgba(0,0,0,0.05) 4px
   );
   pointer-events: none;
-  z-index: 9999;
+  z-index: 0;
 }
 
 /* Chunky Y2K button style */

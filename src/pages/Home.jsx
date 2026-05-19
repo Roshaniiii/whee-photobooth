@@ -35,7 +35,7 @@ export default function () {
         {Array.from({ length: 18 }).map((_, i) => (
           <div key={i} style={{
             flex: 1,
-            borderRight: '8px solid #917264',
+            borderRight: '5px solid #917264',
             opacity: 0.20,
           }} />
         ))}
@@ -56,14 +56,14 @@ export default function () {
         {/* ── Logo + Title ── */}
         <div style={{ textAlign: 'center', marginBottom: '4px' }}>
           <h1 style={{
-            fontFamily: "'Networkand', 'Rosario', cursive",
+            fontFamily: "'Unkempt', 'Rosario', cursive",
             fontSize: 'clamp(38px, 7vw, 72px)',
             color: '#DF82A3',
             margin: 0,
             letterSpacing: '2px',
             lineHeight: 1.1,
           }}>
-            Whee Photobooth
+            Whee! Photobooth
           </h1>
 
           {/* Tagline — shifted right */}
