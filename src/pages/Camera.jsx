@@ -32,13 +32,17 @@ const TEMPLATE_CONFIGS = {
 }
 
 const FILTERS = [
-  { id: 'none',   label: 'Normal',  emoji: '🤍' },
-  { id: 'vhs',    label: 'VHS',     emoji: '📼' },
-  { id: 'glitch', label: 'Glitch',  emoji: '⚡' },
-  { id: 'y2k',    label: 'Y2K',     emoji: '💿' },
-  { id: 'crt',    label: 'CRT',     emoji: '📺' },
-  { id: 'grain',  label: 'Grain',   emoji: '🎞' },
-  { id: 'chroma', label: 'Chroma',  emoji: '🌈' },
+  { id: 'none',        label: 'Normal',      emoji: '🤍' },
+  { id: 'vhs',         label: 'VHS',         emoji: '📼' },
+  { id: 'glitch',      label: 'Glitch',      emoji: '⚡' },
+  { id: 'y2k',         label: 'Y2K',         emoji: '💿' },
+  { id: 'crt',         label: 'CRT',         emoji: '📺' },
+  { id: 'grain',       label: 'Grain',       emoji: '🎞' },
+  { id: 'chroma',      label: 'Chroma',      emoji: '🌈' },
+  { id: 'smooth_skin', label: 'Smooth',      emoji: '✨' },
+  { id: 'blush',       label: 'Blush',       emoji: '🌸' },
+  { id: 'cat_ears',    label: 'Cat',         emoji: '🐱' },
+  { id: 'hearts',      label: 'Hearts',      emoji: '💕' },
 ]
 
 function Stripes() {
