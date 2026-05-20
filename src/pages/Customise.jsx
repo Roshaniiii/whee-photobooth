@@ -1,14 +1,47 @@
 import { useRef, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-const COLORS = [
-  '#000000', '#ffffff', '#ff69b4', '#ff0000',
-  '#ff4500', '#ffff00', '#00ff00', '#00ffff',
-  '#0000ff', '#8000ff', '#ff00ff', '#c0c0c0',
-  '#39ff14', '#ff1493', '#00bfff', '#ffd700'
+/** Theme tokens (deduped from design palette) */
+const THEME = {
+  pageBg: '#F2E7B4',
+  text: '#917264',
+  accent: '#DF82A3',
+  accentSoft: '#F4B8CC',
+  panel: 'rgba(255,255,255,0.55)',
+  shadow: 'rgba(145,114,100,0.18)',
+}
+
+/** Unique swatches — no duplicate hex */
+const PALETTE = [
+  '#eae4e9', '#fff1e6', '#fde2e4', '#fad2e1', '#ffd3da', '#e2ece9', '#bee1e6',
+  '#f0efeb', '#dfe7fd', '#cddafd', '#ec91d8', '#ffaaea', '#ffbeee', '#e9d3d0',
+  '#ff61ab', '#ff6176', '#ff8161', '#ffb561', '#ffea62', '#dfff61', '#abff61',
+  '#76ff61', '#61ff81', '#61ffb5', '#2A2A2A', '#ffffff',
 ]
 
 const SIZES = [2, 6, 12, 20]
+
+function Stripes() {
+  return (
+    <div style={{ position: 'fixed', inset: 0, display: 'flex', flexDirection: 'column', pointerEvents: 'none', zIndex: 0 }}>
+      {Array.from({ length: 24 }).map((_, i) => (
+        <div key={i} style={{ flex: 1, borderBottom: '3px solid #917264', opacity: 0.12 }} />
+      ))}
+    </div>
+  )
+}
+
+function drawImageCover(ctx, img, x, y, w, h) {
+  const iw = img.naturalWidth || img.width
+  const ih = img.naturalHeight || img.height
+  if (!iw || !ih) return
+  const s = Math.max(w / iw, h / ih)
+  const dw = iw * s
+  const dh = ih * s
+  const dx = x + (w - dw) / 2
+  const dy = y + (h - dh) / 2
+  ctx.drawImage(img, dx, dy, dw, dh)
+}
 
 export default function Customise() {
   const navigate = useNavigate()
@@ -19,18 +52,26 @@ export default function Customise() {
   const historyRef = useRef([])
   const redoRef = useRef([])
 
-  const [color, setColor] = useState('#ff69b4')
+  const [color, setColor] = useState(THEME.accent)
   const [size, setSize] = useState(6)
   const [isGlow, setIsGlow] = useState(false)
-  const [tool, setTool] = useState('pen') // pen or eraser
+  const [tool, setTool] = useState('pen')
   const [photosLoaded, setPhotosLoaded] = useState(false)
+  const [displaySize, setDisplaySize] = useState({ w: 0, h: 0 })
+  const canvasWrapRef = useRef(null)
 
-  const capturedPhotos = JSON.parse(sessionStorage.getItem('capturedPhotos') || '[]')
-  const layout = sessionStorage.getItem('layout') || 'single'
-
-  // Load photos onto the background canvas
   useEffect(() => {
-    if (capturedPhotos.length === 0) return
+    const layoutConfig = (() => {
+      try {
+        return JSON.parse(sessionStorage.getItem('layoutConfig') || 'null')
+      } catch {
+        return null
+      }
+    })()
+    const stripPreviewUrl = sessionStorage.getItem('stripPreview')
+    const capturedPhotos = JSON.parse(sessionStorage.getItem('capturedPhotos') || '[]')
+    const legacyLayout = sessionStorage.getItem('layout') || 'single'
+
     const canvas = canvasRef.current
     const photoCanvas = photoCanvasRef.current
     if (!canvas || !photoCanvas) return
@@ -38,69 +79,152 @@ export default function Customise() {
     const ctx = canvas.getContext('2d')
     const photoCtx = photoCanvas.getContext('2d')
 
-    // Set canvas size
-    canvas.width = 640
-    canvas.height = 480
-    photoCanvas.width = 640
-    photoCanvas.height = 480
+    function sizeBoth(w, h) {
+      canvas.width = w
+      canvas.height = h
+      photoCanvas.width = w
+      photoCanvas.height = h
+    }
 
-    // Draw photos based on layout
-    const imgs = capturedPhotos.map(src => {
-      const img = new Image()
-      img.src = src
-      return img
+    function fitDisplay() {
+      requestAnimationFrame(() => {
+        const wrap = canvasWrapRef.current
+        const pc = photoCanvasRef.current
+        if (!wrap || !pc || !pc.width || !pc.height) return
+        const maxW = Math.max(200, wrap.getBoundingClientRect().width)
+        const maxH = Math.max(160, window.innerHeight - 210)
+        const scale = Math.min(maxW / pc.width, maxH / pc.height, 1)
+        setDisplaySize({ w: Math.floor(pc.width * scale), h: Math.floor(pc.height * scale) })
+      })
+    }
+
+    if (stripPreviewUrl) {
+      const stripImg = new Image()
+      stripImg.onload = () => {
+        const nw = stripImg.naturalWidth || stripImg.width
+        const nh = stripImg.naturalHeight || stripImg.height
+        if (!nw || !nh) return
+        sizeBoth(nw, nh)
+        photoCtx.drawImage(stripImg, 0, 0)
+        ctx.clearRect(0, 0, nw, nh)
+        setPhotosLoaded(true)
+        fitDisplay()
+      }
+      stripImg.onerror = () => setPhotosLoaded(false)
+      stripImg.src = stripPreviewUrl
+      return () => {
+        stripImg.onload = null
+        stripImg.onerror = null
+      }
+    }
+
+    if (capturedPhotos.length === 0) return undefined
+
+    const imgs = capturedPhotos.map((src) => {
+      const im = new Image()
+      im.src = src
+      return im
     })
 
+    if (layoutConfig?.slots?.length && layoutConfig.canvasWidth && layoutConfig.canvasHeight) {
+      const { canvasWidth: cw, canvasHeight: ch, slots, isCustom, frameColor } = layoutConfig
+      sizeBoth(cw, ch)
+      let loaded = 0
+      imgs.forEach((img) => {
+        img.onload = () => {
+          loaded++
+          if (loaded !== imgs.length) return
+          photoCtx.fillStyle = isCustom ? (frameColor || '#F4B8CC') : '#ffffff'
+          photoCtx.fillRect(0, 0, cw, ch)
+          slots.forEach((slot, i) => {
+            const im = imgs[i] ?? imgs[imgs.length - 1]
+            if (!im) return
+            drawImageCover(photoCtx, im, slot.x, slot.y, slot.width, slot.height)
+          })
+          ctx.clearRect(0, 0, cw, ch)
+          setPhotosLoaded(true)
+          fitDisplay()
+        }
+        img.onerror = () => {
+          loaded++
+          if (loaded === imgs.length) setPhotosLoaded(true)
+        }
+      })
+      return undefined
+    }
+
+    sizeBoth(640, 480)
     let loaded = 0
-    imgs.forEach((img, i) => {
+    imgs.forEach((img) => {
       img.onload = () => {
         loaded++
-        if (loaded === imgs.length) {
-          photoCtx.fillStyle = '#111'
-          photoCtx.fillRect(0, 0, 640, 480)
-
-          if (layout === 'single') {
-            photoCtx.drawImage(imgs[0], 0, 0, 640, 480)
-          } else if (layout === 'strip3' || layout === 'strip4') {
-            const h = 480 / imgs.length
-            imgs.forEach((im, idx) => {
-              photoCtx.drawImage(im, 0, idx * h, 640, h)
-            })
-          } else if (layout === 'grid') {
-            photoCtx.drawImage(imgs[0] || imgs[0], 0, 0, 320, 240)
-            photoCtx.drawImage(imgs[1] || imgs[0], 320, 0, 320, 240)
-            photoCtx.drawImage(imgs[2] || imgs[0], 0, 240, 320, 240)
-            photoCtx.drawImage(imgs[3] || imgs[0], 320, 240, 320, 240)
-          } else if (layout === 'wide') {
-            photoCtx.drawImage(imgs[0], 0, 0, 640, 240)
-            photoCtx.drawImage(imgs[1] || imgs[0], 0, 240, 640, 240)
-          }
-
-          // Clear drawing canvas (transparent)
-          ctx.clearRect(0, 0, 640, 480)
-          setPhotosLoaded(true)
+        if (loaded !== imgs.length) return
+        photoCtx.fillStyle = '#111'
+        photoCtx.fillRect(0, 0, 640, 480)
+        if (legacyLayout === 'single') {
+          drawImageCover(photoCtx, imgs[0], 0, 0, 640, 480)
+        } else if (legacyLayout === 'strip3' || legacyLayout === 'strip4') {
+          const h = 480 / imgs.length
+          imgs.forEach((im, idx) => drawImageCover(photoCtx, im, 0, idx * h, 640, h))
+        } else if (legacyLayout === 'grid') {
+          drawImageCover(photoCtx, imgs[0], 0, 0, 320, 240)
+          drawImageCover(photoCtx, imgs[1] || imgs[0], 320, 0, 320, 240)
+          drawImageCover(photoCtx, imgs[2] || imgs[0], 0, 240, 320, 240)
+          drawImageCover(photoCtx, imgs[3] || imgs[0], 320, 240, 320, 240)
+        } else if (legacyLayout === 'wide') {
+          drawImageCover(photoCtx, imgs[0], 0, 0, 640, 240)
+          drawImageCover(photoCtx, imgs[1] || imgs[0], 0, 240, 640, 240)
+        } else {
+          drawImageCover(photoCtx, imgs[0], 0, 0, 640, 480)
         }
+        ctx.clearRect(0, 0, 640, 480)
+        setPhotosLoaded(true)
+        fitDisplay()
+      }
+      img.onerror = () => {
+        loaded++
+        if (loaded === imgs.length) setPhotosLoaded(true)
       }
     })
+    return undefined
   }, [])
 
-  // Drawing helpers
+  useEffect(() => {
+    if (!photosLoaded) return
+    const ro = new ResizeObserver(() => {
+      const wrap = canvasWrapRef.current
+      const pc = photoCanvasRef.current
+      if (!wrap || !pc || !pc.width || !pc.height) return
+      const maxW = Math.max(200, wrap.getBoundingClientRect().width)
+      const maxH = Math.max(160, window.innerHeight - 210)
+      const scale = Math.min(maxW / pc.width, maxH / pc.height, 1)
+      setDisplaySize({ w: Math.floor(pc.width * scale), h: Math.floor(pc.height * scale) })
+    })
+    if (canvasWrapRef.current) ro.observe(canvasWrapRef.current)
+    const onWin = () => ro.disconnect()
+    window.addEventListener('resize', onWin)
+    return () => {
+      ro.disconnect()
+      window.removeEventListener('resize', onWin)
+    }
+  }, [photosLoaded])
+
   function getPos(e) {
-    const canvas = canvasRef.current
-    const rect = canvas.getBoundingClientRect()
-    const scaleX = canvas.width / rect.width
-    const scaleY = canvas.height / rect.height
+    const c = canvasRef.current
+    const rect = c.getBoundingClientRect()
+    const scaleX = c.width / rect.width
+    const scaleY = c.height / rect.height
     const clientX = e.touches ? e.touches[0].clientX : e.clientX
     const clientY = e.touches ? e.touches[0].clientY : e.clientY
     return {
       x: (clientX - rect.left) * scaleX,
-      y: (clientY - rect.top) * scaleY
+      y: (clientY - rect.top) * scaleY,
     }
   }
 
   function saveHistory() {
-    const canvas = canvasRef.current
-    historyRef.current.push(canvas.toDataURL())
+    const c = canvasRef.current
+    historyRef.current.push(c.toDataURL())
     redoRef.current = []
   }
 
@@ -114,8 +238,8 @@ export default function Customise() {
   function draw(e) {
     e.preventDefault()
     if (!isDrawing.current) return
-    const canvas = canvasRef.current
-    const ctx = canvas.getContext('2d')
+    const c = canvasRef.current
+    const ctx = c.getContext('2d')
     const pos = getPos(e)
 
     ctx.beginPath()
@@ -153,300 +277,310 @@ export default function Customise() {
 
   function undo() {
     if (historyRef.current.length === 0) return
-    const canvas = canvasRef.current
-    const ctx = canvas.getContext('2d')
-    redoRef.current.push(canvas.toDataURL())
+    const c = canvasRef.current
+    const ctx = c.getContext('2d')
+    redoRef.current.push(c.toDataURL())
     const prev = historyRef.current.pop()
     const img = new Image()
     img.src = prev
     img.onload = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      ctx.clearRect(0, 0, c.width, c.height)
       ctx.drawImage(img, 0, 0)
     }
   }
 
   function redo() {
     if (redoRef.current.length === 0) return
-    const canvas = canvasRef.current
-    const ctx = canvas.getContext('2d')
-    historyRef.current.push(canvas.toDataURL())
+    const c = canvasRef.current
+    const ctx = c.getContext('2d')
+    historyRef.current.push(c.toDataURL())
     const next = redoRef.current.pop()
     const img = new Image()
     img.src = next
     img.onload = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      ctx.clearRect(0, 0, c.width, c.height)
       ctx.drawImage(img, 0, 0)
     }
   }
 
   function handleDownload() {
-    // Merge photo canvas + drawing canvas
     const merge = document.createElement('canvas')
-    merge.width = 640
-    merge.height = 480
-    const ctx = merge.getContext('2d')
-    ctx.drawImage(photoCanvasRef.current, 0, 0)
-    ctx.drawImage(canvasRef.current, 0, 0)
+    const pc = photoCanvasRef.current
+    const dc = canvasRef.current
+    if (!pc || !dc) return
+    merge.width = pc.width
+    merge.height = pc.height
+    const mctx = merge.getContext('2d')
+    mctx.drawImage(pc, 0, 0)
+    mctx.drawImage(dc, 0, 0)
     const a = document.createElement('a')
     a.href = merge.toDataURL('image/png')
-    a.download = `y2k-photobooth-${Date.now()}.png`
+    a.download = `whee-photobooth-${Date.now()}.png`
     a.click()
   }
 
+  const toolBtn = (active) => ({
+    background: 'transparent',
+    border: 'none',
+    cursor: 'pointer',
+    fontFamily: "'Rosario',serif",
+    fontSize: '22px',
+    lineHeight: 1,
+    padding: '6px 4px',
+    color: active ? THEME.accent : THEME.text,
+    opacity: active ? 1 : 0.85,
+    textDecoration: active ? 'underline' : 'none',
+    textUnderlineOffset: '4px',
+    transition: 'color 0.15s',
+  })
+
   return (
     <div style={{
-      minHeight: '100vh',
+      height: '100dvh',
+      width: '100%',
+      overflow: 'hidden',
+      backgroundColor: THEME.pageBg,
+      position: 'relative',
+      fontFamily: "'Rosario',serif",
       display: 'flex',
       flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '16px',
-      background: 'radial-gradient(ellipse at center, #1a0a2e 0%, #0a0a0f 70%)'
     }}>
-      <div className="window" style={{ width: '100%', maxWidth: '900px' }}>
+      <Stripes />
 
-        {/* Title Bar */}
-        <div className="window-titlebar">
-          <span>🎨 Y2K Photobooth — Customise (Paint Mode)</span>
-          <div style={{ display: 'flex', gap: '4px' }}>
-            <span style={{ background: '#c0c0c0', color: '#000', padding: '0 6px', fontSize: '12px' }}>_</span>
-            <span style={{ background: '#c0c0c0', color: '#000', padding: '0 6px', fontSize: '12px' }}>□</span>
-            <span style={{ background: '#ff4444', color: '#fff', padding: '0 6px', fontSize: '12px' }}>✕</span>
-          </div>
+      <div style={{
+        position: 'relative',
+        zIndex: 1,
+        flex: 1,
+        minHeight: 0,
+        width: '100%',
+        maxWidth: '900px',
+        margin: '0 auto',
+        padding: '10px 14px 12px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '8px',
+        boxSizing: 'border-box',
+      }}>
+
+        <div style={{ width: '100%', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+          <button
+            type="button"
+            onClick={() => navigate('/camera')}
+            style={{ background: 'none', border: 'none', color: THEME.text, cursor: 'pointer', fontFamily: "'Rosario',serif", fontSize: '14px', letterSpacing: '1px', padding: 0 }}
+          >
+            ← Back
+          </button>
+          <h1 style={{
+            fontFamily: "'Networkand',cursive",
+            fontSize: 'clamp(20px,4vw,30px)',
+            color: THEME.accent,
+            margin: '0 auto',
+            letterSpacing: '2px',
+            textAlign: 'center',
+          }}>
+            Doodle your strip
+          </h1>
+          <div style={{ width: '48px' }} />
         </div>
 
-        {/* MS Paint Menu Bar */}
         <div style={{
-          background: '#c0c0c0',
-          padding: '2px 8px',
+          flex: 1,
+          minHeight: 0,
           display: 'flex',
-          gap: '16px',
-          borderBottom: '2px solid #808080'
+          flexDirection: 'row',
+          gap: '12px',
+          alignItems: 'stretch',
         }}>
-          {['File', 'Edit', 'View', 'Image', 'Colors', 'Help'].map(m => (
-            <span key={m} style={{
-              fontSize: '13px', color: '#000',
-              cursor: 'pointer', padding: '2px 6px',
-              fontFamily: 'Arial, sans-serif'
-            }}
-              onMouseEnter={e => e.target.style.background = '#000080' || e.target.style.color === '#fff'}
-            >
-              {m}
-            </span>
-          ))}
-        </div>
 
-        <div className="window-body" style={{ padding: '8px', display: 'flex', gap: '8px' }}>
-
-          {/* LEFT — MS Paint Toolbar */}
+          {/* Tools — no boxes, sit on page background */}
           <div style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: '4px',
-            background: '#c0c0c0',
-            padding: '6px',
-            border: '2px inset #808080',
-            minWidth: '44px',
-            alignItems: 'center'
+            alignItems: 'center',
+            gap: '6px',
+            flexShrink: 0,
+            paddingTop: '4px',
+            width: '40px',
           }}>
-
-            {/* Pen Tool */}
-            <button
-              onClick={() => setTool('pen')}
-              title="Pen"
-              style={{
-                width: '36px', height: '36px',
-                background: tool === 'pen' ? '#000080' : '#c0c0c0',
-                color: tool === 'pen' ? '#fff' : '#000',
-                border: tool === 'pen'
-                  ? '2px inset #fff'
-                  : '2px outset #fff',
-                cursor: 'pointer', fontSize: '18px'
-              }}>
-              ✏️
-            </button>
-
-            {/* Eraser */}
-            <button
-              onClick={() => setTool('eraser')}
-              title="Eraser"
-              style={{
-                width: '36px', height: '36px',
-                background: tool === 'eraser' ? '#000080' : '#c0c0c0',
-                color: tool === 'eraser' ? '#fff' : '#000',
-                border: tool === 'eraser'
-                  ? '2px inset #fff'
-                  : '2px outset #fff',
-                cursor: 'pointer', fontSize: '18px'
-              }}>
-              🧹
-            </button>
-
-            <div style={{ width: '100%', height: '2px', background: '#808080', margin: '4px 0' }} />
-
-            {/* Glow Toggle */}
-            <button
-              onClick={() => setIsGlow(g => !g)}
-              title="Glow Pen"
-              style={{
-                width: '36px', height: '36px',
-                background: isGlow ? '#ff69b4' : '#c0c0c0',
-                border: isGlow ? '2px inset #fff' : '2px outset #fff',
-                cursor: 'pointer', fontSize: '16px'
-              }}>
-              ✨
-            </button>
-
-            <div style={{ width: '100%', height: '2px', background: '#808080', margin: '4px 0' }} />
-
-            {/* Undo */}
-            <button onClick={undo} title="Undo"
-              style={{
-                width: '36px', height: '36px',
-                background: '#c0c0c0',
-                border: '2px outset #fff',
-                cursor: 'pointer', fontSize: '16px'
-              }}>
-              ↩
-            </button>
-
-            {/* Redo */}
-            <button onClick={redo} title="Redo"
-              style={{
-                width: '36px', height: '36px',
-                background: '#c0c0c0',
-                border: '2px outset #fff',
-                cursor: 'pointer', fontSize: '16px'
-              }}>
-              ↪
-            </button>
-
-            <div style={{ width: '100%', height: '2px', background: '#808080', margin: '4px 0' }} />
-
-            {/* Pen Sizes */}
-            {SIZES.map(s => (
+            <button type="button" title="Pen" onClick={() => setTool('pen')} style={toolBtn(tool === 'pen')}>✏️</button>
+            <button type="button" title="Eraser" onClick={() => setTool('eraser')} style={toolBtn(tool === 'eraser')}>⌫</button>
+            <button type="button" title="Glow" onClick={() => setIsGlow((g) => !g)} style={toolBtn(isGlow)}>✦</button>
+            <button type="button" title="Undo" onClick={undo} style={toolBtn(false)}>↩</button>
+            <button type="button" title="Redo" onClick={redo} style={toolBtn(false)}>↪</button>
+            {SIZES.map((s) => (
               <button
                 key={s}
-                onClick={() => setSize(s)}
+                type="button"
                 title={`Size ${s}`}
+                onClick={() => setSize(s)}
                 style={{
-                  width: '36px', height: '36px',
-                  background: size === s ? '#000080' : '#c0c0c0',
-                  border: size === s ? '2px inset #fff' : '2px outset #fff',
-                  cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center'
-                }}>
-                <div style={{
-                  width: `${Math.min(s + 4, 24)}px`,
-                  height: `${Math.min(s + 4, 24)}px`,
-                  borderRadius: '50%',
-                  background: size === s ? '#fff' : '#000'
-                }} />
+                  ...toolBtn(size === s),
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  letterSpacing: '0.5px',
+                }}
+              >
+                {s}
               </button>
             ))}
           </div>
 
-          {/* CENTER — Canvas */}
-          <div style={{ flex: 1, position: 'relative', minWidth: 0 }}>
-
-            {!photosLoaded && (
-              <div style={{
-                position: 'absolute', top: 0, left: 0,
-                width: '100%', height: '100%',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                background: '#111', color: '#ff69b4', letterSpacing: '2px', fontSize: '14px'
-              }}>
-                LOADING...
-              </div>
-            )}
-
-            {/* Photo layer (background) */}
-            <canvas
-              ref={photoCanvasRef}
-              style={{
-                position: 'absolute', top: 0, left: 0,
-                width: '100%', height: '100%',
-                display: 'block'
-              }}
-            />
-
-            {/* Drawing layer (on top) */}
-            <canvas
-              ref={canvasRef}
-              style={{
-                position: 'relative',
-                width: '100%',
-                display: 'block',
-                cursor: tool === 'eraser' ? 'cell' : 'crosshair',
-                touchAction: 'none'
-              }}
-              onMouseDown={startDraw}
-              onMouseMove={draw}
-              onMouseUp={stopDraw}
-              onMouseLeave={stopDraw}
-              onTouchStart={startDraw}
-              onTouchMove={draw}
-              onTouchEnd={stopDraw}
-            />
-          </div>
-        </div>
-
-        {/* BOTTOM — Color Palette + Download (MS Paint style) */}
-        <div style={{
-          background: '#c0c0c0',
-          padding: '6px 8px',
-          borderTop: '2px solid #808080',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          flexWrap: 'wrap'
-        }}>
-
-          {/* Current color box */}
+          {/* Canvas + palette — fills remaining height */}
           <div style={{
-            width: '36px', height: '36px',
-            background: color,
-            border: '3px inset #808080',
-            flexShrink: 0,
-            boxShadow: `0 0 ${isGlow ? 12 : 0}px ${color}`
-          }} />
-
-          {/* Color palette */}
-          <div style={{
+            flex: 1,
+            minWidth: 0,
+            minHeight: 0,
             display: 'flex',
-            flexWrap: 'wrap',
-            gap: '2px',
-            maxWidth: '280px'
+            flexDirection: 'column',
+            gap: '8px',
           }}>
-            {COLORS.map(c => (
-              <button
-                key={c}
-                onClick={() => setColor(c)}
+            <div style={{
+              flex: 1,
+              minHeight: 0,
+              borderRadius: '16px',
+              overflow: 'hidden',
+              background: '#2a1f1a',
+              boxShadow: `0 6px 24px ${THEME.shadow}`,
+              position: 'relative',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              {!photosLoaded && (
+                <div style={{
+                  position: 'absolute',
+                  inset: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: THEME.panel,
+                  color: THEME.text,
+                  fontSize: '13px',
+                  letterSpacing: '2px',
+                }}>
+                  LOADING…
+                </div>
+              )}
+
+              <div style={{
+                maxWidth: '100%',
+                maxHeight: '100%',
+                width: 'auto',
+                height: '100%',
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+                <canvas
+                  ref={photoCanvasRef}
+                  style={{
+                    position: 'absolute',
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                    width: 'auto',
+                    height: 'auto',
+                    objectFit: 'contain',
+                    display: 'block',
+                  }}
+                />
+                <canvas
+                  ref={canvasRef}
+                  style={{
+                    position: 'relative',
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                    width: 'auto',
+                    height: 'auto',
+                    objectFit: 'contain',
+                    display: 'block',
+                    cursor: tool === 'eraser' ? 'cell' : 'crosshair',
+                    touchAction: 'none',
+                  }}
+                  onMouseDown={startDraw}
+                  onMouseMove={draw}
+                  onMouseUp={stopDraw}
+                  onMouseLeave={stopDraw}
+                  onTouchStart={startDraw}
+                  onTouchMove={draw}
+                  onTouchEnd={stopDraw}
+                />
+              </div>
+            </div>
+
+            {/* Colors — free-floating dots, no swatch boxes */}
+            <div style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '10px 14px',
+              padding: '4px 0',
+              flexShrink: 0,
+            }}>
+              {PALETTE.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  aria-label={`Color ${c}`}
+                  onClick={() => setColor(c)}
+                  style={{
+                    width: color === c ? 22 : 18,
+                    height: color === c ? 22 : 18,
+                    borderRadius: '50%',
+                    background: c,
+                    border: color === c ? `2px solid ${THEME.accent}` : '2px solid rgba(145,114,100,0.25)',
+                    padding: 0,
+                    cursor: 'pointer',
+                    boxShadow: color === c ? `0 0 0 3px ${THEME.accentSoft}` : 'none',
+                    transition: 'transform 0.15s, width 0.15s, height 0.15s',
+                    flexShrink: 0,
+                  }}
+                />
+              ))}
+            </div>
+
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '14px',
+              flexShrink: 0,
+              flexWrap: 'wrap',
+            }}>
+              <span style={{ fontSize: '11px', color: THEME.text, letterSpacing: '1px' }}>Active</span>
+              <span
                 style={{
-                  width: '20px', height: '20px',
-                  background: c,
-                  border: color === c ? '3px inset #000' : '2px outset #fff',
-                  cursor: 'pointer',
-                  padding: 0
+                  width: '28px',
+                  height: '28px',
+                  borderRadius: '50%',
+                  background: color,
+                  border: `2px solid ${THEME.text}`,
+                  boxShadow: isGlow ? `0 0 14px ${color}` : 'none',
                 }}
               />
-            ))}
+              <button
+                type="button"
+                onClick={handleDownload}
+                style={{
+                  fontFamily: "'Rosario',serif",
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  letterSpacing: '1.5px',
+                  textTransform: 'uppercase',
+                  color: '#F2E7B4',
+                  background: '#917264',
+                  border: 'none',
+                  borderRadius: '100px',
+                  padding: '10px 24px',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 0 #6b5248, 0 6px 16px rgba(145,114,100,0.25)',
+                }}
+              >
+                Download
+              </button>
+            </div>
           </div>
-
-          {/* Action buttons */}
-          <div style={{ display: 'flex', gap: '8px', marginLeft: 'auto', flexWrap: 'wrap' }}>
-            <button className="btn-secondary"
-              onClick={() => navigate('/camera')}
-              style={{ padding: '8px 16px', fontSize: '12px' }}>
-              ← Back
-            </button>
-            <button className="btn-y2k"
-              onClick={handleDownload}
-              style={{ padding: '8px 20px', fontSize: '13px' }}>
-              ⬇ Download
-            </button>
-          </div>
-
         </div>
       </div>
     </div>
