@@ -31,19 +31,211 @@ const TEMPLATE_CONFIGS = {
   template_4strip_a: { canvasWidth: 900, canvasHeight: 2400, slots: [{ x: 40, y: 40, width: 820, height: 440 }, { x: 40, y: 530, width: 820, height: 440 }, { x: 40, y: 1020, width: 820, height: 440 }, { x: 40, y: 1510, width: 820, height: 440 }] },
 }
 
+const CROP_ASPECT = 4 / 3
+
 const FILTERS = [
-  { id: 'none',        label: 'Normal',      emoji: '🤍' },
-  { id: 'vhs',         label: 'VHS',         emoji: '📼' },
-  { id: 'glitch',      label: 'Glitch',      emoji: '⚡' },
-  { id: 'y2k',         label: 'Y2K',         emoji: '💿' },
-  { id: 'crt',         label: 'CRT',         emoji: '📺' },
-  { id: 'grain',       label: 'Grain',       emoji: '🎞' },
-  { id: 'chroma',      label: 'Chroma',      emoji: '🌈' },
-  { id: 'smooth_skin', label: 'Smooth',      emoji: '✨' },
-  { id: 'blush',       label: 'Blush',       emoji: '🌸' },
-  { id: 'cat_ears',    label: 'Cat',         emoji: '🐱' },
-  { id: 'hearts',      label: 'Hearts',      emoji: '💕' },
+  { id: 'none', label: 'Normal', source: 'none' },
+  {
+    id: 'sunshine',
+    label: 'Sunshine',
+    source: 'css',
+    css: 'brightness(1.15) saturate(1.4) sepia(0.18) contrast(1.05)',
+  },
+  {
+    id: 'rosegold',
+    label: 'Rose Gold',
+    source: 'css',
+    css: 'sepia(0.45) saturate(1.5) brightness(1.08) hue-rotate(-15deg)',
+  },
+  {
+    id: 'greyglow',
+    label: 'Grey Glow',
+    source: 'css',
+    css: 'grayscale(1) brightness(1.12) contrast(1.18)',
+  },
+  {
+    id: 'dreamy',
+    label: 'Dreamy',
+    source: 'css',
+    css: 'brightness(1.1) saturate(0.85) contrast(0.92) blur(0.6px)',
+  },
+  { id: 'blush', label: 'Blush', source: 'backend' },
+  { id: 'cat_ears', label: 'Cat', source: 'backend' },
+  { id: 'hearts', label: 'Hearts', source: 'backend' },
 ]
+
+const ICON_COLOR = '#917264'
+
+function IconUpload({ size = 22, color = ICON_COLOR }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path
+        d="M12 15V5M12 5L8 9M12 5l4 4"
+        stroke={color}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M5 19h14"
+        stroke={color}
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
+function IconFlip({ size = 22, color = ICON_COLOR }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path
+        d="M3 9h10a4 4 0 1 1 0 8H7"
+        stroke={color}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M7 13L3 9l4-4"
+        stroke={color}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M21 15H11a4 4 0 0 0 0-8h6"
+        stroke={color}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M17 11l4 4-4 4"
+        stroke={color}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+function getFilterById(id) {
+  return FILTERS.find(f => f.id === id) ?? FILTERS[0]
+}
+
+function isBackendFilter(id) {
+  return getFilterById(id).source === 'backend'
+}
+
+function isCssFilter(id) {
+  return getFilterById(id).source === 'css'
+}
+
+function getCssFilterValue(id) {
+  const f = getFilterById(id)
+  return f.source === 'css' ? f.css : 'none'
+}
+
+async function bakeCssFilter(b64, css) {
+  if (!css) return `data:image/jpeg;base64,${b64}`
+  const img = await loadImage(`data:image/jpeg;base64,${b64}`)
+  const canvas = document.createElement('canvas')
+  canvas.width = img.naturalWidth
+  canvas.height = img.naturalHeight
+  const ctx = canvas.getContext('2d')
+  ctx.filter = css
+  ctx.drawImage(img, 0, 0)
+  return canvas.toDataURL('image/jpeg', 0.92)
+}
+
+function emptySlots(count) {
+  return Array(count).fill(null)
+}
+
+function filledSlotCount(slots) {
+  return slots.filter(s => s?.displayUrl).length
+}
+
+function firstEmptySlotIndex(slots) {
+  return slots.findIndex(s => !s?.displayUrl)
+}
+
+/** Compact vertical frame strip (inside camera view) — matches layout shot count */
+function FrameProgressStrip({ total, slots, activeIndex, onSlotClick }) {
+  const box = total <= 1 ? 64 : total === 2 ? 56 : 48
+  const gap = total <= 2 ? 10 : 8
+
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        right: 12,
+        top: '50%',
+        transform: 'translateY(-50%)',
+        zIndex: 8,
+        display: 'flex',
+        flexDirection: 'column',
+        gap,
+        pointerEvents: 'auto',
+        maxHeight: '88%',
+        justifyContent: 'center',
+      }}
+    >
+      {Array.from({ length: total }).map((_, i) => {
+        const entry = slots[i]
+        const hasPhoto = !!entry?.displayUrl
+        const isActive = activeIndex >= 0 && i === activeIndex && !hasPhoto
+        return (
+          <button
+            key={i}
+            type="button"
+            onClick={() => onSlotClick(i)}
+            title={hasPhoto ? `Frame ${i + 1} — tap to replace` : `Frame ${i + 1}`}
+            style={{
+              width: box,
+              height: box,
+              borderRadius: 14,
+              border: `2px dashed ${isActive ? '#DF82A3' : 'rgba(223,130,163,0.75)'}`,
+              background: hasPhoto
+                ? '#fff'
+                : isActive
+                  ? 'rgba(223,130,163,0.42)'
+                  : 'rgba(255,255,255,0.55)',
+              overflow: 'hidden',
+              padding: 0,
+              cursor: 'pointer',
+              flexShrink: 0,
+              boxShadow: isActive ? '0 0 12px rgba(223,130,163,0.5)' : '0 2px 8px rgba(145,114,100,0.15)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            {hasPhoto ? (
+              <img
+                src={entry.displayUrl}
+                alt=""
+                style={{ width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }}
+              />
+            ) : (
+              <span style={{
+                fontFamily: "'Networkand',cursive",
+                fontSize: box * 0.38,
+                color: isActive ? '#fff' : '#DF82A3',
+                lineHeight: 1,
+                pointerEvents: 'none',
+              }}>
+                {i + 1}
+              </span>
+            )}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
 
 function Stripes() {
   return (
@@ -59,29 +251,46 @@ export default function Camera() {
   const navigate          = useNavigate()
   const videoRef          = useRef(null)
   const canvasRef         = useRef(null)
+  const previewCanvasRef  = useRef(null)
   const streamRef         = useRef(null)
-  const filterIntervalRef = useRef(null)
-  const isFilterPendingRef = useRef(false)
+  const facingModeRef     = useRef('user')
+  const selectedFilterRef = useRef('none')
+  const filterRunIdRef    = useRef(0)
+  const filterAbortRef    = useRef(null)
+  const filterSlotsRunRef = useRef(0)
 
   const [cameraReady,    setCameraReady]    = useState(false)
   const [facingMode,     setFacingMode]     = useState('user')
   const [selectedFilter, setSelectedFilter] = useState('none')
   const [filteredFrame,  setFilteredFrame]  = useState(null)
-  const [timerSecs,      setTimerSecs]      = useState(3)
+  const [timerSecs,      setTimerSecs]      = useState(0)
   const [countdown,      setCountdown]      = useState(null)
   const [capturing,      setCapturing]      = useState(false)
-  const [capturedPhotos, setCapturedPhotos] = useState([])
   const [stripPreview,   setStripPreview]   = useState(null)
   const [isProcessing,   setIsProcessing]   = useState(false)
+  const [cropSource,     setCropSource]     = useState(null)
+  const [showCrop,       setShowCrop]       = useState(false)
+  const [cropAspect,     setCropAspect]     = useState(CROP_ASPECT)
+  const [targetSlotIndex, setTargetSlotIndex] = useState(null)
 
-  // Read config — note: file asset must come from TEMPLATE_ASSETS not sessionStorage
+  const fileInputRef = useRef(null)
+
+  facingModeRef.current = facingMode
+  selectedFilterRef.current = selectedFilter
+
+  const activeCssFilter = isCssFilter(selectedFilter) ? getCssFilterValue(selectedFilter) : 'none'
+
   const layoutConfig  = JSON.parse(sessionStorage.getItem('layoutConfig') || 'null')
   const totalShots    = layoutConfig?.slots?.length || 1
-  const uploadedImage = sessionStorage.getItem('uploadedImage')
+  const templateSrc   = layoutConfig?.isCustom ? null : TEMPLATE_ASSETS[layoutConfig?.id]
+
+  const [slots, setSlots] = useState(() => emptySlots(totalShots))
+
+  const filledCount = filledSlotCount(slots)
+  const nextCaptureIndex = firstEmptySlotIndex(slots)
 
   // ── Camera start/stop ─────────────────────────────────────
   useEffect(() => {
-    if (uploadedImage) { setCameraReady(true); return }
     startCamera()
     return () => stopCamera()
   }, [facingMode])
@@ -106,9 +315,14 @@ export default function Camera() {
     }
   }
 
+  function cancelFilterPreview() {
+    filterRunIdRef.current += 1
+    filterAbortRef.current?.abort()
+    filterAbortRef.current = null
+  }
+
   function stopCamera() {
-    clearInterval(filterIntervalRef.current)
-    isFilterPendingRef.current = false
+    cancelFilterPreview()
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(t => t.stop())
       streamRef.current = null
@@ -116,103 +330,164 @@ export default function Camera() {
   }
 
   // ── Capture raw frame → base64 JPEG string (no prefix) ───
-  function captureRawFrame() {
-    if (uploadedImage) return uploadedImage.split(',')[1]
-    const video  = videoRef.current
-    const canvas = canvasRef.current
-    if (!video || !canvas) return null
-    canvas.width  = video.videoWidth  || 640
-    canvas.height = video.videoHeight || 480
-    const ctx = canvas.getContext('2d')
-    if (facingMode === 'user') {
-      ctx.save(); ctx.scale(-1, 1); ctx.drawImage(video, -canvas.width, 0); ctx.restore()
-    } else {
-      ctx.drawImage(video, 0, 0)
+  function captureRawFrame({ preview = false } = {}) {
+    const video = videoRef.current
+    if (!video || video.readyState < 2) return null
+
+    const target = preview ? previewCanvasRef.current : canvasRef.current
+    if (!target) return null
+
+    let w = video.videoWidth  || 640
+    let h = video.videoHeight || 480
+    if (preview) {
+      const maxW = 480
+      if (w > maxW) {
+        h = Math.round(h * (maxW / w))
+        w = maxW
+      }
     }
-    return canvas.toDataURL('image/jpeg', 0.92).split(',')[1]
+
+    target.width  = w
+    target.height = h
+    const ctx = target.getContext('2d')
+    const mirror = facingModeRef.current === 'user'
+    if (mirror) {
+      ctx.save()
+      ctx.scale(-1, 1)
+      ctx.drawImage(video, -w, 0, w, h)
+      ctx.restore()
+    } else {
+      ctx.drawImage(video, 0, 0, w, h)
+    }
+    const quality = preview ? 0.68 : 0.92
+    return target.toDataURL('image/jpeg', quality).split(',')[1]
   }
 
-  // ── Apply filter via Python backend ──────────────────────
-  async function applyFilter(b64, filter) {
+  async function applyFilterToPhoto(dataUrl, filterId) {
+    if (!dataUrl || filterId === 'none') return dataUrl
+    const b64 = dataUrl.includes(',') ? dataUrl.split(',')[1] : dataUrl
+    return applyFilter(b64, filterId)
+  }
+
+  // ── Apply filter (CSS instant, backend via API) ──────────
+  async function applyFilter(b64, filter, { signal, preview = false } = {}) {
     if (filter === 'none') return 'data:image/jpeg;base64,' + b64
+    if (isCssFilter(filter)) return bakeCssFilter(b64, getCssFilterValue(filter))
     try {
-      const res  = await fetch('http://localhost:8000/apply-filter', {
+      const res = await fetch('http://localhost:8000/apply-filter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: b64, filter }),
+        body: JSON.stringify({ image: b64, filter, preview }),
+        signal,
       })
+      if (!res.ok) throw new Error(`Filter API ${res.status}`)
       const data = await res.json()
+      if (!data?.image) throw new Error('No image in response')
       return 'data:image/jpeg;base64,' + data.image
-    } catch {
+    } catch (err) {
+      if (err?.name === 'AbortError') throw err
       return 'data:image/jpeg;base64,' + b64
     }
   }
 
-  // ── Live filter preview ───────────────────────────────────
+  // Live backend filter preview on camera
   useEffect(() => {
-    if (!cameraReady || stripPreview) return
-    clearInterval(filterIntervalRef.current)
-    isFilterPendingRef.current = false
-    if (selectedFilter === 'none') { setFilteredFrame(null); return }
-    filterIntervalRef.current = setInterval(async () => {
-      if (isFilterPendingRef.current) return
-      const frame = captureRawFrame()
-      if (!frame) return
-      isFilterPendingRef.current = true
-      try {
-        setFilteredFrame(await applyFilter(frame, selectedFilter))
-      } finally {
-        isFilterPendingRef.current = false
-      }
-    }, 500)
-    return () => {
-      clearInterval(filterIntervalRef.current)
-      isFilterPendingRef.current = false
-    }
-  }, [selectedFilter, cameraReady, stripPreview])
+    if (!cameraReady || stripPreview || capturing) return
 
-  // ── Capture one photo with filter ────────────────────────
+    const runId = ++filterRunIdRef.current
+    filterAbortRef.current?.abort()
+    filterAbortRef.current = null
+
+    if (selectedFilter === 'none' || !isBackendFilter(selectedFilter)) {
+      setFilteredFrame(null)
+      return
+    }
+
+    let inFlight = false
+    const runLoop = async () => {
+      while (runId === filterRunIdRef.current) {
+        const filterId = selectedFilterRef.current
+        if (filterId === 'none' || !isBackendFilter(filterId)) break
+        if (inFlight) {
+          await sleep(40)
+          continue
+        }
+        const frame = captureRawFrame({ preview: true })
+        if (!frame) {
+          await sleep(80)
+          continue
+        }
+        inFlight = true
+        const controller = new AbortController()
+        filterAbortRef.current = controller
+        try {
+          const result = await applyFilter(frame, filterId, { signal: controller.signal, preview: true })
+          if (runId === filterRunIdRef.current && filterId === selectedFilterRef.current) {
+            setFilteredFrame(result)
+          }
+        } catch (err) {
+          if (err?.name !== 'AbortError') console.warn('Filter preview failed:', err)
+        } finally {
+          inFlight = false
+          if (filterAbortRef.current === controller) filterAbortRef.current = null
+        }
+      }
+    }
+    runLoop()
+    return () => {
+      filterAbortRef.current?.abort()
+      filterAbortRef.current = null
+    }
+  }, [selectedFilter, cameraReady, stripPreview, capturing])
+
+  // Re-apply filters to filled slots when filter changes
+  useEffect(() => {
+    if (stripPreview || capturing) return
+    const runId = ++filterSlotsRunRef.current
+    let cancelled = false
+
+    setSlots(prev => {
+      if (!prev.some(s => s?.rawUrl)) return prev
+      ;(async () => {
+        const next = await Promise.all(
+          prev.map(async s => {
+            if (!s?.rawUrl) return s
+            const displayUrl = await applyFilterToPhoto(s.rawUrl, selectedFilter)
+            return { ...s, displayUrl }
+          }),
+        )
+        if (!cancelled && runId === filterSlotsRunRef.current) setSlots(next)
+      })()
+      return prev
+    })
+
+    return () => { cancelled = true }
+  }, [selectedFilter, stripPreview, capturing])
+
   async function captureOne() {
     const frame = captureRawFrame()
     if (!frame) return null
-    return await applyFilter(frame, selectedFilter)
+    const rawUrl = `data:image/jpeg;base64,${frame}`
+    const displayUrl = await applyFilterToPhoto(rawUrl, selectedFilter)
+    return { displayUrl, rawUrl }
   }
 
-  // ── Auto-sequence: countdown → shoot all frames ──────────
-  async function startCapture() {
-    if (capturing || stripPreview) return
-    setCapturing(true)
-    clearInterval(filterIntervalRef.current)
-    setFilteredFrame(null)
-
-    const photos = []
-
-    for (let shot = 0; shot < totalShots; shot++) {
-      // Countdown
-      if (timerSecs > 0) {
-        for (let t = timerSecs; t >= 1; t--) {
-          setCountdown(t)
-          await sleep(1000)
-        }
+  function setSlotPhoto(index, displayUrl, source, rawUrl) {
+    setSlots(prev => {
+      const next = [...prev]
+      next[index] = {
+        displayUrl,
+        source,
+        rawUrl: rawUrl || displayUrl,
       }
-      // Brief pause before shutter (countdown shows numbers only)
-      setCountdown(null)
-      await sleep(250)
+      return next
+    })
+  }
 
-      const photo = await captureOne()
-      if (photo) photos.push(photo)
-      setCapturedPhotos([...photos])
-
-      if (shot < totalShots - 1) await sleep(600)
-    }
-
-    setCapturing(false)
+  async function finishStrip(photos) {
+    if (photos.length < totalShots) return
     setIsProcessing(true)
-
-    // Build strip — pass template asset URL from TEMPLATE_ASSETS map
-    const templateSrc = layoutConfig?.isCustom ? null : TEMPLATE_ASSETS[layoutConfig?.id]
     const strip = await buildStrip(photos, layoutConfig, templateSrc)
-
     setIsProcessing(false)
 
     if (strip) {
@@ -223,14 +498,105 @@ export default function Camera() {
     }
   }
 
-  function retake() {
-    setStripPreview(null)
+  // Timer Off: one photo per capture click. Timer On: auto sequence with countdown.
+  async function startCapture() {
+    if (capturing || stripPreview || nextCaptureIndex < 0) return
+
+    setCapturing(true)
+    cancelFilterPreview()
     setFilteredFrame(null)
-    setCapturedPhotos([])
+
+    if (timerSecs === 0) {
+      const shot = await captureOne()
+      if (shot) setSlotPhoto(nextCaptureIndex, shot.displayUrl, 'camera', shot.rawUrl)
+      setCapturing(false)
+      return
+    }
+
+    let working = [...slots]
+    let index = firstEmptySlotIndex(working)
+    while (index >= 0) {
+      for (let t = timerSecs; t >= 1; t--) {
+        setCountdown(t)
+        await sleep(1000)
+      }
+      setCountdown(null)
+      await sleep(250)
+
+      const shot = await captureOne()
+      if (shot) {
+        working[index] = { displayUrl: shot.displayUrl, source: 'camera', rawUrl: shot.rawUrl }
+        setSlots([...working])
+      }
+
+      index = firstEmptySlotIndex(working)
+      if (index < 0) break
+      await sleep(600)
+    }
+
     setCountdown(null)
     setCapturing(false)
-    sessionStorage.removeItem('uploadedImage')
+  }
+
+  useEffect(() => {
+    if (stripPreview || capturing || isProcessing) return
+    if (filledCount >= totalShots && slots.every(s => s?.displayUrl)) {
+      finishStrip(slots.map(s => s.displayUrl))
+    }
+  }, [slots, stripPreview, capturing, isProcessing])
+
+  function retake() {
+    setStripPreview(null)
+    setSlots(emptySlots(totalShots))
+    setFilteredFrame(null)
+    setCountdown(null)
+    setCapturing(false)
+    setTargetSlotIndex(null)
     startCamera()
+  }
+
+  function openUploadForSlot(slotIndex) {
+    const idx = slotIndex ?? firstEmptySlotIndex(slots)
+    if (idx < 0) return
+    const slot = layoutConfig?.slots?.[idx]
+    if (slot) setCropAspect(slot.width / slot.height)
+    else setCropAspect(CROP_ASPECT)
+    setTargetSlotIndex(idx)
+    fileInputRef.current?.click()
+  }
+
+  function handleUploadPick(e) {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    if (!file || !file.type.startsWith('image/')) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      setCropSource(reader.result)
+      setShowCrop(true)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  async function handleCropConfirm(croppedDataUrl) {
+    const idx = targetSlotIndex ?? firstEmptySlotIndex(slots)
+    if (idx < 0) {
+      setShowCrop(false)
+      setCropSource(null)
+      return
+    }
+    const displayUrl = await applyFilterToPhoto(croppedDataUrl, selectedFilter)
+    setSlotPhoto(idx, displayUrl, 'upload', croppedDataUrl)
+    setShowCrop(false)
+    setCropSource(null)
+    setTargetSlotIndex(null)
+  }
+
+  function clearSlot(index) {
+    setSlots(prev => {
+      const next = [...prev]
+      next[index] = null
+      return next
+    })
   }
 
   function handleDownload() {
@@ -256,7 +622,7 @@ export default function Camera() {
     <div style={{ minHeight: '100vh', width: '100%', backgroundColor: '#F2E7B4', position: 'relative', fontFamily: "'Rosario',serif" }}>
       <Stripes />
 
-      <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: '680px', margin: '0 auto', padding: '24px 16px 48px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px' }}>
+      <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: '720px', margin: '0 auto', padding: '24px 16px 48px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px' }}>
 
         {/* ── Header ── */}
         <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
@@ -269,96 +635,100 @@ export default function Camera() {
           <div style={{ width: '48px' }} />
         </div>
 
-        {/* ── Shot dots ── */}
-        {!allDone && (
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            {Array.from({ length: totalShots }).map((_, i) => (
-              <div key={i} style={{
-                width: '10px', height: '10px', borderRadius: '50%',
-                background: i < capturedPhotos.length ? '#DF82A3' : 'rgba(145,114,100,0.25)',
-                border: '2px solid #DF82A3',
-                boxShadow: i < capturedPhotos.length ? '0 0 6px rgba(223,130,163,0.6)' : 'none',
-                transition: 'all 0.3s',
-              }} />
-            ))}
-            <span style={{ fontSize: '12px', color: '#917264', marginLeft: '4px' }}>
-              {capturedPhotos.length} / {totalShots}
-            </span>
-          </div>
-        )}
-
-        {/* ── Camera / Strip preview box ── */}
-        <div style={{
-          width: '100%',
-          borderRadius: '16px',
-          overflow: 'hidden',
-          background: '#2a1f1a',
-          boxShadow: '0 8px 32px rgba(145,114,100,0.25)',
-          position: 'relative',
-          aspectRatio: allDone ? 'auto' : '4/3',
-          maxHeight: allDone ? 'none' : '52vh',
-        }}>
-
-          {/* Countdown overlay */}
-          {typeof countdown === 'number' && (
-            <div style={{
-              position: 'absolute', inset: 0, zIndex: 10,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: 'rgba(0,0,0,0.3)',
-            }}>
-              <span style={{
-                fontSize: '120px',
-                fontWeight: '700', color: '#F2E7B4',
-                textShadow: '0 0 40px rgba(223,130,163,0.9)',
+        {/* ── Camera view + frame strip overlay ── */}
+        {!allDone ? (
+          <div style={{
+            width: '100%',
+            borderRadius: '16px',
+            overflow: 'hidden',
+            background: '#2a1f1a',
+            boxShadow: '0 8px 32px rgba(145,114,100,0.25)',
+            position: 'relative',
+            aspectRatio: '4/3',
+            maxHeight: '62vh',
+          }}>
+            {typeof countdown === 'number' && (
+              <div style={{
+                position: 'absolute', inset: 0, zIndex: 10,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: 'rgba(0,0,0,0.3)',
               }}>
-                {countdown}
-              </span>
-            </div>
-          )}
-
-          {/* Processing overlay */}
-          {isProcessing && (
-            <div style={{
-              position: 'absolute', inset: 0, zIndex: 10,
-              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-              background: 'rgba(242,231,180,0.9)', gap: '12px',
-            }}>
-              <div style={{ fontSize: '28px' }}>✨</div>
-              <p style={{ fontFamily: "'Rosario',serif", fontSize: '13px', color: '#917264', letterSpacing: '2px', margin: 0 }}>
-                BUILDING YOUR STRIP...
-              </p>
-            </div>
-          )}
-
-          {/* Strip preview after capture */}
-          {allDone ? (
+                <span style={{
+                  fontSize: '120px',
+                  fontWeight: '700', color: '#F2E7B4',
+                  textShadow: '0 0 40px rgba(223,130,163,0.9)',
+                }}>
+                  {countdown}
+                </span>
+              </div>
+            )}
+            {isProcessing && (
+              <div style={{
+                position: 'absolute', inset: 0, zIndex: 10,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: 'rgba(242,231,180,0.9)',
+              }}>
+                <p style={{ fontFamily: "'Rosario',serif", fontSize: '13px', color: '#917264', letterSpacing: '2px', margin: 0 }}>
+                  BUILDING YOUR STRIP...
+                </p>
+              </div>
+            )}
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              style={{
+                width: '100%',
+                height: '100%',
+                display: 'block',
+                objectFit: 'cover',
+                transform: facingMode === 'user' ? 'scaleX(-1)' : 'none',
+                filter: activeCssFilter !== 'none' ? activeCssFilter : undefined,
+              }}
+            />
+            {filteredFrame && isBackendFilter(selectedFilter) && (
+              <img
+                src={filteredFrame}
+                alt=""
+                style={{
+                  position: 'absolute', inset: 0, width: '100%', height: '100%',
+                  objectFit: 'cover', pointerEvents: 'none', zIndex: 2,
+                }}
+              />
+            )}
+            <FrameProgressStrip
+              total={totalShots}
+              slots={slots}
+              activeIndex={nextCaptureIndex}
+              onSlotClick={openUploadForSlot}
+            />
+          </div>
+        ) : (
+          <div style={{
+            width: '100%',
+            borderRadius: '16px',
+            overflow: 'hidden',
+            background: '#2a1f1a',
+            boxShadow: '0 8px 32px rgba(145,114,100,0.25)',
+            position: 'relative',
+          }}>
+            {isProcessing && (
+              <div style={{
+                position: 'absolute', inset: 0, zIndex: 10,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: 'rgba(242,231,180,0.9)',
+              }}>
+                <p style={{ fontFamily: "'Rosario',serif", fontSize: '13px', color: '#917264', letterSpacing: '2px', margin: 0 }}>
+                  BUILDING YOUR STRIP...
+                </p>
+              </div>
+            )}
             <img src={stripPreview} alt="Your photo strip" style={{
               width: '100%', display: 'block',
               maxHeight: '72vh', objectFit: 'contain',
               background: '#2a1f1a',
             }} />
-          ) : (
-            <>
-              {filteredFrame && selectedFilter !== 'none' ? (
-                <img src={filteredFrame} alt="filtered" style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover', transform: facingMode === 'user' ? 'scaleX(-1)' : 'none' }} />
-              ) : (
-                <video ref={videoRef} autoPlay playsInline muted style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover', transform: facingMode === 'user' ? 'scaleX(-1)' : 'none' }} />
-              )}
-              {uploadedImage && selectedFilter === 'none' && (
-                <img src={uploadedImage} alt="upload" style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover' }} />
-              )}
-            </>
-          )}
-        </div>
-
-        {/* Thumbnail row during capture */}
-        {capturedPhotos.length > 0 && !allDone && (
-          <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            {capturedPhotos.map((p, i) => (
-              <div key={i} style={{ width: '48px', height: '48px', borderRadius: '8px', overflow: 'hidden', border: '2px solid #DF82A3', flexShrink: 0 }}>
-                <img src={p} alt={`shot ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              </div>
-            ))}
           </div>
         )}
 
@@ -366,24 +736,53 @@ export default function Camera() {
         {!allDone ? (
           <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
 
-            {/* Flip | Capture | Timer */}
+            {/* Upload | Flip | Capture | Timer */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '24px', width: '100%' }}>
 
-              {/* Flip */}
-              <button onClick={flipCamera} disabled={capturing} title="Flip camera" style={{
-                width: '48px', height: '48px', borderRadius: '50%',
-                background: 'rgba(255,255,255,0.75)', border: '2px solid #D4C49A',
-                fontSize: '20px', cursor: capturing ? 'not-allowed' : 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: '0 3px 10px rgba(145,114,100,0.15)', transition: 'all 0.2s',
-                opacity: capturing ? 0.4 : 1,
-              }}
+              {/* Upload */}
+              <button
+                type="button"
+                onClick={() => openUploadForSlot()}
+                disabled={capturing}
+                title="Upload photo"
+                aria-label="Upload photo"
+                style={{
+                  width: '48px', height: '48px', borderRadius: '50%',
+                  background: 'rgba(255,255,255,0.75)', border: '2px solid #D4C49A',
+                  cursor: capturing ? 'not-allowed' : 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  boxShadow: '0 3px 10px rgba(145,114,100,0.15)', transition: 'all 0.2s',
+                  opacity: capturing ? 0.4 : 1, padding: 0,
+                }}
                 onMouseEnter={e => { if (!capturing) e.currentTarget.style.background = '#F4B8CC' }}
                 onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.75)' }}
-              >🔄</button>
+              >
+                <IconUpload />
+              </button>
+
+              {/* Flip */}
+              <button
+                type="button"
+                onClick={flipCamera}
+                disabled={capturing}
+                title="Flip camera"
+                aria-label="Flip camera"
+                style={{
+                  width: '48px', height: '48px', borderRadius: '50%',
+                  background: 'rgba(255,255,255,0.75)', border: '2px solid #D4C49A',
+                  cursor: capturing ? 'not-allowed' : 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  boxShadow: '0 3px 10px rgba(145,114,100,0.15)', transition: 'all 0.2s',
+                  opacity: capturing ? 0.4 : 1, padding: 0,
+                }}
+                onMouseEnter={e => { if (!capturing) e.currentTarget.style.background = '#F4B8CC' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.75)' }}
+              >
+                <IconFlip />
+              </button>
 
               {/* Capture — clean circle, NO emoji */}
-              <button onClick={startCapture} disabled={!cameraReady || capturing} style={{
+              <button onClick={startCapture} disabled={!cameraReady || capturing || nextCaptureIndex < 0} style={{
                 width: '72px', height: '72px', borderRadius: '50%',
                 background: capturing ? '#C4A882' : '#DF82A3',
                 border: '4px solid #ffffff',
@@ -428,18 +827,33 @@ export default function Camera() {
             {/* Hint */}
             <p style={{ fontSize: '12px', color: '#917264', margin: 0, fontStyle: 'italic', textAlign: 'center' }}>
               {capturing
-                ? `Taking photo ${capturedPhotos.length + 1} of ${totalShots}...`
-                : totalShots > 1
+                ? (timerSecs > 0
+                  ? `Taking photo ${filledCount + 1} of ${totalShots}...`
+                  : 'Capturing...')
+                : timerSecs > 0 && totalShots > 1
                   ? `${totalShots} shots will be taken automatically`
-                  : 'Press to capture'
+                  : totalShots > 1
+                    ? `Press capture — photo moves to frame (${filledCount} / ${totalShots})`
+                    : 'Press capture — live filter preview on camera'
               }
             </p>
 
             {/* Filter strip */}
             <div style={{ width: '100%', display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px', scrollbarWidth: 'none' }}>
               {FILTERS.map(f => (
-                <button key={f.id} onClick={() => !capturing && setSelectedFilter(f.id)} style={{
-                  flexShrink: 0, minWidth: '62px', padding: '7px 5px',
+                <button key={f.id} onClick={() => {
+                  if (capturing) return
+                  if (f.id === 'none') {
+                    setSelectedFilter('none')
+                    return
+                  }
+                  if (selectedFilter === f.id) {
+                    setSelectedFilter('none')
+                    return
+                  }
+                  setSelectedFilter(f.id)
+                }} title={f.label} style={{
+                  flexShrink: 0, minWidth: '62px', padding: '10px 8px',
                   borderRadius: '10px',
                   background: selectedFilter === f.id ? '#DF82A3' : 'rgba(255,255,255,0.75)',
                   color: selectedFilter === f.id ? '#fff' : '#917264',
@@ -449,7 +863,6 @@ export default function Camera() {
                   textTransform: 'uppercase', letterSpacing: '0.5px',
                   transition: 'all 0.2s', opacity: capturing ? 0.5 : 1,
                 }}>
-                  <div style={{ fontSize: '16px', marginBottom: '3px' }}>{f.emoji}</div>
                   {f.label}
                 </button>
               ))}
@@ -503,6 +916,154 @@ export default function Camera() {
 
       </div>
       <canvas ref={canvasRef} style={{ display: 'none' }} />
+      <canvas ref={previewCanvasRef} style={{ display: 'none' }} />
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        style={{ display: 'none' }}
+        onChange={handleUploadPick}
+      />
+      {showCrop && cropSource && (
+        <ImageCropModal
+          imageSrc={cropSource}
+          aspect={cropAspect}
+          onConfirm={handleCropConfirm}
+          onCancel={() => { setShowCrop(false); setCropSource(null); setTargetSlotIndex(null) }}
+        />
+      )}
+    </div>
+  )
+}
+
+function ImageCropModal({ imageSrc, aspect = CROP_ASPECT, onConfirm, onCancel }) {
+  const viewportRef = useRef(null)
+  const [scale, setScale] = useState(1)
+  const [offset, setOffset] = useState({ x: 0, y: 0 })
+  const dragRef = useRef(null)
+
+  function onPointerDown(e) {
+    dragRef.current = { startX: e.clientX, startY: e.clientY, ox: offset.x, oy: offset.y }
+    e.currentTarget.setPointerCapture(e.pointerId)
+  }
+
+  function onPointerMove(e) {
+    if (!dragRef.current) return
+    setOffset({
+      x: dragRef.current.ox + (e.clientX - dragRef.current.startX),
+      y: dragRef.current.oy + (e.clientY - dragRef.current.startY),
+    })
+  }
+
+  function onPointerUp(e) {
+    dragRef.current = null
+    e.currentTarget.releasePointerCapture(e.pointerId)
+  }
+
+  async function handleApply() {
+    const viewport = viewportRef.current
+    if (!viewport) return
+    const vw = viewport.clientWidth
+    const vh = viewport.clientHeight
+    const img = await loadImage(imageSrc)
+    const outW = 1280
+    const outH = Math.round(outW / aspect)
+    const canvas = document.createElement('canvas')
+    canvas.width = outW
+    canvas.height = outH
+    const ctx = canvas.getContext('2d')
+    ctx.fillStyle = '#2a1f1a'
+    ctx.fillRect(0, 0, outW, outH)
+
+    const baseScale = Math.max(vw / img.naturalWidth, vh / img.naturalHeight) * scale
+    const drawW = img.naturalWidth * baseScale
+    const drawH = img.naturalHeight * baseScale
+    const dx = (vw - drawW) / 2 + offset.x
+    const dy = (vh - drawH) / 2 + offset.y
+    const sx = (-dx / baseScale)
+    const sy = (-dy / baseScale)
+    const sw = vw / baseScale
+    const sh = vh / baseScale
+
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, outW, outH)
+    onConfirm(canvas.toDataURL('image/jpeg', 0.92))
+  }
+
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 100,
+      background: 'rgba(42,31,26,0.92)',
+      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+      padding: 16, gap: 14, fontFamily: "'Rosario',serif",
+    }}>
+      <p style={{ color: '#F2E7B4', fontSize: 14, letterSpacing: 1, margin: 0, textTransform: 'uppercase' }}>
+        Crop to fit frame
+      </p>
+      <div
+        ref={viewportRef}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        style={{
+          width: 'min(92vw, 420px)',
+          aspectRatio: `${aspect}`,
+          borderRadius: 12,
+          overflow: 'hidden',
+          border: '3px solid #DF82A3',
+          position: 'relative',
+          background: '#2a1f1a',
+          touchAction: 'none',
+          cursor: 'grab',
+        }}
+      >
+        <img
+          src={imageSrc}
+          alt="crop"
+          draggable={false}
+          style={{
+            position: 'absolute',
+            left: '50%',
+            top: '50%',
+            maxWidth: 'none',
+            transform: `translate(calc(-50% + ${offset.x}px), calc(-50% + ${offset.y}px)) scale(${scale})`,
+            transformOrigin: 'center center',
+            userSelect: 'none',
+            pointerEvents: 'none',
+          }}
+        />
+      </div>
+      <label style={{ color: '#917264', fontSize: 12, display: 'flex', alignItems: 'center', gap: 10 }}>
+        Zoom
+        <input
+          type="range"
+          min={1}
+          max={3}
+          step={0.02}
+          value={scale}
+          onChange={e => setScale(Number(e.target.value))}
+          style={{ width: 180, accentColor: '#DF82A3' }}
+        />
+      </label>
+      <p style={{ color: '#917264', fontSize: 11, margin: 0, fontStyle: 'italic' }}>
+        Drag to reposition
+      </p>
+      <div style={{ display: 'flex', gap: 12 }}>
+        <button type="button" onClick={onCancel} style={{
+          fontFamily: "'Rosario',serif", fontSize: 13, fontWeight: 700,
+          letterSpacing: '1px', textTransform: 'uppercase',
+          color: '#917264', background: 'rgba(255,255,255,0.75)',
+          border: '2px solid #D4C49A', borderRadius: '100px',
+          padding: '10px 24px', cursor: 'pointer',
+        }}>Cancel</button>
+        <button type="button" onClick={handleApply} style={{
+          fontFamily: "'Rosario',serif", fontSize: 13, fontWeight: 700,
+          letterSpacing: '1px', textTransform: 'uppercase',
+          color: '#F2E7B4', background: '#DF82A3',
+          border: 'none', borderRadius: '100px',
+          padding: '10px 24px', cursor: 'pointer',
+        }}>Apply</button>
+      </div>
     </div>
   )
 }
