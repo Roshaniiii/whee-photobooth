@@ -31,6 +31,26 @@ const TEMPLATE_CONFIGS = {
   template_4strip_a: { canvasWidth: 900, canvasHeight: 2400, slots: [{ x: 40, y: 40, width: 820, height: 440 }, { x: 40, y: 530, width: 820, height: 440 }, { x: 40, y: 1020, width: 820, height: 440 }, { x: 40, y: 1510, width: 820, height: 440 }] },
 }
 
+/** 4-frame strip height — other layouts scale proportionally for the result page */
+const FOUR_FRAME_REF_HEIGHT = 2400
+const STRIP_DISPLAY_MAX_HEIGHT_4 = 460
+
+function getStripImageStyle(layoutConfig) {
+  const cw = layoutConfig?.canvasWidth ?? 900
+  const ch = layoutConfig?.canvasHeight ?? 1100
+  const scale = ch / FOUR_FRAME_REF_HEIGHT
+  const maxH = Math.round(STRIP_DISPLAY_MAX_HEIGHT_4 * scale)
+  const maxW = Math.round(maxH * (cw / ch))
+  return {
+    display: 'block',
+    maxHeight: `min(72vh, ${maxH}px)`,
+    maxWidth: `min(36vw, ${maxW}px)`,
+    width: 'auto',
+    height: 'auto',
+    objectFit: 'contain',
+  }
+}
+
 const CROP_ASPECT = 4 / 3
 
 const FILTERS = [
@@ -622,7 +642,16 @@ export default function Camera() {
     <div style={{ minHeight: '100vh', width: '100%', backgroundColor: '#F2E7B4', position: 'relative', fontFamily: "'Rosario',serif" }}>
       <Stripes />
 
-      <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: '720px', margin: '0 auto', padding: '24px 16px 48px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px' }}>
+      <div style={{
+        position: 'relative', zIndex: 1, width: '100%',
+        maxWidth: allDone ? 'min(1100px, 98vw)' : '720px',
+        margin: '0 auto',
+        padding: allDone ? '20px 20px 24px' : '24px 16px 48px',
+        display: 'flex', flexDirection: 'column', alignItems: 'center',
+        gap: allDone ? '12px' : '14px',
+        minHeight: allDone ? 'calc(100vh - 8px)' : undefined,
+        boxSizing: 'border-box',
+      }}>
 
         {/* ── Header ── */}
         <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
@@ -706,29 +735,104 @@ export default function Camera() {
           </div>
         ) : (
           <div style={{
+            flex: 1,
             width: '100%',
-            borderRadius: '16px',
-            overflow: 'hidden',
-            background: '#2a1f1a',
-            boxShadow: '0 8px 32px rgba(145,114,100,0.25)',
-            position: 'relative',
+            display: 'flex',
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 20,
+            minHeight: 0,
+            maxHeight: 'calc(100vh - 100px)',
           }}>
-            {isProcessing && (
+            <div style={{
+              flex: 1,
+              minWidth: 0,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              alignSelf: 'stretch',
+            }}>
               <div style={{
-                position: 'absolute', inset: 0, zIndex: 10,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                background: 'rgba(242,231,180,0.9)',
+                borderRadius: 16,
+                overflow: 'hidden',
+                background: '#2a1f1a',
+                boxShadow: '0 8px 32px rgba(145,114,100,0.25)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                position: 'relative',
               }}>
-                <p style={{ fontFamily: "'Rosario',serif", fontSize: '13px', color: '#917264', letterSpacing: '2px', margin: 0 }}>
-                  BUILDING YOUR STRIP...
-                </p>
+                {isProcessing && (
+                  <div style={{
+                    position: 'absolute', inset: 0, zIndex: 10,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    background: 'rgba(242,231,180,0.9)',
+                  }}>
+                    <p style={{ fontFamily: "'Rosario',serif", fontSize: '13px', color: '#917264', letterSpacing: '2px', margin: 0 }}>
+                      BUILDING YOUR STRIP...
+                    </p>
+                  </div>
+                )}
+                <img
+                  src={stripPreview}
+                  alt="Your photo strip"
+                  style={getStripImageStyle(layoutConfig)}
+                />
               </div>
-            )}
-            <img src={stripPreview} alt="Your photo strip" style={{
-              width: '100%', display: 'block',
-              maxHeight: '72vh', objectFit: 'contain',
-              background: '#2a1f1a',
-            }} />
+            </div>
+
+            <div style={{
+              flexShrink: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'stretch',
+              gap: 12,
+              paddingRight: 4,
+              minWidth: 148,
+              marginLeft: 'auto',
+            }}>
+              <button type="button" onClick={retake} style={{
+                fontFamily: "'Rosario',serif", fontSize: '13px', fontWeight: '700',
+                letterSpacing: '1.5px', textTransform: 'uppercase',
+                color: '#917264', background: 'rgba(255,255,255,0.75)',
+                border: '2px solid #D4C49A', borderRadius: '100px',
+                padding: '11px 22px', cursor: 'pointer',
+                boxShadow: '0 3px 10px rgba(145,114,100,0.15)', transition: 'all 0.2s',
+                whiteSpace: 'nowrap',
+              }}
+                onMouseEnter={e => { e.currentTarget.style.background = '#F4B8CC'; e.currentTarget.style.borderColor = '#DF82A3' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.75)'; e.currentTarget.style.borderColor = '#D4C49A' }}
+              >Retake</button>
+
+              <button type="button" onClick={handleDownload} style={{
+                fontFamily: "'Rosario',serif", fontSize: '13px', fontWeight: '700',
+                letterSpacing: '1.5px', textTransform: 'uppercase',
+                color: '#F2E7B4', background: '#917264',
+                border: 'none', borderRadius: '100px',
+                padding: '11px 22px', cursor: 'pointer',
+                boxShadow: '0 5px 0px #6b5248, 0 8px 20px rgba(145,114,100,0.3)',
+                transition: 'transform 0.12s', whiteSpace: 'nowrap',
+              }}
+                onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+                onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+              >Download</button>
+
+              <button type="button" onClick={handleCustomise} style={{
+                fontFamily: "'Rosario',serif", fontSize: '13px', fontWeight: '700',
+                letterSpacing: '1.5px', textTransform: 'uppercase',
+                color: '#F2E7B4', background: '#DF82A3',
+                border: 'none', borderRadius: '100px',
+                padding: '11px 22px', cursor: 'pointer',
+                boxShadow: '0 5px 0px #917264, 0 8px 20px rgba(223,130,163,0.3)',
+                transition: 'transform 0.12s', whiteSpace: 'nowrap',
+              }}
+                onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+                onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+              >Customise</button>
+            </div>
           </div>
         )}
 
@@ -869,50 +973,7 @@ export default function Camera() {
             </div>
 
           </div>
-        ) : (
-          /* Post-capture actions */
-          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap', width: '100%' }}>
-
-            <button onClick={retake} style={{
-              fontFamily: "'Rosario',serif", fontSize: '14px', fontWeight: '700',
-              letterSpacing: '1.5px', textTransform: 'uppercase',
-              color: '#917264', background: 'rgba(255,255,255,0.75)',
-              border: '2px solid #D4C49A', borderRadius: '100px',
-              padding: '12px 28px', cursor: 'pointer',
-              boxShadow: '0 3px 10px rgba(145,114,100,0.15)', transition: 'all 0.2s',
-            }}
-              onMouseEnter={e => { e.currentTarget.style.background = '#F4B8CC'; e.currentTarget.style.borderColor = '#DF82A3' }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.75)'; e.currentTarget.style.borderColor = '#D4C49A' }}
-            >🔄 Retake</button>
-
-            <button onClick={handleDownload} style={{
-              fontFamily: "'Rosario',serif", fontSize: '14px', fontWeight: '700',
-              letterSpacing: '1.5px', textTransform: 'uppercase',
-              color: '#F2E7B4', background: '#917264',
-              border: 'none', borderRadius: '100px',
-              padding: '12px 28px', cursor: 'pointer',
-              boxShadow: '0 5px 0px #6b5248, 0 8px 20px rgba(145,114,100,0.3)',
-              transition: 'transform 0.12s',
-            }}
-              onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-              onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
-            >⬇ Download</button>
-
-            <button onClick={handleCustomise} style={{
-              fontFamily: "'Rosario',serif", fontSize: '14px', fontWeight: '700',
-              letterSpacing: '1.5px', textTransform: 'uppercase',
-              color: '#F2E7B4', background: '#DF82A3',
-              border: 'none', borderRadius: '100px',
-              padding: '12px 28px', cursor: 'pointer',
-              boxShadow: '0 5px 0px #917264, 0 8px 20px rgba(223,130,163,0.3)',
-              transition: 'transform 0.12s',
-            }}
-              onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-              onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
-            >✏ Customise</button>
-
-          </div>
-        )}
+        ) : null}
 
       </div>
       <canvas ref={canvasRef} style={{ display: 'none' }} />
