@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { playClick, playHover } from '../utils/sounds'
 
 import t1a from '../assets/template_1strip_a.png'
 import t1b from '../assets/template_1strip_b.png'
@@ -59,7 +60,7 @@ function Stripes() {
 function PillButton({ onClick, disabled, children }) {
   return (
     <button onClick={onClick} disabled={disabled} style={{
-      fontFamily: "'Rosario',serif", fontSize: '15px', fontWeight: '700',
+      fontFamily: "'Cause',serif", fontSize: '15px', fontWeight: '700',
       letterSpacing: '2px', textTransform: 'uppercase', color: '#F2E7B4',
       background: disabled ? '#C4A882' : '#DF82A3', border: 'none', borderRadius: '100px',
       padding: '13px 52px', cursor: disabled ? 'not-allowed' : 'pointer',
@@ -186,7 +187,7 @@ function PickTemplate({ onSelect }) {
 
               {/* Label only under center card */}
               {isCenter && (
-                <p style={{ fontFamily: "'Rosario',serif", fontSize: '13px', fontWeight: '600', color: '#917264', letterSpacing: '1px', margin: 0 }}>
+                <p style={{ fontFamily: "'Cause',serif", fontSize: '13px', fontWeight: '600', color: '#917264', letterSpacing: '1px', margin: 0 }}>
                   {t.label}
                 </p>
               )}
@@ -240,7 +241,10 @@ function PickTemplate({ onSelect }) {
 
       {/* ── Button ── */}
       <div style={{ flexShrink: 0, paddingBottom: '4px' }}>
-        <PillButton onClick={() => onSelect(TEMPLATES[current])}>Use This Template</PillButton>
+        <PillButton onClick={() => {
+          playClick()
+          onSelect(TEMPLATES[current])
+        }}>Use This Template</PillButton>
       </div>
     </div>
   )
@@ -296,7 +300,7 @@ function BuildOwn({ onSelect }) {
 
         {/* Layout grid — compact cards, 2×2 */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <p style={{ fontFamily: "'Rosario',serif", fontSize: '11px', fontWeight: '700', letterSpacing: '2px', textTransform: 'uppercase', color: '#917264', margin: 0, textAlign: 'center' }}>
+          <p style={{ fontFamily: "'Cause',serif", fontSize: '11px', fontWeight: '700', letterSpacing: '2px', textTransform: 'uppercase', color: '#917264', margin: 0, textAlign: 'center' }}>
             Choose Layout
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
@@ -340,7 +344,7 @@ function BuildOwn({ onSelect }) {
 
         {/* ── Frame preview — fixed size, proportional inner slots ── */}
         <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', paddingTop: '24px' }}>
-          <p style={{ fontFamily: "'Rosario',serif", fontSize: '11px', fontWeight: '700', letterSpacing: '1.5px', textTransform: 'uppercase', color: '#917264', margin: 0 }}>
+          <p style={{ fontFamily: "'Cause',serif", fontSize: '11px', fontWeight: '700', letterSpacing: '1.5px', textTransform: 'uppercase', color: '#917264', margin: 0 }}>
             Preview
           </p>
           {/* Outer frame — fixed PREV_W × PREV_H always */}
@@ -365,7 +369,7 @@ function BuildOwn({ onSelect }) {
 
       {/* ── Color picker ── */}
       <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-        <p style={{ fontFamily: "'Rosario',serif", fontSize: '11px', fontWeight: '700', letterSpacing: '2px', textTransform: 'uppercase', color: '#917264', margin: 0 }}>
+        <p style={{ fontFamily: "'Cause',serif", fontSize: '11px', fontWeight: '700', letterSpacing: '2px', textTransform: 'uppercase', color: '#917264', margin: 0 }}>
           Frame Color
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center', maxWidth: '440px' }}>
@@ -386,7 +390,10 @@ function BuildOwn({ onSelect }) {
 
       {/* ── Next button ── */}
       <div style={{ paddingBottom: '4px' }}>
-        <PillButton onClick={() => selectedLayout && onSelect({ ...selectedLayout, frameColor: selectedColor.hex, isCustom: true })} disabled={!selectedLayout}>
+        <PillButton onClick={() => {
+          playClick()
+          selectedLayout && onSelect({ ...selectedLayout, frameColor: selectedColor.hex, isCustom: true })
+        }} disabled={!selectedLayout}>
           Next →
         </PillButton>
       </div>
@@ -409,25 +416,25 @@ export default function Layout() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', width: '100%', backgroundColor: '#F2E7B4', position: 'relative', fontFamily: "'Rosario',serif" }}>
+    <div style={{ minHeight: '100vh', width: '100%', backgroundColor: '#F2E7B4', position: 'relative', fontFamily: "'Cause',serif" }}>
       <Stripes />
       <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: '680px', margin: '0 auto', padding: '32px 20px 56px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 
-        <button onClick={() => navigate('/')} style={{ alignSelf: 'flex-start', background: 'none', border: 'none', color: '#917264', cursor: 'pointer', fontFamily: "'Rosario',serif", fontSize: '14px', letterSpacing: '1px', padding: '4px 0', marginBottom: '8px' }}>
+        <button onClick={() => navigate('/')} style={{ alignSelf: 'flex-start', background: 'none', border: 'none', color: '#917264', cursor: 'pointer', fontFamily: "'Cause',serif", fontSize: '14px', letterSpacing: '1px', padding: '4px 0', marginBottom: '8px' }}>
           ← Back
         </button>
 
-        <h1 style={{ fontFamily: "'Networkand',cursive", fontSize: 'clamp(28px,6vw,46px)', color: '#DF82A3', margin: '0 0 4px', letterSpacing: '2px', textAlign: 'center' }}>
+        <h1 style={{ fontFamily: "'Unkempt',cursive", fontSize: 'clamp(28px,6vw,46px)', color: '#DF82A3', margin: '0 0 4px', letterSpacing: '2px', textAlign: 'center' }}>
           Your Frame
         </h1>
-        <p style={{ fontFamily: "'Rosario',serif", fontSize: '14px', color: '#917264', margin: '0 0 20px', letterSpacing: '0.5px' }}>
+        <p style={{ fontFamily: "'Cause',serif", fontSize: '14px', color: '#917264', margin: '0 0 20px', letterSpacing: '0.5px' }}>
           Pick a template or build your own
         </p>
 
         <div style={{ display: 'flex', background: 'rgba(255,255,255,0.5)', borderRadius: '100px', padding: '4px', border: '2px solid #D4C49A', marginBottom: '20px', gap: '4px', flexShrink: 0 }}>
           {[{ id: 'template', label: '✦ Templates' }, { id: 'build', label: '✐ Build Your Own' }].map(t => (
             <button key={t.id} onClick={() => setTab(t.id)} style={{
-              fontFamily: "'Rosario',serif", fontSize: 'clamp(12px,2.5vw,14px)', fontWeight: '700', letterSpacing: '1px',
+              fontFamily: "'Cause',serif", fontSize: 'clamp(12px,2.5vw,14px)', fontWeight: '700', letterSpacing: '1px',
               padding: '9px clamp(14px,3.5vw,28px)', borderRadius: '100px', border: 'none', cursor: 'pointer',
               background: tab === t.id ? '#DF82A3' : 'transparent',
               color: tab === t.id ? '#F2E7B4' : '#917264',
