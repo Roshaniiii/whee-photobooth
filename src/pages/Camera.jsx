@@ -82,6 +82,7 @@ const FILTERS = [
   { id: 'blush', label: 'Blush', source: 'backend' },
   { id: 'cat_ears', label: 'Cat', source: 'backend' },
   { id: 'hearts', label: 'Hearts', source: 'backend' },
+  {id: 'star_face', label: 'Star Face', source: 'backend' },
 ]
 
 const ICON_COLOR = '#917264'
