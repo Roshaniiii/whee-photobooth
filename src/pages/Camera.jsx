@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
+import sparkleOverlay from '../assets/sparkle_overlay.png'
 
 // ── Template imports — needed to overlay on canvas ────────────
 import t1a from '../assets/template_1strip_a.png'
@@ -78,6 +79,13 @@ const FILTERS = [
     label: 'Dreamy',
     source: 'css',
     css: 'brightness(1.1) saturate(0.85) contrast(0.92) blur(0.6px)',
+  },
+  {
+  id: 'sparkle',
+  label: 'Sparkle',
+  source: 'css',
+  css: 'none',
+  desc: 'Star frame',
   },
   { id: 'blush', label: 'Blush', source: 'backend' },
   { id: 'cat_ears', label: 'Cat', source: 'backend' },
@@ -351,7 +359,7 @@ export default function Camera() {
   }
 
   // ── Capture raw frame → base64 JPEG string (no prefix) ───
-  function captureRawFrame({ preview = false } = {}) {
+    async function captureRawFrame({ preview = false } = {}) {
     const video = videoRef.current
     if (!video || video.readyState < 2) return null
 
@@ -379,6 +387,19 @@ export default function Camera() {
       ctx.restore()
     } else {
       ctx.drawImage(video, 0, 0, w, h)
+    }
+
+    // ── Bake sparkle overlay into captured frame ──────────────────────────
+    if (!preview && selectedFilterRef.current === 'sparkle') {
+      await new Promise((resolve) => {
+        const overlayImg = new Image()
+        overlayImg.onload = () => {
+          ctx.drawImage(overlayImg, 0, 0, w, h)
+          resolve()
+        }
+        overlayImg.onerror = resolve   // fail silently if PNG missing
+        overlayImg.src = sparkleOverlay
+      })
     }
     const quality = preview ? 0.68 : 0.92
     return target.toDataURL('image/jpeg', quality).split(',')[1]
@@ -486,7 +507,7 @@ export default function Camera() {
   }, [selectedFilter, stripPreview, capturing])
 
   async function captureOne() {
-    const frame = captureRawFrame()
+    const frame = await captureRawFrame()
     if (!frame) return null
     const rawUrl = `data:image/jpeg;base64,${frame}`
     const displayUrl = await applyFilterToPhoto(rawUrl, selectedFilter)
@@ -703,20 +724,41 @@ export default function Camera() {
                 </p>
               </div>
             )}
-            <video
-              ref={videoRef}
-              autoPlay
-              playsInline
-              muted
-              style={{
-                width: '100%',
-                height: '100%',
-                display: 'block',
-                objectFit: 'cover',
-                transform: facingMode === 'user' ? 'scaleX(-1)' : 'none',
-                filter: activeCssFilter !== 'none' ? activeCssFilter : undefined,
-              }}
-            />
+          <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    display: 'block',
+                    objectFit: 'cover',
+                    transform: facingMode === 'user' ? 'scaleX(-1)' : 'none',
+                    filter: activeCssFilter !== 'none'
+                      ? activeCssFilter
+                      : undefined,
+                  }}
+                />
+
+                {/* Sparkle overlay */}
+                {selectedFilter === 'sparkle' && !allDone && (
+                  <img
+                    src={sparkleOverlay}
+                    alt=""
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      pointerEvents: 'none',
+                      zIndex: 3,
+                    }}
+                  />
+                )}
+              </div>
             {filteredFrame && isBackendFilter(selectedFilter) && (
               <img
                 src={filteredFrame}
