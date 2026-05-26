@@ -5,6 +5,7 @@ import sparkleOverlay from '../assets/sparkle_overlay.png'
 // ── Template imports — needed to overlay on canvas ────────────
 import t1a from '../assets/template_1strip_a.png'
 import t1b from '../assets/template_1strip_b.png'
+import t1c from '../assets/template_1strip_c.png'
 import t2a from '../assets/template_2strip_a.png'
 import t2b from '../assets/template_2strip_b.png'
 import t2c from '../assets/template_2strip_c.png'
@@ -15,6 +16,7 @@ import t4a from '../assets/template_4strip_a.png'
 const TEMPLATE_ASSETS = {
   template_1strip_a: t1a,
   template_1strip_b: t1b,
+  template_1strip_c: t1c,
   template_2strip_a: t2a,
   template_2strip_b: t2b,
   template_2strip_c: t2c,
@@ -25,6 +27,7 @@ const TEMPLATE_ASSETS = {
 const TEMPLATE_CONFIGS = {
   template_1strip_a: { canvasWidth: 900, canvasHeight: 1100, slots: [{ x: 70, y: 80, width: 760, height: 760 }] },
   template_1strip_b: { canvasWidth: 900, canvasHeight: 1100, slots: [{ x: 70, y: 80, width: 760, height: 760 }] },
+  template_1strip_c: { canvasWidth: 900, canvasHeight: 1100, slots: [{ x: 70, y: 80, width: 760, height: 760 }] },
   template_2strip_a: { canvasWidth: 900, canvasHeight: 1600, slots: [{ x: 40, y: 50, width: 820, height: 600 }, { x: 40, y: 700, width: 820, height: 600 }] },
   template_2strip_b: { canvasWidth: 900, canvasHeight: 1600, slots: [{ x: 40, y: 50, width: 820, height: 600 }, { x: 40, y: 700, width: 820, height: 600 }] },
   template_2strip_c: { canvasWidth: 900, canvasHeight: 1600, slots: [{ x: 40, y: 50, width: 820, height: 600 }, { x: 40, y: 700, width: 820, height: 600 }] },
@@ -419,7 +422,7 @@ export default function Camera() {
       const res = await fetch('http://localhost:8000/apply-filter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: b64, filter, preview }),
+        body: JSON.stringify({ image: b64, filter, preview}),
         signal,
       })
       if (!res.ok) throw new Error(`Filter API ${res.status}`)

@@ -4,6 +4,7 @@ import { playClick, playHover } from '../utils/sounds'
 
 import t1a from '../assets/template_1strip_a.png'
 import t1b from '../assets/template_1strip_b.png'
+import t1c from '../assets/template_1strip_c.png'
 import t2a from '../assets/template_2strip_a.png'
 import t2b from '../assets/template_2strip_b.png'
 import t2c from '../assets/template_2strip_c.png'
@@ -13,6 +14,7 @@ import t4a from '../assets/template_4strip_a.png'
 const TEMPLATES = [
   { id: 'template_1strip_a', label: 'Lace & Love',   shots: 1, file: t1a, canvasWidth: 900, canvasHeight: 1100, slots: [{ x: 70, y: 80, width: 760, height: 760 }] },
   { id: 'template_1strip_b', label: 'Solo Moment',   shots: 1, file: t1b, canvasWidth: 900, canvasHeight: 1100, slots: [{ x: 70, y: 80, width: 760, height: 760 }] },
+  { id: 'template_1strip_c', label: 'Sweetheart',    shots: 1, file: t1c, canvasWidth: 900, canvasHeight: 1100, slots: [{ x: 70, y: 80, width: 760, height: 760 }] },
   { id: 'template_2strip_a', label: 'Double Take',   shots: 2, file: t2a, canvasWidth: 900, canvasHeight: 1600, slots: [{ x: 40, y: 50, width: 820, height: 600 }, { x: 40, y: 700, width: 820, height: 600 }] },
   { id: 'template_2strip_b', label: 'Two of Us',     shots: 2, file: t2b, canvasWidth: 900, canvasHeight: 1600, slots: [{ x: 40, y: 50, width: 820, height: 600 }, { x: 40, y: 700, width: 820, height: 600 }] },
   { id: 'template_2strip_c', label: 'Duo Bloom',     shots: 2, file: t2c, canvasWidth: 900, canvasHeight: 1600, slots: [{ x: 40, y: 50, width: 820, height: 600 }, { x: 40, y: 700, width: 820, height: 600 }] },
