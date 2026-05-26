@@ -422,7 +422,7 @@ export default function Camera() {
       const res = await fetch('http://localhost:8000/apply-filter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: b64, filter, preview}),
+        body: JSON.stringify({ image: b64, filter: selectedFilter, preview: true }),
         signal,
       })
       if (!res.ok) throw new Error(`Filter API ${res.status}`)
