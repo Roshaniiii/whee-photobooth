@@ -457,7 +457,7 @@ export default function Camera() {
           await sleep(40)
           continue
         }
-        const frame = captureRawFrame({ preview: true })
+        const frame = await captureRawFrame({ preview: true })
         if (!frame) {
           await sleep(80)
           continue
@@ -744,6 +744,22 @@ export default function Camera() {
                       : undefined,
                   }}
                 />
+                {/* Backend filter overlay — INSIDE the relative div */}
+            {filteredFrame && isBackendFilter(selectedFilter) && (
+              <img
+                src={filteredFrame}
+                alt=""
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  pointerEvents: 'none',
+                  zIndex: 2,
+                }}
+              />
+            )}
 
                 {/* Sparkle overlay */}
                 {selectedFilter === 'sparkle' && !allDone && (
