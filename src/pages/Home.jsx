@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { playClick, playHover } from '../utils/sounds'
+import { playClick } from '../utils/sounds'
 
 // Import all assets — copy these files into your src/assets/ folder
 import logo from '../assets/whee-logo.png'
@@ -99,10 +99,7 @@ export default function Home() {
             filter: 'drop-shadow(4px 6px 10px rgba(145,114,100,0.25))',
             transition: 'transform 0.3s ease',
           }}
-            onMouseEnter={e => {
-              e.currentTarget.style.transform = 'rotate(0deg) scale(1.06)'
-              playHover()
-            }}
+            onMouseEnter={e => { e.currentTarget.style.transform = 'rotate(0deg) scale(1.06)' }}
             onMouseLeave={e => e.currentTarget.style.transform = 'rotate(0deg) scale(1)'}
           />
 
@@ -118,10 +115,7 @@ export default function Home() {
             transition: 'transform 0.3s ease',
             zIndex: 2,
           }}
-            onMouseEnter={e => {
-              e.currentTarget.style.transform = 'translateX(-55%) rotate(0deg) scale(1.06)'
-              playHover()
-            }}
+            onMouseEnter={e => { e.currentTarget.style.transform = 'translateX(-55%) rotate(0deg) scale(1.06)' }}
             onMouseLeave={e => e.currentTarget.style.transform = 'translateX(-55%) rotate(0deg) scale(1)'}
           />
 
@@ -136,10 +130,7 @@ export default function Home() {
             filter: 'drop-shadow(4px 6px 10px rgba(145,114,100,0.25))',
             transition: 'transform 0.3s ease',
           }}
-            onMouseEnter={e => {
-              e.currentTarget.style.transform = 'rotate(0deg) scale(1.06)'
-              playHover()
-            }}
+            onMouseEnter={e => { e.currentTarget.style.transform = 'rotate(0deg) scale(1.06)' }}
             onMouseLeave={e => e.currentTarget.style.transform = 'rotate(0deg) scale(1)'}
           />
 
@@ -154,10 +145,7 @@ export default function Home() {
             filter: 'drop-shadow(4px 6px 10px rgba(145,114,100,0.25))',
             transition: 'transform 0.3s ease',
           }}
-            onMouseEnter={e => {
-              e.currentTarget.style.transform = 'rotate(0deg) scale(1.06)'
-              playHover()
-            }}
+            onMouseEnter={e => { e.currentTarget.style.transform = 'rotate(0deg) scale(1.06)' }}
             onMouseLeave={e => e.currentTarget.style.transform = 'rotate(0deg) scale(1)'}
           />
 
@@ -173,10 +161,7 @@ export default function Home() {
             transition: 'transform 0.3s ease',
             zIndex: 2,
           }}
-            onMouseEnter={e => {
-              e.currentTarget.style.transform = 'translateX(-50%) rotate(0deg) scale(1.06)'
-              playHover()
-            }}
+            onMouseEnter={e => { e.currentTarget.style.transform = 'translateX(-50%) rotate(0deg) scale(1.06)' }}
             onMouseLeave={e => e.currentTarget.style.transform = 'translateX(-50%) rotate(0deg) scale(1)'}
           />
 
@@ -191,10 +176,7 @@ export default function Home() {
             filter: 'drop-shadow(4px 6px 10px rgba(145,114,100,0.25))',
             transition: 'transform 0.3s ease',
           }}
-            onMouseEnter={e => {
-              e.currentTarget.style.transform = 'rotate(0deg) scale(1.06)'
-              playHover()
-            }}
+            onMouseEnter={e => { e.currentTarget.style.transform = 'rotate(0deg) scale(1.06)' }}
             onMouseLeave={e => e.currentTarget.style.transform = 'rotate(0deg) scale(1)'}
           />
 

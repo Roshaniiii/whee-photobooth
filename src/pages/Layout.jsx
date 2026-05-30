@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { playClick } from '../utils/sounds'
+import PageHeader from '../components/PageHeader'
 
 import t1a from '../assets/template_1strip_a.png'
 import t1b from '../assets/template_1strip_b.png'
@@ -31,7 +32,7 @@ const NEW_LAYOUTS = [
 
 const FRAME_COLORS = [
   { id: 'white',    label: 'Snow',     hex: '#FFFFFF' },
-  { id: 'cream',    label: 'Cream',    hex: '#F2E7B4' },
+  { id: 'cream',    label: 'Grey',     hex: '#B5B5B5' },
   { id: 'pink',     label: 'Blossom',  hex: '#F4B8CC' },
   { id: 'mauve',    label: 'Mauve',    hex: '#DF82A3' },
   { id: 'sage',     label: 'Sage',     hex: '#B5C9A1' },
@@ -39,7 +40,7 @@ const FRAME_COLORS = [
   { id: 'sky',      label: 'Sky',      hex: '#A8C8E8' },
   { id: 'lavender', label: 'Lavender', hex: '#C8B8E8' },
   { id: 'peach',    label: 'Peach',    hex: '#F4C4A0' },
-  { id: 'butter',   label: 'Butter',   hex: '#F4E4A0' },
+  { id: 'butter',   label: 'Slate',    hex: '#8E8E8E' },
   { id: 'mocha',    label: 'Mocha',    hex: '#917264' },
   { id: 'black',    label: 'Noir',     hex: '#2A2A2A' },
 ]
@@ -242,7 +243,7 @@ function PickTemplate({ onSelect }) {
       </div>
 
       {/* ── Dots ── */}
-      <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+      <div style={{ display: 'flex', gap: '8px', flexShrink: 0, marginTop: '6px' }}>
         {TEMPLATES.map((_, i) => (
           <button key={i} onClick={() => setCurrent(i)} style={{
             width: i === current ? '22px' : '8px', height: '8px', borderRadius: '4px',
@@ -253,7 +254,7 @@ function PickTemplate({ onSelect }) {
       </div>
 
       {/* ── Button ── */}
-      <div style={{ flexShrink: 0 }}>
+      <div style={{ flexShrink: 0, marginTop: '20px' }}>
         <PillButton onClick={() => {
           playClick()
           onSelect(TEMPLATES[current])
@@ -461,35 +462,13 @@ export default function Layout() {
       <VerticalStripes />
       <div style={{
         position: 'relative', zIndex: 1, width: '100%', maxWidth: '680px',
-        height: '100%', margin: '0 auto', padding: '14px 16px 16px',
+        height: '100%', margin: '0 auto', padding: '24px 16px 16px',
         boxSizing: 'border-box',
         display: 'flex', flexDirection: 'column', alignItems: 'center',
       }}>
 
-        <button onClick={() => navigate('/')} style={{
-          alignSelf: 'flex-start',
-          background: 'rgba(255,255,255,0.55)',
-          border: '2px solid #D4C49A',
-          borderRadius: '100px',
-          color: '#917264',
-          cursor: 'pointer',
-          fontFamily: "'Cause',serif",
-          fontSize: '13px',
-          fontWeight: '600',
-          letterSpacing: '0.5px',
-          padding: '7px 16px',
-          marginBottom: '6px',
-          transition: 'background 0.2s, border-color 0.2s',
-        }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(223,130,163,0.12)'; e.currentTarget.style.borderColor = '#DF82A3' }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.55)'; e.currentTarget.style.borderColor = '#D4C49A' }}
-        >
-          ← Back
-        </button>
+        <PageHeader onBack={() => navigate('/')} title="Your Frame" />
 
-        <h1 style={{ fontFamily: "'Unkempt',cursive", fontSize: 'clamp(24px,5vw,40px)', color: '#DF82A3', margin: '0 0 2px', letterSpacing: '2px', textAlign: 'center' }}>
-          Your Frame
-        </h1>
         <p style={{ fontFamily: "'Cause',serif", fontSize: '13px', color: '#917264', margin: '0 0 12px', letterSpacing: '0.5px' }}>
           Pick a template or build your own
         </p>

@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import BackButton from '../components/BackButton'
+import PageHeader from '../components/PageHeader'
 import VerticalStripes from '../components/VerticalStripes'
 
 const THEME = {
@@ -20,6 +20,25 @@ const PALETTE = [
 ]
 
 const SIZES = [6, 12, 20]
+
+function IconEraser({ size = 18, color = '#917264' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path
+        d="M15.5 5.5l3 3L9 18H6v-3l9.5-9.5z"
+        stroke={color}
+        strokeWidth="1.75"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M13 7l4 4M5 21h14"
+        stroke={color}
+        strokeWidth="1.75"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
 
 function drawImageCover(ctx, img, x, y, w, h) {
   const iw = img.naturalWidth || img.width
@@ -83,7 +102,7 @@ export default function Customise() {
         const pc = photoCanvasRef.current
         if (!wrap || !pc || !pc.width || !pc.height) return
         const maxW = Math.max(200, wrap.getBoundingClientRect().width)
-        const maxH = Math.max(200, window.innerHeight - 180)
+        const maxH = Math.max(200, window.innerHeight - 220)
         const scale = Math.min(maxW / pc.width, maxH / pc.height, 1)
         setDisplaySize({ w: Math.floor(pc.width * scale), h: Math.floor(pc.height * scale) })
       })
@@ -187,7 +206,7 @@ export default function Customise() {
       const pc = photoCanvasRef.current
       if (!wrap || !pc || !pc.width || !pc.height) return
       const maxW = Math.max(200, wrap.getBoundingClientRect().width)
-      const maxH = Math.max(200, window.innerHeight - 180)
+      const maxH = Math.max(200, window.innerHeight - 220)
       const scale = Math.min(maxW / pc.width, maxH / pc.height, 1)
       setDisplaySize({ w: Math.floor(pc.width * scale), h: Math.floor(pc.height * scale) })
     })
@@ -352,7 +371,7 @@ export default function Customise() {
 
   const canvasStackStyle = displaySize.w > 0 && displaySize.h > 0
     ? { width: `${displaySize.w}px`, height: `${displaySize.h}px` }
-    : { maxWidth: '100%', maxHeight: 'calc(100dvh - 160px)', width: 'auto', height: 'auto' }
+    : { maxWidth: '100%', maxHeight: 'calc(100dvh - 200px)', width: 'auto', height: 'auto' }
 
   return (
     <div style={{
@@ -375,35 +394,23 @@ export default function Customise() {
         width: '100%',
         maxWidth: '960px',
         margin: '0 auto',
-        padding: '12px 16px',
+        padding: '28px 16px 16px',
         display: 'flex',
         flexDirection: 'column',
         gap: '8px',
         boxSizing: 'border-box',
       }}>
 
-        <div style={{ width: '100%', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-          <BackButton onClick={() => navigate('/camera')} />
-          <h1 style={{
-            fontFamily: "'Unkempt',cursive",
-            fontSize: 'clamp(20px,4vw,30px)',
-            color: THEME.accent,
-            margin: '0 auto',
-            letterSpacing: '2px',
-            textAlign: 'center',
-          }}>
-            Doodle your strip
-          </h1>
-          <div style={{ width: '72px' }} />
-        </div>
+        <PageHeader onBack={() => navigate('/camera')} title="Doodle your strip" />
 
         <div style={{
           flex: 1,
           minHeight: 0,
           display: 'flex',
           flexDirection: 'row',
-          gap: '8px',
-          alignItems: 'stretch',
+          gap: '4px',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}>
 
           {/* Left — framed tools */}
@@ -412,30 +419,31 @@ export default function Customise() {
             width: '80px',
             display: 'flex',
             flexDirection: 'column',
-            gap: '6px',
+            gap: '4px',
             background: THEME.panel,
             border: '2px solid #D4C49A',
             borderRadius: '14px',
-            padding: '10px 6px',
+            padding: '8px 6px',
             boxShadow: HOME_BTN_SHADOW,
-            alignSelf: 'stretch',
-            justifyContent: 'flex-start',
+            alignSelf: 'center',
           }}>
             <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: THEME.text, textAlign: 'center' }}>
               Tools
             </span>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
               <button type="button" title="Pen" onClick={() => { setTool('pen'); setIsGlow(false); glowWasUsedRef.current = false }} style={toolBtn(tool === 'pen' && !isGlow)}>✏️</button>
-              <button type="button" title="Eraser" onClick={() => { setTool('eraser'); setIsGlow(false); glowWasUsedRef.current = false }} style={toolBtn(tool === 'eraser')}>⌫</button>
+              <button type="button" title="Eraser" onClick={() => { setTool('eraser'); setIsGlow(false); glowWasUsedRef.current = false }} style={toolBtn(tool === 'eraser')}>
+                <IconEraser color={tool === 'eraser' ? THEME.accent : THEME.text} />
+              </button>
               <button type="button" title="Glow" onClick={toggleGlow} style={toolBtn(isGlow)}>✦</button>
               <button type="button" title="Undo" onClick={undo} style={toolBtn(false)}>↩</button>
               <button type="button" title="Redo" onClick={redo} style={toolBtn(false)}>↪</button>
             </div>
 
-            <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: THEME.text, textAlign: 'center', marginTop: '2px' }}>
+            <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: THEME.text, textAlign: 'center' }}>
               Size
             </span>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
               {SIZES.map(s => (
                 <button key={s} type="button" title={`Size ${s}`} onClick={() => setSize(s)} style={{ ...toolBtn(size === s), fontSize: '11px', fontWeight: 700 }}>
                   {s}
@@ -446,7 +454,7 @@ export default function Customise() {
             <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: THEME.text, textAlign: 'center' }}>
               Color
             </span>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', justifyContent: 'center' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px', justifyContent: 'center' }}>
               {PALETTE.map(c => (
                 <button
                   key={c}
@@ -468,23 +476,24 @@ export default function Customise() {
             </div>
           </div>
 
-          {/* Center — canvas */}
+          {/* Center — canvas + download */}
           <div style={{
             flex: 1,
             minWidth: 0,
             minHeight: 0,
             display: 'flex',
             flexDirection: 'column',
-            gap: '4px',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'flex-end',
             margin: 0,
             padding: 0,
+            gap: 0,
           }}>
             <div
               ref={canvasWrapRef}
               style={{
-                height: 'calc(100dvh - 120px)',
+                flex: '1 1 auto',
+                minHeight: 0,
                 width: 'auto',
                 maxWidth: '100%',
                 margin: 0,
@@ -493,8 +502,6 @@ export default function Customise() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 position: 'relative',
-                flex: '1 1 auto',
-                minHeight: 0,
               }}
             >
               {!photosLoaded && (
@@ -560,10 +567,14 @@ export default function Customise() {
                 background: '#DF82A3',
                 border: 'none',
                 borderRadius: '100px',
-                padding: '10px 28px',
+                padding: '11px 32px',
                 cursor: 'pointer',
                 boxShadow: HOME_BTN_SHADOW,
                 flexShrink: 0,
+                marginTop: '10px',
+                marginBottom: '4px',
+                position: 'relative',
+                zIndex: 2,
               }}
             >
               Download

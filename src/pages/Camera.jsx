@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import sparkleOverlay from '../assets/sparkle_overlay.png'
-import BackButton from '../components/BackButton'
 import VerticalStripes from '../components/VerticalStripes'
+import PageHeader from '../components/PageHeader'
 
 // ── Template imports — needed to overlay on canvas ────────────
 import t1a from '../assets/template_1strip_a.png'
@@ -126,30 +126,22 @@ function IconFlip({ size = 22, color = ICON_COLOR }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
       <path
-        d="M3 9h10a4 4 0 1 1 0 8H7"
+        d="M7 8h4.5l1.2-1.8h2.6L16.5 8H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2v-7a2 2 0 012-2z"
         stroke={color}
-        strokeWidth="2"
+        strokeWidth="1.75"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M12 16.5V12M9.5 14.5L12 12l2.5 2.5"
+        stroke={color}
+        strokeWidth="1.75"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
-        d="M7 13L3 9l4-4"
+        d="M9.2 7.2L12 4.8l2.8 2.4"
         stroke={color}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M21 15H11a4 4 0 0 0 0-8h6"
-        stroke={color}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M17 11l4 4-4 4"
-        stroke={color}
-        strokeWidth="2"
+        strokeWidth="1.75"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -665,21 +657,17 @@ export default function Camera() {
         position: 'relative', zIndex: 1, width: '100%',
         maxWidth: allDone ? 'min(1100px, 98vw)' : '720px',
         margin: '0 auto',
-        padding: allDone ? '20px 20px 24px' : '24px 16px 48px',
+        padding: allDone ? '28px 20px 24px' : '28px 16px 48px',
         display: 'flex', flexDirection: 'column', alignItems: 'center',
         gap: allDone ? '12px' : '14px',
         minHeight: allDone ? 'calc(100vh - 8px)' : undefined,
         boxSizing: 'border-box',
       }}>
 
-        {/* ── Header ── */}
-        <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
-          <BackButton onClick={() => navigate('/layout')} />
-          <h1 style={{ fontFamily: "'Unkempt',cursive", fontSize: 'clamp(22px,5vw,34px)', color: '#DF82A3', margin: '0 auto', letterSpacing: '2px', textAlign: 'center' }}>
-            {allDone ? 'Your Strip!' : 'Strike a Pose'}
-          </h1>
-          <div style={{ width: '72px' }} />
-        </div>
+        <PageHeader
+          onBack={() => navigate('/layout')}
+          title={allDone ? 'Your Strip!' : 'Strike a Pose'}
+        />
 
         {/* ── Camera view + frame strip overlay ── */}
         {!allDone ? (
