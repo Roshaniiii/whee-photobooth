@@ -13,21 +13,13 @@ const THEME = {
 
 const HOME_BTN_SHADOW = '0 5px 3px #917264, 0 10px 24px rgba(145,114,100,0.25)'
 
-const PEN_PALETTE = [
+const PALETTE = [
   '#917264', '#DF82A3', '#F4B8CC', '#2A2A2A', '#ffffff',
   '#ff61ab', '#ffb561', '#76ff61', '#bee1e6', '#cddafd',
+  '#eae4e9', '#fde2e4', '#ec91d8', '#ff6176', '#abff61',
 ]
 
-const TEXT_COLORS = [
-  '#917264', '#DF82A3', '#2A2A2A', '#ffffff', '#ff61ab',
-  '#ffb561', '#76ff61', '#bee1e6', '#ff6176', '#abff61',
-]
-
-const PEN_SIZES = [6, 12, 20]
-const EMOJIS = ['✨', '💖', '⭐', '🌸', '🎀', '✦', '♥', '😊', '🦋', '💫']
-const TEXT_MAX = 15
-const TEXT_FONT_SIZES = [18, 24, 32, 42]
-const EMOJI_SIZES = [24, 32, 40, 48]
+const SIZES = [6, 12, 20]
 
 function drawImageCover(ctx, img, x, y, w, h) {
   const iw = img.naturalWidth || img.width
@@ -39,38 +31,6 @@ function drawImageCover(ctx, img, x, y, w, h) {
   const dx = x + (w - dw) / 2
   const dy = y + (h - dh) / 2
   ctx.drawImage(img, dx, dy, dw, dh)
-}
-
-function panelStyle() {
-  return {
-    flexShrink: 0,
-    width: 'fit-content',
-    minWidth: '88px',
-    maxWidth: '110px',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '8px',
-    background: THEME.panel,
-    border: '2px solid #D4C49A',
-    borderRadius: '14px',
-    padding: '10px 8px',
-    boxShadow: HOME_BTN_SHADOW,
-    alignSelf: 'center',
-    maxHeight: 'calc(100vh - 120px)',
-    overflowY: 'auto',
-  }
-}
-
-function sectionLabel(text) {
-  return {
-    fontSize: '9px',
-    fontWeight: 700,
-    letterSpacing: '1.5px',
-    textTransform: 'uppercase',
-    color: THEME.text,
-    textAlign: 'center',
-    margin: 0,
-  }
 }
 
 export default function Customise() {
@@ -88,15 +48,8 @@ export default function Customise() {
   const [size, setSize] = useState(6)
   const [isGlow, setIsGlow] = useState(false)
   const [tool, setTool] = useState('pen')
-  const [textDraft, setTextDraft] = useState('')
-  const [textBold, setTextBold] = useState(false)
-  const [textItalic, setTextItalic] = useState(false)
-  const [textFontSize, setTextFontSize] = useState(24)
-  const [textColor, setTextColor] = useState(THEME.accent)
-  const [emojiSize, setEmojiSize] = useState(32)
   const [photosLoaded, setPhotosLoaded] = useState(false)
   const [displaySize, setDisplaySize] = useState({ w: 0, h: 0 })
-  const [dragOverCanvas, setDragOverCanvas] = useState(false)
 
   useEffect(() => {
     const layoutConfig = (() => {
@@ -129,7 +82,7 @@ export default function Customise() {
         const wrap = canvasWrapRef.current
         const pc = photoCanvasRef.current
         if (!wrap || !pc || !pc.width || !pc.height) return
-        const maxW = Math.max(200, wrap.getBoundingClientRect().width - 8)
+        const maxW = Math.max(200, wrap.getBoundingClientRect().width)
         const maxH = Math.max(200, window.innerHeight - 180)
         const scale = Math.min(maxW / pc.width, maxH / pc.height, 1)
         setDisplaySize({ w: Math.floor(pc.width * scale), h: Math.floor(pc.height * scale) })
@@ -233,7 +186,7 @@ export default function Customise() {
       const wrap = canvasWrapRef.current
       const pc = photoCanvasRef.current
       if (!wrap || !pc || !pc.width || !pc.height) return
-      const maxW = Math.max(200, wrap.getBoundingClientRect().width - 8)
+      const maxW = Math.max(200, wrap.getBoundingClientRect().width)
       const maxH = Math.max(200, window.innerHeight - 180)
       const scale = Math.min(maxW / pc.width, maxH / pc.height, 1)
       setDisplaySize({ w: Math.floor(pc.width * scale), h: Math.floor(pc.height * scale) })
@@ -242,21 +195,17 @@ export default function Customise() {
     return () => ro.disconnect()
   }, [photosLoaded])
 
-  function getPosFromClient(clientX, clientY) {
+  function getPos(e) {
     const c = canvasRef.current
     const rect = c.getBoundingClientRect()
     const scaleX = c.width / rect.width
     const scaleY = c.height / rect.height
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY
     return {
       x: (clientX - rect.left) * scaleX,
       y: (clientY - rect.top) * scaleY,
     }
-  }
-
-  function getPos(e) {
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY
-    return getPosFromClient(clientX, clientY)
   }
 
   function saveHistory() {
@@ -265,93 +214,11 @@ export default function Customise() {
     redoRef.current = []
   }
 
-  function restoreCanvas(dataUrl) {
-    const c = canvasRef.current
-    const ctx = c.getContext('2d')
-    const img = new Image()
-    img.src = dataUrl
-    img.onload = () => {
-      ctx.clearRect(0, 0, c.width, c.height)
-      ctx.drawImage(img, 0, 0)
-    }
-  }
-
-  function undo() {
-    if (historyRef.current.length === 0) return
-    const c = canvasRef.current
-    redoRef.current.push(c.toDataURL())
-    const prev = historyRef.current.pop()
-    restoreCanvas(prev)
-  }
-
-  function redo() {
-    if (redoRef.current.length === 0) return
-    const c = canvasRef.current
-    historyRef.current.push(c.toDataURL())
-    const next = redoRef.current.pop()
-    restoreCanvas(next)
-  }
-
-  function buildTextFont({ bold, italic, fontSize }) {
-    return `${italic ? 'italic ' : ''}${bold ? 'bold ' : ''}${fontSize}px 'Cause', serif`
-  }
-
-  function drawTextOnCanvas(text, pos, opts) {
-    const c = canvasRef.current
-    const ctx = c.getContext('2d')
-    ctx.save()
-    ctx.globalCompositeOperation = 'source-over'
+  function clearCanvasShadow() {
+    const ctx = canvasRef.current?.getContext('2d')
+    if (!ctx) return
     ctx.shadowBlur = 0
-    ctx.font = buildTextFont(opts)
-    ctx.fillStyle = opts.color
-    ctx.textBaseline = 'middle'
-    ctx.textAlign = 'center'
-    ctx.fillText(text, pos.x, pos.y)
-    ctx.restore()
-  }
-
-  function drawEmojiOnCanvas(emoji, pos, fontSize) {
-    const c = canvasRef.current
-    const ctx = c.getContext('2d')
-    ctx.save()
-    ctx.globalCompositeOperation = 'source-over'
-    ctx.shadowBlur = 0
-    ctx.font = `${fontSize}px serif`
-    ctx.textBaseline = 'middle'
-    ctx.textAlign = 'center'
-    ctx.fillText(emoji, pos.x, pos.y)
-    ctx.restore()
-  }
-
-  function handleCanvasDrop(e) {
-    e.preventDefault()
-    setDragOverCanvas(false)
-    let payload
-    try {
-      payload = JSON.parse(e.dataTransfer.getData('application/json'))
-    } catch {
-      return
-    }
-    const pos = getPosFromClient(e.clientX, e.clientY)
-    saveHistory()
-
-    if (payload.type === 'text' && payload.text?.trim()) {
-      drawTextOnCanvas(payload.text.trim(), pos, payload)
-    } else if (payload.type === 'emoji' && payload.emoji) {
-      drawEmojiOnCanvas(payload.emoji, pos, payload.fontSize ?? emojiSize)
-    }
-  }
-
-  function toggleGlow() {
-    if (isGlow) {
-      if (glowWasUsedRef.current) undo()
-      glowWasUsedRef.current = false
-      setIsGlow(false)
-      setTool('pen')
-    } else {
-      setIsGlow(true)
-      setTool('pen')
-    }
+    ctx.shadowColor = 'transparent'
   }
 
   function startDraw(e) {
@@ -381,16 +248,17 @@ export default function Customise() {
       ctx.strokeStyle = 'rgba(0,0,0,1)'
       ctx.lineWidth = size * 2
       ctx.shadowBlur = 0
+    } else if (isGlow && tool === 'pen') {
+      ctx.globalCompositeOperation = 'source-over'
+      ctx.strokeStyle = color
+      ctx.lineWidth = size
+      ctx.shadowBlur = 20
+      ctx.shadowColor = color
     } else {
       ctx.globalCompositeOperation = 'source-over'
       ctx.strokeStyle = color
       ctx.lineWidth = size
-      if (isGlow) {
-        ctx.shadowBlur = 20
-        ctx.shadowColor = color
-      } else {
-        ctx.shadowBlur = 0
-      }
+      ctx.shadowBlur = 0
     }
 
     ctx.lineCap = 'round'
@@ -403,6 +271,49 @@ export default function Customise() {
     e.preventDefault()
     isDrawing.current = false
     lastPos.current = null
+    clearCanvasShadow()
+  }
+
+  function undo() {
+    if (historyRef.current.length === 0) return
+    const c = canvasRef.current
+    const ctx = c.getContext('2d')
+    redoRef.current.push(c.toDataURL())
+    const prev = historyRef.current.pop()
+    const img = new Image()
+    img.src = prev
+    img.onload = () => {
+      ctx.clearRect(0, 0, c.width, c.height)
+      ctx.drawImage(img, 0, 0)
+      clearCanvasShadow()
+    }
+  }
+
+  function redo() {
+    if (redoRef.current.length === 0) return
+    const c = canvasRef.current
+    const ctx = c.getContext('2d')
+    historyRef.current.push(c.toDataURL())
+    const next = redoRef.current.pop()
+    const img = new Image()
+    img.src = next
+    img.onload = () => {
+      ctx.clearRect(0, 0, c.width, c.height)
+      ctx.drawImage(img, 0, 0)
+      clearCanvasShadow()
+    }
+  }
+
+  function toggleGlow() {
+    if (isGlow) {
+      if (glowWasUsedRef.current) undo()
+      glowWasUsedRef.current = false
+      setIsGlow(false)
+      setTool('pen')
+    } else {
+      setIsGlow(true)
+      setTool('pen')
+    }
   }
 
   function handleDownload() {
@@ -419,11 +330,6 @@ export default function Customise() {
     a.href = merge.toDataURL('image/png')
     a.download = `whee-photobooth-${Date.now()}.png`
     a.click()
-  }
-
-  function setDragPayload(e, payload) {
-    e.dataTransfer.setData('application/json', JSON.stringify(payload))
-    e.dataTransfer.effectAllowed = 'copy'
   }
 
   const toolBtn = (active) => ({
@@ -444,36 +350,9 @@ export default function Customise() {
     justifyContent: 'center',
   })
 
-  const fmtBtn = (active) => ({
-    flex: 1,
-    minWidth: '28px',
-    height: '28px',
-    borderRadius: '6px',
-    border: active ? '2px solid #DF82A3' : '2px solid #D4C49A',
-    background: active ? 'rgba(223,130,163,0.12)' : '#fff',
-    color: active ? THEME.accent : THEME.text,
-    fontFamily: "'Cause', serif",
-    fontSize: '12px',
-    fontWeight: 700,
-    fontStyle: 'normal',
-    cursor: 'pointer',
-    padding: 0,
-  })
-
-  const canvasStackStyle = displaySize.w > 0
+  const canvasStackStyle = displaySize.w > 0 && displaySize.h > 0
     ? { width: `${displaySize.w}px`, height: `${displaySize.h}px` }
-    : { maxWidth: '100%', maxHeight: 'calc(100vh - 200px)', width: 'auto', height: 'auto' }
-
-  const textPreviewStyle = {
-    fontFamily: "'Cause', serif",
-    fontSize: `${Math.min(textFontSize, 20)}px`,
-    fontWeight: textBold ? 700 : 400,
-    fontStyle: textItalic ? 'italic' : 'normal',
-    color: textColor,
-    textAlign: 'center',
-    wordBreak: 'break-word',
-    lineHeight: 1.2,
-  }
+    : { maxWidth: '100%', maxHeight: 'calc(100dvh - 160px)', width: 'auto', height: 'auto' }
 
   return (
     <div style={{
@@ -494,9 +373,9 @@ export default function Customise() {
         flex: 1,
         minHeight: 0,
         width: '100%',
-        maxWidth: '1100px',
+        maxWidth: '960px',
         margin: '0 auto',
-        padding: '12px 16px 14px',
+        padding: '12px 16px',
         display: 'flex',
         flexDirection: 'column',
         gap: '8px',
@@ -523,45 +402,63 @@ export default function Customise() {
           minHeight: 0,
           display: 'flex',
           flexDirection: 'row',
-          gap: '10px',
+          gap: '8px',
           alignItems: 'stretch',
-          justifyContent: 'center',
         }}>
 
-          {/* Left — draw tools */}
-          <div style={panelStyle()}>
-            <p style={sectionLabel('Tools')}>Tools</p>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+          {/* Left — framed tools */}
+          <div style={{
+            flexShrink: 0,
+            width: '80px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '6px',
+            background: THEME.panel,
+            border: '2px solid #D4C49A',
+            borderRadius: '14px',
+            padding: '10px 6px',
+            boxShadow: HOME_BTN_SHADOW,
+            alignSelf: 'stretch',
+            justifyContent: 'flex-start',
+          }}>
+            <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: THEME.text, textAlign: 'center' }}>
+              Tools
+            </span>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px' }}>
               <button type="button" title="Pen" onClick={() => { setTool('pen'); setIsGlow(false); glowWasUsedRef.current = false }} style={toolBtn(tool === 'pen' && !isGlow)}>✏️</button>
               <button type="button" title="Eraser" onClick={() => { setTool('eraser'); setIsGlow(false); glowWasUsedRef.current = false }} style={toolBtn(tool === 'eraser')}>⌫</button>
-              <button type="button" title="Glow pen — tap again to undo glow stroke" onClick={toggleGlow} style={toolBtn(isGlow)}>✦</button>
+              <button type="button" title="Glow" onClick={toggleGlow} style={toolBtn(isGlow)}>✦</button>
               <button type="button" title="Undo" onClick={undo} style={toolBtn(false)}>↩</button>
               <button type="button" title="Redo" onClick={redo} style={toolBtn(false)}>↪</button>
             </div>
 
-            <p style={{ ...sectionLabel('Size'), marginTop: '2px' }}>Size</p>
+            <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: THEME.text, textAlign: 'center', marginTop: '2px' }}>
+              Size
+            </span>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px' }}>
-              {PEN_SIZES.map(s => (
-                <button key={s} type="button" onClick={() => setSize(s)} style={{ ...toolBtn(size === s), fontSize: '11px', fontWeight: 700 }}>
+              {SIZES.map(s => (
+                <button key={s} type="button" title={`Size ${s}`} onClick={() => setSize(s)} style={{ ...toolBtn(size === s), fontSize: '11px', fontWeight: 700 }}>
                   {s}
                 </button>
               ))}
             </div>
 
-            <p style={{ ...sectionLabel('Color'), marginTop: '2px' }}>Color</p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', justifyContent: 'center' }}>
-              {PEN_PALETTE.map(c => (
+            <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: THEME.text, textAlign: 'center' }}>
+              Color
+            </span>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', justifyContent: 'center' }}>
+              {PALETTE.map(c => (
                 <button
                   key={c}
                   type="button"
-                  aria-label={`Pen color ${c}`}
+                  aria-label={`Color ${c}`}
                   onClick={() => setColor(c)}
                   style={{
-                    width: color === c ? 20 : 16,
-                    height: color === c ? 20 : 16,
+                    width: color === c ? 16 : 12,
+                    height: color === c ? 16 : 12,
                     borderRadius: '50%',
                     background: c,
-                    border: color === c ? `2px solid ${THEME.accent}` : '2px solid rgba(145,114,100,0.25)',
+                    border: color === c ? `2px solid ${THEME.accent}` : '1px solid rgba(145,114,100,0.25)',
                     padding: 0,
                     cursor: 'pointer',
                     flexShrink: 0,
@@ -571,32 +468,34 @@ export default function Customise() {
             </div>
           </div>
 
-          {/* Center — strip canvas */}
+          {/* Center — canvas */}
           <div style={{
             flex: 1,
             minWidth: 0,
             minHeight: 0,
             display: 'flex',
             flexDirection: 'column',
-            gap: '8px',
+            gap: '4px',
             alignItems: 'center',
             justifyContent: 'center',
+            margin: 0,
+            padding: 0,
           }}>
             <div
               ref={canvasWrapRef}
               style={{
-                flex: 1,
-                minHeight: 0,
-                width: 'fit-content',
+                height: 'calc(100dvh - 120px)',
+                width: 'auto',
                 maxWidth: '100%',
+                margin: 0,
+                padding: 0,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 position: 'relative',
+                flex: '1 1 auto',
+                minHeight: 0,
               }}
-              onDragOver={e => { e.preventDefault(); setDragOverCanvas(true) }}
-              onDragLeave={() => setDragOverCanvas(false)}
-              onDrop={handleCanvasDrop}
             >
               {!photosLoaded && (
                 <div style={{
@@ -613,14 +512,7 @@ export default function Customise() {
                 </div>
               )}
 
-              <div style={{
-                position: 'relative',
-                ...canvasStackStyle,
-                outline: dragOverCanvas ? '3px dashed #DF82A3' : 'none',
-                outlineOffset: '4px',
-                borderRadius: '12px',
-                transition: 'outline 0.15s',
-              }}>
+              <div style={{ position: 'relative', ...canvasStackStyle }}>
                 <canvas
                   ref={photoCanvasRef}
                   style={{
@@ -641,7 +533,7 @@ export default function Customise() {
                     height: '100%',
                     display: 'block',
                     borderRadius: '12px',
-                    cursor: tool === 'eraser' ? 'cell' : isGlow ? 'crosshair' : tool === 'pen' ? 'crosshair' : 'default',
+                    cursor: tool === 'eraser' ? 'cell' : 'crosshair',
                     touchAction: 'none',
                   }}
                   onMouseDown={startDraw}
@@ -676,144 +568,6 @@ export default function Customise() {
             >
               Download
             </button>
-          </div>
-
-          {/* Right — text & emoji drag sources */}
-          <div style={{ ...panelStyle(), maxWidth: '120px', minWidth: '100px' }}>
-            <p style={sectionLabel('Text')}>Text</p>
-            <input
-              type="text"
-              value={textDraft}
-              maxLength={TEXT_MAX}
-              placeholder="Say it!"
-              onChange={e => setTextDraft(e.target.value.slice(0, TEXT_MAX))}
-              style={{
-                width: '100%',
-                boxSizing: 'border-box',
-                fontFamily: "'Cause',serif",
-                fontSize: '11px',
-                padding: '6px 8px',
-                borderRadius: '8px',
-                border: '2px solid #D4C49A',
-                background: '#fff',
-                color: THEME.text,
-                outline: 'none',
-              }}
-            />
-            <span style={{ fontSize: '8px', color: THEME.text, textAlign: 'center', opacity: 0.7 }}>
-              {textDraft.length}/{TEXT_MAX}
-            </span>
-
-            <div style={{ display: 'flex', gap: '4px' }}>
-              <button type="button" onClick={() => setTextBold(b => !b)} style={{ ...fmtBtn(textBold), fontWeight: 800 }}>B</button>
-              <button type="button" onClick={() => setTextItalic(i => !i)} style={{ ...fmtBtn(textItalic), fontStyle: 'italic' }}>I</button>
-            </div>
-
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px', justifyContent: 'center' }}>
-              {TEXT_FONT_SIZES.map(fs => (
-                <button
-                  key={fs}
-                  type="button"
-                  onClick={() => setTextFontSize(fs)}
-                  style={{
-                    ...fmtBtn(textFontSize === fs),
-                    flex: '0 0 auto',
-                    minWidth: '24px',
-                    fontSize: '9px',
-                    padding: '0 4px',
-                  }}
-                >
-                  {fs}
-                </button>
-              ))}
-            </div>
-
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', justifyContent: 'center' }}>
-              {TEXT_COLORS.map(c => (
-                <button
-                  key={c}
-                  type="button"
-                  onClick={() => setTextColor(c)}
-                  style={{
-                    width: textColor === c ? 18 : 14,
-                    height: textColor === c ? 18 : 14,
-                    borderRadius: '50%',
-                    background: c,
-                    border: textColor === c ? `2px solid ${THEME.accent}` : '1px solid rgba(145,114,100,0.3)',
-                    padding: 0,
-                    cursor: 'pointer',
-                  }}
-                />
-              ))}
-            </div>
-
-            <div
-              draggable={!!textDraft.trim()}
-              onDragStart={e => setDragPayload(e, {
-                type: 'text',
-                text: textDraft,
-                bold: textBold,
-                italic: textItalic,
-                fontSize: textFontSize,
-                color: textColor,
-              })}
-              style={{
-                ...textPreviewStyle,
-                padding: '8px 6px',
-                borderRadius: '8px',
-                border: '2px dashed #D4C49A',
-                background: textDraft.trim() ? '#fff' : 'rgba(255,255,255,0.4)',
-                cursor: textDraft.trim() ? 'grab' : 'not-allowed',
-                opacity: textDraft.trim() ? 1 : 0.55,
-                userSelect: 'none',
-              }}
-            >
-              {textDraft.trim() || 'Type & drag'}
-            </div>
-            <span style={{ fontSize: '8px', color: THEME.text, textAlign: 'center', opacity: 0.65 }}>
-              Drag onto strip
-            </span>
-
-            <p style={{ ...sectionLabel('Stickers'), marginTop: '4px' }}>Stickers</p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px', justifyContent: 'center' }}>
-              {EMOJI_SIZES.map(s => (
-                <button
-                  key={s}
-                  type="button"
-                  onClick={() => setEmojiSize(s)}
-                  style={{ ...fmtBtn(emojiSize === s), flex: '0 0 auto', minWidth: '22px', fontSize: '9px' }}
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', justifyContent: 'center' }}>
-              {EMOJIS.map(em => (
-                <div
-                  key={em}
-                  draggable
-                  onDragStart={e => setDragPayload(e, { type: 'emoji', emoji: em, fontSize: emojiSize })}
-                  style={{
-                    width: '32px',
-                    height: '32px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '20px',
-                    borderRadius: '8px',
-                    border: '2px solid #D4C49A',
-                    background: '#fff',
-                    cursor: 'grab',
-                    userSelect: 'none',
-                  }}
-                >
-                  {em}
-                </div>
-              ))}
-            </div>
-            <span style={{ fontSize: '8px', color: THEME.text, textAlign: 'center', opacity: 0.65 }}>
-              Drag onto strip
-            </span>
           </div>
         </div>
       </div>

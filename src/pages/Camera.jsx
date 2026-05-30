@@ -39,7 +39,7 @@ const TEMPLATE_CONFIGS = {
 
 /** 4-frame strip height — other layouts scale proportionally for the result page */
 const FOUR_FRAME_REF_HEIGHT = 2400
-const STRIP_DISPLAY_MAX_HEIGHT_4 = 580
+const STRIP_DISPLAY_MAX_HEIGHT_4 = 620
 const HOME_BTN_SHADOW = '0 5px 3px #917264, 0 10px 24px rgba(145,114,100,0.25)'
 const HOME_BTN_SHADOW_HOVER = '0 7px 7px #917264, 0 14px 28px rgba(145,114,100,0.3)'
 
@@ -51,8 +51,8 @@ function getStripImageStyle(layoutConfig) {
   const maxW = Math.round(maxH * (cw / ch))
   return {
     display: 'block',
-    maxHeight: `min(78vh, ${maxH}px)`,
-    maxWidth: `min(44vw, ${maxW}px)`,
+    maxHeight: `min(82vh, ${maxH}px)`,
+    maxWidth: `min(48vw, ${maxW}px)`,
     width: 'auto',
     height: 'auto',
     objectFit: 'contain',
@@ -791,15 +791,15 @@ export default function Camera() {
           <div style={{
             flex: 1,
             width: 'fit-content',
+            minWidth: 100,
             maxWidth: '100%',
             display: 'flex',
             flexDirection: 'row',
             flexWrap: 'wrap',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: 28,
+            gap: 14,
             minHeight: 0,
-            minWidth: 100,
             maxHeight: 'calc(100vh - 100px)',
           }}>
             <div style={{
@@ -809,6 +809,8 @@ export default function Camera() {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
+              margin: 0,
+              padding: 0,
             }}>
               {isProcessing && (
                 <div style={{
@@ -828,6 +830,7 @@ export default function Camera() {
                   ...getStripImageStyle(layoutConfig),
                   borderRadius: 12,
                   boxShadow: HOME_BTN_SHADOW,
+                  margin: 0,
                 }}
               />
             </div>
@@ -840,7 +843,7 @@ export default function Camera() {
               flexDirection: 'column',
               justifyContent: 'center',
               alignItems: 'stretch',
-              gap: 16,
+              gap: 10,
             }}>
               <button type="button" onClick={retake} style={{
                 fontFamily: "'Cause',serif", fontSize: '13px', fontWeight: '700',
@@ -992,18 +995,11 @@ export default function Camera() {
 
             {/* Filter strip */}
             <div style={{ width: '100%', display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px', scrollbarWidth: 'none' }}>
-              {FILTERS.map(f => {
-                const timerOff = timerSecs === 0
-                const locked = timerOff && selectedFilter !== 'none' && f.id !== 'none' && f.id !== selectedFilter
-                return (
+              {FILTERS.map(f => (
                 <button key={f.id} onClick={() => {
-                  if (capturing || locked) return
+                  if (capturing) return
                   if (f.id === 'none') {
                     setSelectedFilter('none')
-                    return
-                  }
-                  if (timerOff) {
-                    setSelectedFilter(f.id)
                     return
                   }
                   if (selectedFilter === f.id) {
@@ -1011,20 +1007,20 @@ export default function Camera() {
                     return
                   }
                   setSelectedFilter(f.id)
-                }} title={f.label} disabled={locked} style={{
+                }} title={f.label} style={{
                   flexShrink: 0, minWidth: '62px', padding: '10px 8px',
                   borderRadius: '10px',
                   background: selectedFilter === f.id ? '#DF82A3' : 'rgba(255,255,255,0.75)',
                   color: selectedFilter === f.id ? '#fff' : '#917264',
                   border: `2px solid ${selectedFilter === f.id ? '#DF82A3' : '#D4C49A'}`,
-                  cursor: capturing || locked ? 'not-allowed' : 'pointer',
+                  cursor: capturing ? 'not-allowed' : 'pointer',
                   fontFamily: "'Cause',serif", fontSize: '10px', fontWeight: '700',
                   textTransform: 'uppercase', letterSpacing: '0.5px',
-                  transition: 'all 0.2s', opacity: capturing || locked ? 0.45 : 1,
+                  transition: 'all 0.2s', opacity: capturing ? 0.5 : 1,
                 }}>
                   {f.label}
                 </button>
-              )})}
+              ))}
             </div>
 
           </div>
