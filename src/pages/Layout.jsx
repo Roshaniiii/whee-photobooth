@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { playClick } from '../utils/sounds'
+import BackButton from '../components/BackButton'
+import VerticalStripes from '../components/VerticalStripes'
 
 import t1a from '../assets/template_1strip_a.png'
 import t1b from '../assets/template_1strip_b.png'
@@ -46,8 +48,8 @@ const FRAME_COLORS = [
 
 // ── Each card rendered at its TRUE aspect ratio, but capped at max height ──
 // Center card max-height = 300px. Side cards scale to 0.78.
-const CENTER_MAX_H = 260
-const CENTER_W     = 190
+const CENTER_MAX_H = 320
+const CENTER_W     = 220
 
 // Fixed preview box — always Trio (3-frame) outer size; slots reflow inside
 const PREVIEW_FIXED_W = 112
@@ -56,16 +58,6 @@ const PREVIEW_PAD = 7
 
 const HOME_BTN_SHADOW = '0 5px 3px #917264, 0 10px 24px rgba(145,114,100,0.25)'
 const HOME_BTN_SHADOW_HOVER = '0 7px 7px #917264, 0 14px 28px rgba(145,114,100,0.3)'
-
-function VerticalStripes() {
-  return (
-    <div style={{ position: 'absolute', inset: 0, display: 'flex', pointerEvents: 'none', zIndex: 0 }}>
-      {Array.from({ length: 18 }).map((_, i) => (
-        <div key={i} style={{ flex: 1, borderRight: '5px solid #917264', opacity: 0.20 }} />
-      ))}
-    </div>
-  )
-}
 
 function getFixedPreviewDims() {
   return { w: PREVIEW_FIXED_W, h: PREVIEW_FIXED_H, pad: PREVIEW_PAD }
@@ -153,7 +145,7 @@ function PickTemplate({ onSelect }) {
       <div style={{
         position: 'relative',
         width: '100%',
-        maxWidth: '580px',
+        maxWidth: '640px',
         // height = center max height + label + breathing room
         height: `${CENTER_MAX_H + 52}px`,
         overflow: 'hidden',
@@ -484,26 +476,9 @@ export default function Layout() {
         display: 'flex', flexDirection: 'column', alignItems: 'center',
       }}>
 
-        <button onClick={() => navigate('/')} style={{
-          alignSelf: 'flex-start',
-          background: 'rgba(255,255,255,0.55)',
-          border: '2px solid #D4C49A',
-          borderRadius: '100px',
-          color: '#917264',
-          cursor: 'pointer',
-          fontFamily: "'Cause',serif",
-          fontSize: '13px',
-          fontWeight: '600',
-          letterSpacing: '0.5px',
-          padding: '7px 16px',
-          marginBottom: '6px',
-          transition: 'background 0.2s, border-color 0.2s',
-        }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(223,130,163,0.12)'; e.currentTarget.style.borderColor = '#DF82A3' }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.55)'; e.currentTarget.style.borderColor = '#D4C49A' }}
-        >
-          ← Back
-        </button>
+        <div style={{ alignSelf: 'flex-start', marginBottom: '6px' }}>
+          <BackButton onClick={() => navigate('/')} />
+        </div>
 
         <h1 style={{ fontFamily: "'Unkempt',cursive", fontSize: 'clamp(24px,5vw,40px)', color: '#DF82A3', margin: '0 0 2px', letterSpacing: '2px', textAlign: 'center' }}>
           Your Frame

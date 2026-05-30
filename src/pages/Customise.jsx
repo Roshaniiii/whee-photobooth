@@ -1,17 +1,18 @@
 import { useRef, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import BackButton from '../components/BackButton'
+import VerticalStripes from '../components/VerticalStripes'
 
-/** Theme tokens (deduped from design palette) */
 const THEME = {
   pageBg: '#F2E7B4',
   text: '#917264',
   accent: '#DF82A3',
   accentSoft: '#F4B8CC',
   panel: 'rgba(255,255,255,0.55)',
-  shadow: 'rgba(145,114,100,0.18)',
 }
 
-/** Unique swatches — no duplicate hex */
+const HOME_BTN_SHADOW = '0 5px 3px #917264, 0 10px 24px rgba(145,114,100,0.25)'
+
 const PALETTE = [
   '#eae4e9', '#fff1e6', '#fde2e4', '#fad2e1', '#ffd3da', '#e2ece9', '#bee1e6',
   '#f0efeb', '#dfe7fd', '#cddafd', '#ec91d8', '#ffaaea', '#ffbeee', '#e9d3d0',
@@ -20,16 +21,8 @@ const PALETTE = [
 ]
 
 const SIZES = [2, 6, 12, 20]
-
-function Stripes() {
-  return (
-    <div style={{ position: 'fixed', inset: 0, display: 'flex', flexDirection: 'column', pointerEvents: 'none', zIndex: 0 }}>
-      {Array.from({ length: 24 }).map((_, i) => (
-        <div key={i} style={{ flex: 1, borderBottom: '3px solid #917264', opacity: 0.12 }} />
-      ))}
-    </div>
-  )
-}
+const EMOJIS = ['✨', '💖', '⭐', '🌸', '🎀', '✦', '♥', '😊', '🦋', '💫']
+const TEXT_MAX = 15
 
 function drawImageCover(ctx, img, x, y, w, h) {
   const iw = img.naturalWidth || img.width
@@ -47,6 +40,7 @@ export default function Customise() {
   const navigate = useNavigate()
   const canvasRef = useRef(null)
   const photoCanvasRef = useRef(null)
+  const canvasWrapRef = useRef(null)
   const isDrawing = useRef(false)
   const lastPos = useRef(null)
   const historyRef = useRef([])
@@ -56,9 +50,10 @@ export default function Customise() {
   const [size, setSize] = useState(6)
   const [isGlow, setIsGlow] = useState(false)
   const [tool, setTool] = useState('pen')
+  const [selectedEmoji, setSelectedEmoji] = useState('✨')
+  const [textDraft, setTextDraft] = useState('')
   const [photosLoaded, setPhotosLoaded] = useState(false)
   const [displaySize, setDisplaySize] = useState({ w: 0, h: 0 })
-  const canvasWrapRef = useRef(null)
 
   useEffect(() => {
     const layoutConfig = (() => {
@@ -91,8 +86,8 @@ export default function Customise() {
         const wrap = canvasWrapRef.current
         const pc = photoCanvasRef.current
         if (!wrap || !pc || !pc.width || !pc.height) return
-        const maxW = Math.max(200, wrap.getBoundingClientRect().width)
-        const maxH = Math.max(160, window.innerHeight - 210)
+        const maxW = Math.max(240, wrap.getBoundingClientRect().width - 8)
+        const maxH = Math.max(200, window.innerHeight - 180)
         const scale = Math.min(maxW / pc.width, maxH / pc.height, 1)
         setDisplaySize({ w: Math.floor(pc.width * scale), h: Math.floor(pc.height * scale) })
       })
@@ -195,18 +190,13 @@ export default function Customise() {
       const wrap = canvasWrapRef.current
       const pc = photoCanvasRef.current
       if (!wrap || !pc || !pc.width || !pc.height) return
-      const maxW = Math.max(200, wrap.getBoundingClientRect().width)
-      const maxH = Math.max(160, window.innerHeight - 210)
+      const maxW = Math.max(240, wrap.getBoundingClientRect().width - 8)
+      const maxH = Math.max(200, window.innerHeight - 180)
       const scale = Math.min(maxW / pc.width, maxH / pc.height, 1)
       setDisplaySize({ w: Math.floor(pc.width * scale), h: Math.floor(pc.height * scale) })
     })
     if (canvasWrapRef.current) ro.observe(canvasWrapRef.current)
-    const onWin = () => ro.disconnect()
-    window.addEventListener('resize', onWin)
-    return () => {
-      ro.disconnect()
-      window.removeEventListener('resize', onWin)
-    }
+    return () => ro.disconnect()
   }, [photosLoaded])
 
   function getPos(e) {
@@ -228,15 +218,45 @@ export default function Customise() {
     redoRef.current = []
   }
 
+  function drawStamp(content, pos, isText) {
+    const c = canvasRef.current
+    const ctx = c.getContext('2d')
+    ctx.globalCompositeOperation = 'source-over'
+    ctx.shadowBlur = isGlow && isText ? 12 : 0
+    ctx.shadowColor = color
+    const fontSize = isText ? Math.max(14, size * 3.5) : Math.max(18, size * 5)
+    ctx.font = `${fontSize}px ${isText ? "'Cause', serif" : 'serif'}`
+    ctx.fillStyle = isText ? color : '#000'
+    ctx.textBaseline = 'middle'
+    ctx.fillText(content, pos.x, pos.y)
+    ctx.shadowBlur = 0
+  }
+
   function startDraw(e) {
     e.preventDefault()
+    const pos = getPos(e)
+
+    if (tool === 'text') {
+      if (!textDraft.trim()) return
+      saveHistory()
+      drawStamp(textDraft.trim(), pos, true)
+      return
+    }
+
+    if (tool === 'emoji') {
+      saveHistory()
+      drawStamp(selectedEmoji, pos, false)
+      return
+    }
+
     saveHistory()
     isDrawing.current = true
-    lastPos.current = getPos(e)
+    lastPos.current = pos
   }
 
   function draw(e) {
     e.preventDefault()
+    if (tool === 'text' || tool === 'emoji') return
     if (!isDrawing.current) return
     const c = canvasRef.current
     const ctx = c.getContext('2d')
@@ -255,12 +275,8 @@ export default function Customise() {
       ctx.globalCompositeOperation = 'source-over'
       ctx.strokeStyle = color
       ctx.lineWidth = size
-      if (isGlow) {
-        ctx.shadowBlur = 20
-        ctx.shadowColor = color
-      } else {
-        ctx.shadowBlur = 0
-      }
+      ctx.shadowBlur = isGlow ? 20 : 0
+      ctx.shadowColor = color
     }
 
     ctx.lineCap = 'round'
@@ -320,19 +336,26 @@ export default function Customise() {
   }
 
   const toolBtn = (active) => ({
-    background: 'transparent',
-    border: 'none',
+    background: active ? 'rgba(223,130,163,0.15)' : 'transparent',
+    border: active ? '2px solid #DF82A3' : '2px solid transparent',
+    borderRadius: '8px',
     cursor: 'pointer',
-    fontFamily: "'Rosario',serif",
-    fontSize: '22px',
+    fontFamily: "'Cause',serif",
+    fontSize: '16px',
     lineHeight: 1,
-    padding: '6px 4px',
+    padding: '5px 4px',
     color: active ? THEME.accent : THEME.text,
-    opacity: active ? 1 : 0.85,
-    textDecoration: active ? 'underline' : 'none',
-    textUnderlineOffset: '4px',
-    transition: 'color 0.15s',
+    transition: 'all 0.15s',
+    width: '36px',
+    height: '36px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   })
+
+  const canvasStackStyle = displaySize.w > 0
+    ? { width: `${displaySize.w}px`, height: `${displaySize.h}px` }
+    : { maxWidth: '100%', maxHeight: 'calc(100vh - 200px)', width: 'auto', height: 'auto' }
 
   return (
     <div style={{
@@ -341,11 +364,11 @@ export default function Customise() {
       overflow: 'hidden',
       backgroundColor: THEME.pageBg,
       position: 'relative',
-      fontFamily: "'Rosario',serif",
+      fontFamily: "'Cause',serif",
       display: 'flex',
       flexDirection: 'column',
     }}>
-      <Stripes />
+      <VerticalStripes />
 
       <div style={{
         position: 'relative',
@@ -353,9 +376,9 @@ export default function Customise() {
         flex: 1,
         minHeight: 0,
         width: '100%',
-        maxWidth: '900px',
+        maxWidth: '960px',
         margin: '0 auto',
-        padding: '10px 14px 12px',
+        padding: '12px 16px 14px',
         display: 'flex',
         flexDirection: 'column',
         gap: '8px',
@@ -363,15 +386,9 @@ export default function Customise() {
       }}>
 
         <div style={{ width: '100%', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-          <button
-            type="button"
-            onClick={() => navigate('/camera')}
-            style={{ background: 'none', border: 'none', color: THEME.text, cursor: 'pointer', fontFamily: "'Rosario',serif", fontSize: '14px', letterSpacing: '1px', padding: 0 }}
-          >
-            ← Back
-          </button>
+          <BackButton onClick={() => navigate('/camera')} />
           <h1 style={{
-            fontFamily: "'Networkand',cursive",
+            fontFamily: "'Unkempt',cursive",
             fontSize: 'clamp(20px,4vw,30px)',
             color: THEME.accent,
             margin: '0 auto',
@@ -380,7 +397,7 @@ export default function Customise() {
           }}>
             Doodle your strip
           </h1>
-          <div style={{ width: '48px' }} />
+          <div style={{ width: '72px' }} />
         </div>
 
         <div style={{
@@ -388,44 +405,117 @@ export default function Customise() {
           minHeight: 0,
           display: 'flex',
           flexDirection: 'row',
-          gap: '12px',
+          gap: '10px',
           alignItems: 'stretch',
         }}>
 
-          {/* Tools — no boxes, sit on page background */}
+          {/* Tools panel */}
           <div style={{
+            flexShrink: 0,
+            width: 'fit-content',
+            minWidth: '72px',
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center',
-            gap: '6px',
-            flexShrink: 0,
-            paddingTop: '4px',
-            width: '40px',
+            gap: '8px',
+            background: THEME.panel,
+            border: '2px solid #D4C49A',
+            borderRadius: '14px',
+            padding: '10px 8px',
+            boxShadow: HOME_BTN_SHADOW,
+            alignSelf: 'center',
+            maxHeight: 'calc(100vh - 120px)',
+            overflowY: 'auto',
           }}>
-            <button type="button" title="Pen" onClick={() => setTool('pen')} style={toolBtn(tool === 'pen')}>✏️</button>
-            <button type="button" title="Eraser" onClick={() => setTool('eraser')} style={toolBtn(tool === 'eraser')}>⌫</button>
-            <button type="button" title="Glow" onClick={() => setIsGlow((g) => !g)} style={toolBtn(isGlow)}>✦</button>
-            <button type="button" title="Undo" onClick={undo} style={toolBtn(false)}>↩</button>
-            <button type="button" title="Redo" onClick={redo} style={toolBtn(false)}>↪</button>
-            {SIZES.map((s) => (
-              <button
-                key={s}
-                type="button"
-                title={`Size ${s}`}
-                onClick={() => setSize(s)}
-                style={{
-                  ...toolBtn(size === s),
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  letterSpacing: '0.5px',
-                }}
-              >
-                {s}
-              </button>
-            ))}
+            <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: THEME.text, textAlign: 'center' }}>
+              Tools
+            </span>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+              <button type="button" title="Pen" onClick={() => setTool('pen')} style={toolBtn(tool === 'pen')}>✏️</button>
+              <button type="button" title="Eraser" onClick={() => setTool('eraser')} style={toolBtn(tool === 'eraser')}>⌫</button>
+              <button type="button" title="Text" onClick={() => setTool('text')} style={toolBtn(tool === 'text')}>Aa</button>
+              <button type="button" title="Emoji" onClick={() => setTool('emoji')} style={toolBtn(tool === 'emoji')}>😊</button>
+              <button type="button" title="Glow" onClick={() => setIsGlow(g => !g)} style={toolBtn(isGlow)}>✦</button>
+              <button type="button" title="Undo" onClick={undo} style={toolBtn(false)}>↩</button>
+              <button type="button" title="Redo" onClick={redo} style={toolBtn(false)}>↪</button>
+            </div>
+
+            <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: THEME.text, textAlign: 'center', marginTop: '2px' }}>
+              Size
+            </span>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px' }}>
+              {SIZES.map(s => (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => setSize(s)}
+                  style={{
+                    ...toolBtn(size === s),
+                    fontSize: '11px',
+                    fontWeight: 700,
+                  }}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+
+            {tool === 'text' && (
+              <>
+                <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', color: THEME.text, textAlign: 'center' }}>
+                  Text
+                </span>
+                <input
+                  type="text"
+                  value={textDraft}
+                  maxLength={TEXT_MAX}
+                  placeholder="Say it!"
+                  onChange={e => setTextDraft(e.target.value.slice(0, TEXT_MAX))}
+                  style={{
+                    width: '100%',
+                    boxSizing: 'border-box',
+                    fontFamily: "'Cause',serif",
+                    fontSize: '11px',
+                    padding: '6px 8px',
+                    borderRadius: '8px',
+                    border: '2px solid #D4C49A',
+                    background: '#fff',
+                    color: THEME.text,
+                    outline: 'none',
+                  }}
+                />
+                <span style={{ fontSize: '8px', color: THEME.text, textAlign: 'center', opacity: 0.7 }}>
+                  {textDraft.length}/{TEXT_MAX} · tap strip
+                </span>
+              </>
+            )}
+
+            {tool === 'emoji' && (
+              <>
+                <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', color: THEME.text, textAlign: 'center' }}>
+                  Stickers
+                </span>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', justifyContent: 'center', maxWidth: '72px' }}>
+                  {EMOJIS.map(em => (
+                    <button
+                      key={em}
+                      type="button"
+                      onClick={() => setSelectedEmoji(em)}
+                      style={{
+                        ...toolBtn(selectedEmoji === em),
+                        fontSize: '18px',
+                        width: '32px',
+                        height: '32px',
+                      }}
+                    >
+                      {em}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
 
-          {/* Canvas + palette — fills remaining height */}
+          {/* Canvas + palette column */}
           <div style={{
             flex: 1,
             minWidth: 0,
@@ -433,19 +523,21 @@ export default function Customise() {
             display: 'flex',
             flexDirection: 'column',
             gap: '8px',
+            alignItems: 'center',
           }}>
-            <div style={{
-              flex: 1,
-              minHeight: 0,
-              borderRadius: '16px',
-              overflow: 'hidden',
-              background: '#2a1f1a',
-              boxShadow: `0 6px 24px ${THEME.shadow}`,
-              position: 'relative',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
+            <div
+              ref={canvasWrapRef}
+              style={{
+                flex: 1,
+                minHeight: 0,
+                width: 'fit-content',
+                maxWidth: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                position: 'relative',
+              }}
+            >
               {!photosLoaded && (
                 <div style={{
                   position: 'absolute',
@@ -453,7 +545,6 @@ export default function Customise() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  background: THEME.panel,
                   color: THEME.text,
                   fontSize: '13px',
                   letterSpacing: '2px',
@@ -462,39 +553,28 @@ export default function Customise() {
                 </div>
               )}
 
-              <div style={{
-                maxWidth: '100%',
-                maxHeight: '100%',
-                width: 'auto',
-                height: '100%',
-                position: 'relative',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
+              <div style={{ position: 'relative', ...canvasStackStyle }}>
                 <canvas
                   ref={photoCanvasRef}
                   style={{
                     position: 'absolute',
-                    maxWidth: '100%',
-                    maxHeight: '100%',
-                    width: 'auto',
-                    height: 'auto',
-                    objectFit: 'contain',
+                    inset: 0,
+                    width: '100%',
+                    height: '100%',
                     display: 'block',
+                    borderRadius: '12px',
+                    boxShadow: HOME_BTN_SHADOW,
                   }}
                 />
                 <canvas
                   ref={canvasRef}
                   style={{
                     position: 'relative',
-                    maxWidth: '100%',
-                    maxHeight: '100%',
-                    width: 'auto',
-                    height: 'auto',
-                    objectFit: 'contain',
+                    width: '100%',
+                    height: '100%',
                     display: 'block',
-                    cursor: tool === 'eraser' ? 'cell' : 'crosshair',
+                    borderRadius: '12px',
+                    cursor: tool === 'eraser' ? 'cell' : tool === 'text' || tool === 'emoji' ? 'pointer' : 'crosshair',
                     touchAction: 'none',
                   }}
                   onMouseDown={startDraw}
@@ -508,17 +588,17 @@ export default function Customise() {
               </div>
             </div>
 
-            {/* Colors — free-floating dots, no swatch boxes */}
             <div style={{
               display: 'flex',
               flexWrap: 'wrap',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '10px 14px',
-              padding: '4px 0',
+              gap: '8px 12px',
+              padding: '2px 0',
               flexShrink: 0,
+              width: '100%',
             }}>
-              {PALETTE.map((c) => (
+              {PALETTE.map(c => (
                 <button
                   key={c}
                   type="button"
@@ -549,32 +629,30 @@ export default function Customise() {
               flexWrap: 'wrap',
             }}>
               <span style={{ fontSize: '11px', color: THEME.text, letterSpacing: '1px' }}>Active</span>
-              <span
-                style={{
-                  width: '28px',
-                  height: '28px',
-                  borderRadius: '50%',
-                  background: color,
-                  border: `2px solid ${THEME.text}`,
-                  boxShadow: isGlow ? `0 0 14px ${color}` : 'none',
-                }}
-              />
+              <span style={{
+                width: '28px',
+                height: '28px',
+                borderRadius: '50%',
+                background: color,
+                border: `2px solid ${THEME.text}`,
+                boxShadow: isGlow ? `0 0 14px ${color}` : 'none',
+              }} />
               <button
                 type="button"
                 onClick={handleDownload}
                 style={{
-                  fontFamily: "'Rosario',serif",
+                  fontFamily: "'Cause',serif",
                   fontSize: '13px',
                   fontWeight: 700,
                   letterSpacing: '1.5px',
                   textTransform: 'uppercase',
                   color: '#F2E7B4',
-                  background: '#917264',
+                  background: '#DF82A3',
                   border: 'none',
                   borderRadius: '100px',
-                  padding: '10px 24px',
+                  padding: '10px 28px',
                   cursor: 'pointer',
-                  boxShadow: '0 4px 0 #6b5248, 0 6px 16px rgba(145,114,100,0.25)',
+                  boxShadow: HOME_BTN_SHADOW,
                 }}
               >
                 Download

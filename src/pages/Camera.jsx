@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import sparkleOverlay from '../assets/sparkle_overlay.png'
+import BackButton from '../components/BackButton'
+import VerticalStripes from '../components/VerticalStripes'
 
 // ── Template imports — needed to overlay on canvas ────────────
 import t1a from '../assets/template_1strip_a.png'
@@ -37,7 +39,9 @@ const TEMPLATE_CONFIGS = {
 
 /** 4-frame strip height — other layouts scale proportionally for the result page */
 const FOUR_FRAME_REF_HEIGHT = 2400
-const STRIP_DISPLAY_MAX_HEIGHT_4 = 460
+const STRIP_DISPLAY_MAX_HEIGHT_4 = 580
+const HOME_BTN_SHADOW = '0 5px 3px #917264, 0 10px 24px rgba(145,114,100,0.25)'
+const HOME_BTN_SHADOW_HOVER = '0 7px 7px #917264, 0 14px 28px rgba(145,114,100,0.3)'
 
 function getStripImageStyle(layoutConfig) {
   const cw = layoutConfig?.canvasWidth ?? 900
@@ -47,8 +51,8 @@ function getStripImageStyle(layoutConfig) {
   const maxW = Math.round(maxH * (cw / ch))
   return {
     display: 'block',
-    maxHeight: `min(72vh, ${maxH}px)`,
-    maxWidth: `min(36vw, ${maxW}px)`,
+    maxHeight: `min(78vh, ${maxH}px)`,
+    maxWidth: `min(44vw, ${maxW}px)`,
     width: 'auto',
     height: 'auto',
     objectFit: 'contain',
@@ -253,7 +257,7 @@ function FrameProgressStrip({ total, slots, activeIndex, onSlotClick }) {
               />
             ) : (
               <span style={{
-                fontFamily: "'Networkand',cursive",
+                fontFamily: "'Unkempt',cursive",
                 fontSize: box * 0.38,
                 color: isActive ? '#fff' : '#DF82A3',
                 lineHeight: 1,
@@ -265,16 +269,6 @@ function FrameProgressStrip({ total, slots, activeIndex, onSlotClick }) {
           </button>
         )
       })}
-    </div>
-  )
-}
-
-function Stripes() {
-  return (
-    <div style={{ position: 'fixed', inset: 0, display: 'flex', flexDirection: 'column', pointerEvents: 'none', zIndex: 0 }}>
-      {Array.from({ length: 24 }).map((_, i) => (
-        <div key={i} style={{ flex: 1, borderBottom: '3px solid #917264', opacity: 0.15 }} />
-      ))}
     </div>
   )
 }
@@ -664,8 +658,8 @@ export default function Camera() {
   const allDone = !!stripPreview
 
   return (
-    <div style={{ minHeight: '100vh', width: '100%', backgroundColor: '#F2E7B4', position: 'relative', fontFamily: "'Rosario',serif" }}>
-      <Stripes />
+    <div style={{ minHeight: '100vh', width: '100%', backgroundColor: '#F2E7B4', position: 'relative', fontFamily: "'Cause',serif", overflow: 'hidden' }}>
+      <VerticalStripes />
 
       <div style={{
         position: 'relative', zIndex: 1, width: '100%',
@@ -680,13 +674,11 @@ export default function Camera() {
 
         {/* ── Header ── */}
         <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
-          <button onClick={() => navigate('/layout')} style={{ background: 'none', border: 'none', color: '#917264', cursor: 'pointer', fontFamily: "'Rosario',serif", fontSize: '14px', letterSpacing: '1px', padding: 0 }}>
-            ← Back
-          </button>
-          <h1 style={{ fontFamily: "'Networkand',cursive", fontSize: 'clamp(22px,5vw,34px)', color: '#DF82A3', margin: '0 auto', letterSpacing: '2px', textAlign: 'center' }}>
+          <BackButton onClick={() => navigate('/layout')} />
+          <h1 style={{ fontFamily: "'Unkempt',cursive", fontSize: 'clamp(22px,5vw,34px)', color: '#DF82A3', margin: '0 auto', letterSpacing: '2px', textAlign: 'center' }}>
             {allDone ? 'Your Strip!' : 'Strike a Pose'}
           </h1>
-          <div style={{ width: '48px' }} />
+          <div style={{ width: '72px' }} />
         </div>
 
         {/* ── Camera view + frame strip overlay ── */}
@@ -722,7 +714,7 @@ export default function Camera() {
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 background: 'rgba(242,231,180,0.9)',
               }}>
-                <p style={{ fontFamily: "'Rosario',serif", fontSize: '13px', color: '#917264', letterSpacing: '2px', margin: 0 }}>
+                <p style={{ fontFamily: "'Cause',serif", fontSize: '13px', color: '#917264', letterSpacing: '2px', margin: 0 }}>
                   BUILDING YOUR STRIP...
                 </p>
               </div>
@@ -798,71 +790,65 @@ export default function Camera() {
         ) : (
           <div style={{
             flex: 1,
-            width: '100%',
+            width: 'fit-content',
+            maxWidth: '100%',
             display: 'flex',
             flexDirection: 'row',
             flexWrap: 'wrap',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: 20,
+            gap: 28,
             minHeight: 0,
+            minWidth: 100,
             maxHeight: 'calc(100vh - 100px)',
           }}>
             <div style={{
-              flex: 1,
-              minWidth: 0,
+              flexShrink: 0,
+              width: 'fit-content',
+              minWidth: 100,
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              alignSelf: 'stretch',
             }}>
-              <div style={{
-                borderRadius: 16,
-                overflow: 'hidden',
-                background: '#2a1f1a',
-                boxShadow: '0 8px 32px rgba(145,114,100,0.25)',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                position: 'relative',
-              }}>
-                {isProcessing && (
-                  <div style={{
-                    position: 'absolute', inset: 0, zIndex: 10,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    background: 'rgba(242,231,180,0.9)',
-                  }}>
-                    <p style={{ fontFamily: "'Rosario',serif", fontSize: '13px', color: '#917264', letterSpacing: '2px', margin: 0 }}>
-                      BUILDING YOUR STRIP...
-                    </p>
-                  </div>
-                )}
-                <img
-                  src={stripPreview}
-                  alt="Your photo strip"
-                  style={getStripImageStyle(layoutConfig)}
-                />
-              </div>
+              {isProcessing && (
+                <div style={{
+                  position: 'absolute', inset: 0, zIndex: 10,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  background: 'rgba(242,231,180,0.9)',
+                }}>
+                  <p style={{ fontFamily: "'Cause',serif", fontSize: '13px', color: '#917264', letterSpacing: '2px', margin: 0 }}>
+                    BUILDING YOUR STRIP...
+                  </p>
+                </div>
+              )}
+              <img
+                src={stripPreview}
+                alt="Your photo strip"
+                style={{
+                  ...getStripImageStyle(layoutConfig),
+                  borderRadius: 12,
+                  boxShadow: HOME_BTN_SHADOW,
+                }}
+              />
             </div>
 
             <div style={{
               flexShrink: 0,
+              width: 'fit-content',
+              minWidth: 100,
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
               alignItems: 'stretch',
-              gap: 12,
-              paddingRight: 4,
-              minWidth: 148,
-              marginLeft: 'auto',
+              gap: 16,
             }}>
               <button type="button" onClick={retake} style={{
-                fontFamily: "'Rosario',serif", fontSize: '13px', fontWeight: '700',
+                fontFamily: "'Cause',serif", fontSize: '13px', fontWeight: '700',
                 letterSpacing: '1.5px', textTransform: 'uppercase',
                 color: '#917264', background: 'rgba(255,255,255,0.75)',
                 border: '2px solid #D4C49A', borderRadius: '100px',
-                padding: '11px 22px', cursor: 'pointer',
-                boxShadow: '0 3px 10px rgba(145,114,100,0.15)', transition: 'all 0.2s',
+                padding: '11px 24px', cursor: 'pointer',
+                boxShadow: HOME_BTN_SHADOW, transition: 'all 0.2s',
                 whiteSpace: 'nowrap',
               }}
                 onMouseEnter={e => { e.currentTarget.style.background = '#F4B8CC'; e.currentTarget.style.borderColor = '#DF82A3' }}
@@ -870,29 +856,29 @@ export default function Camera() {
               >Retake</button>
 
               <button type="button" onClick={handleDownload} style={{
-                fontFamily: "'Rosario',serif", fontSize: '13px', fontWeight: '700',
+                fontFamily: "'Cause',serif", fontSize: '13px', fontWeight: '700',
                 letterSpacing: '1.5px', textTransform: 'uppercase',
                 color: '#F2E7B4', background: '#917264',
                 border: 'none', borderRadius: '100px',
-                padding: '11px 22px', cursor: 'pointer',
-                boxShadow: '0 5px 0px #6b5248, 0 8px 20px rgba(145,114,100,0.3)',
-                transition: 'transform 0.12s', whiteSpace: 'nowrap',
+                padding: '11px 24px', cursor: 'pointer',
+                boxShadow: HOME_BTN_SHADOW,
+                transition: 'transform 0.12s, box-shadow 0.12s', whiteSpace: 'nowrap',
               }}
-                onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-                onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = HOME_BTN_SHADOW_HOVER }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = HOME_BTN_SHADOW }}
               >Download</button>
 
               <button type="button" onClick={handleCustomise} style={{
-                fontFamily: "'Rosario',serif", fontSize: '13px', fontWeight: '700',
+                fontFamily: "'Cause',serif", fontSize: '13px', fontWeight: '700',
                 letterSpacing: '1.5px', textTransform: 'uppercase',
                 color: '#F2E7B4', background: '#DF82A3',
                 border: 'none', borderRadius: '100px',
-                padding: '11px 22px', cursor: 'pointer',
-                boxShadow: '0 5px 0px #917264, 0 8px 20px rgba(223,130,163,0.3)',
-                transition: 'transform 0.12s', whiteSpace: 'nowrap',
+                padding: '11px 24px', cursor: 'pointer',
+                boxShadow: HOME_BTN_SHADOW,
+                transition: 'transform 0.12s, box-shadow 0.12s', whiteSpace: 'nowrap',
               }}
-                onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-                onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = HOME_BTN_SHADOW_HOVER }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = HOME_BTN_SHADOW }}
               >Customise</button>
             </div>
           </div>
@@ -981,7 +967,7 @@ export default function Camera() {
                       border: `2px solid ${timerSecs === t ? '#DF82A3' : '#D4C49A'}`,
                       fontSize: '10px', fontWeight: '700',
                       cursor: capturing ? 'not-allowed' : 'pointer',
-                      fontFamily: "'Rosario',serif", transition: 'all 0.2s',
+                      fontFamily: "'Cause',serif", transition: 'all 0.2s',
                     }}>
                       {t === 0 ? 'Off' : `${t}s`}
                     </button>
@@ -1006,11 +992,18 @@ export default function Camera() {
 
             {/* Filter strip */}
             <div style={{ width: '100%', display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px', scrollbarWidth: 'none' }}>
-              {FILTERS.map(f => (
+              {FILTERS.map(f => {
+                const timerOff = timerSecs === 0
+                const locked = timerOff && selectedFilter !== 'none' && f.id !== 'none' && f.id !== selectedFilter
+                return (
                 <button key={f.id} onClick={() => {
-                  if (capturing) return
+                  if (capturing || locked) return
                   if (f.id === 'none') {
                     setSelectedFilter('none')
+                    return
+                  }
+                  if (timerOff) {
+                    setSelectedFilter(f.id)
                     return
                   }
                   if (selectedFilter === f.id) {
@@ -1018,20 +1011,20 @@ export default function Camera() {
                     return
                   }
                   setSelectedFilter(f.id)
-                }} title={f.label} style={{
+                }} title={f.label} disabled={locked} style={{
                   flexShrink: 0, minWidth: '62px', padding: '10px 8px',
                   borderRadius: '10px',
                   background: selectedFilter === f.id ? '#DF82A3' : 'rgba(255,255,255,0.75)',
                   color: selectedFilter === f.id ? '#fff' : '#917264',
                   border: `2px solid ${selectedFilter === f.id ? '#DF82A3' : '#D4C49A'}`,
-                  cursor: capturing ? 'not-allowed' : 'pointer',
-                  fontFamily: "'Rosario',serif", fontSize: '10px', fontWeight: '700',
+                  cursor: capturing || locked ? 'not-allowed' : 'pointer',
+                  fontFamily: "'Cause',serif", fontSize: '10px', fontWeight: '700',
                   textTransform: 'uppercase', letterSpacing: '0.5px',
-                  transition: 'all 0.2s', opacity: capturing ? 0.5 : 1,
+                  transition: 'all 0.2s', opacity: capturing || locked ? 0.45 : 1,
                 }}>
                   {f.label}
                 </button>
-              ))}
+              )})}
             </div>
 
           </div>
@@ -1117,7 +1110,7 @@ function ImageCropModal({ imageSrc, aspect = CROP_ASPECT, onConfirm, onCancel })
       position: 'fixed', inset: 0, zIndex: 100,
       background: 'rgba(42,31,26,0.92)',
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-      padding: 16, gap: 14, fontFamily: "'Rosario',serif",
+      padding: 16, gap: 14, fontFamily: "'Cause',serif",
     }}>
       <p style={{ color: '#F2E7B4', fontSize: 14, letterSpacing: 1, margin: 0, textTransform: 'uppercase' }}>
         Crop to fit frame
@@ -1173,14 +1166,14 @@ function ImageCropModal({ imageSrc, aspect = CROP_ASPECT, onConfirm, onCancel })
       </p>
       <div style={{ display: 'flex', gap: 12 }}>
         <button type="button" onClick={onCancel} style={{
-          fontFamily: "'Rosario',serif", fontSize: 13, fontWeight: 700,
+          fontFamily: "'Cause',serif", fontSize: 13, fontWeight: 700,
           letterSpacing: '1px', textTransform: 'uppercase',
           color: '#917264', background: 'rgba(255,255,255,0.75)',
           border: '2px solid #D4C49A', borderRadius: '100px',
           padding: '10px 24px', cursor: 'pointer',
         }}>Cancel</button>
         <button type="button" onClick={handleApply} style={{
-          fontFamily: "'Rosario',serif", fontSize: 13, fontWeight: 700,
+          fontFamily: "'Cause',serif", fontSize: 13, fontWeight: 700,
           letterSpacing: '1px', textTransform: 'uppercase',
           color: '#F2E7B4', background: '#DF82A3',
           border: 'none', borderRadius: '100px',
