@@ -17,7 +17,7 @@ export default function Home() {
     <div style={{
       minHeight: '100vh',
       width: '100%',
-      backgroundColor: '#F2E7B4',
+      backgroundColor: '#f2e7b4',
       position: 'relative',
       overflow: 'hidden',
       display: 'flex',

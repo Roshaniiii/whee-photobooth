@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { playClick, playHover } from '../utils/sounds'
+import { playClick } from '../utils/sounds'
 
 import t1a from '../assets/template_1strip_a.png'
 import t1b from '../assets/template_1strip_b.png'
@@ -46,17 +46,29 @@ const FRAME_COLORS = [
 
 // ── Each card rendered at its TRUE aspect ratio, but capped at max height ──
 // Center card max-height = 300px. Side cards scale to 0.78.
-const CENTER_MAX_H = 300
+const CENTER_MAX_H = 260
 const CENTER_W     = 190
 
-function Stripes() {
+// Fixed preview box — always Trio (3-frame) outer size; slots reflow inside
+const PREVIEW_FIXED_W = 112
+const PREVIEW_FIXED_H = 170
+const PREVIEW_PAD = 7
+
+const HOME_BTN_SHADOW = '0 5px 3px #917264, 0 10px 24px rgba(145,114,100,0.25)'
+const HOME_BTN_SHADOW_HOVER = '0 7px 7px #917264, 0 14px 28px rgba(145,114,100,0.3)'
+
+function VerticalStripes() {
   return (
-    <div style={{ position: 'fixed', inset: 0, display: 'flex', flexDirection: 'column', pointerEvents: 'none', zIndex: 0 }}>
-      {Array.from({ length: 24 }).map((_, i) => (
-        <div key={i} style={{ flex: 1, borderBottom: '3px solid #917264', opacity: 0.15 }} />
+    <div style={{ position: 'absolute', inset: 0, display: 'flex', pointerEvents: 'none', zIndex: 0 }}>
+      {Array.from({ length: 18 }).map((_, i) => (
+        <div key={i} style={{ flex: 1, borderRight: '5px solid #917264', opacity: 0.20 }} />
       ))}
     </div>
   )
+}
+
+function getFixedPreviewDims() {
+  return { w: PREVIEW_FIXED_W, h: PREVIEW_FIXED_H, pad: PREVIEW_PAD }
 }
 
 function PillButton({ onClick, disabled, children }) {
@@ -66,13 +78,31 @@ function PillButton({ onClick, disabled, children }) {
       letterSpacing: '2px', textTransform: 'uppercase', color: '#F2E7B4',
       background: disabled ? '#C4A882' : '#DF82A3', border: 'none', borderRadius: '100px',
       padding: '13px 52px', cursor: disabled ? 'not-allowed' : 'pointer',
-      boxShadow: disabled ? 'none' : '0 5px 0px #917264, 0 8px 20px rgba(145,114,100,0.25)',
+      boxShadow: disabled ? 'none' : HOME_BTN_SHADOW,
       transition: 'transform 0.12s ease, box-shadow 0.12s ease', opacity: disabled ? 0.6 : 1,
     }}
-      onMouseEnter={e => { if (!disabled) { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 8px 0px #917264, 0 12px 24px rgba(145,114,100,0.3)' } }}
-      onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; if (!disabled) e.currentTarget.style.boxShadow = '0 5px 0px #917264, 0 8px 20px rgba(145,114,100,0.25)' }}
-      onMouseDown={e => { if (!disabled) { e.currentTarget.style.transform = 'translateY(3px)'; e.currentTarget.style.boxShadow = '0 2px 0px #917264' } }}
-      onMouseUp={e => { if (!disabled) { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 8px 0px #917264' } }}
+      onMouseEnter={e => {
+        if (!disabled) {
+          e.currentTarget.style.transform = 'translateY(-3px)'
+          e.currentTarget.style.boxShadow = HOME_BTN_SHADOW_HOVER
+        }
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.transform = 'translateY(0)'
+        if (!disabled) e.currentTarget.style.boxShadow = HOME_BTN_SHADOW
+      }}
+      onMouseDown={e => {
+        if (!disabled) {
+          e.currentTarget.style.transform = 'translateY(3px)'
+          e.currentTarget.style.boxShadow = '0 5px 3px #917264, 0 4px 12px rgba(145,114,100,0.2)'
+        }
+      }}
+      onMouseUp={e => {
+        if (!disabled) {
+          e.currentTarget.style.transform = 'translateY(-3px)'
+          e.currentTarget.style.boxShadow = HOME_BTN_SHADOW_HOVER
+        }
+      }}
     >{children}</button>
   )
 }
@@ -117,7 +147,7 @@ function PickTemplate({ onSelect }) {
   }
 
   return (
-    <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px' }}>
+    <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1px' }}>
 
       {/* ── Carousel ── */}
       <div style={{
@@ -224,13 +254,13 @@ function PickTemplate({ onSelect }) {
 
       {/* ── Thumbnails ── */}
       <div style={{
-        display: 'flex', gap: '8px', overflowX: 'auto',
-        padding: '4px 8px', maxWidth: '500px', width: '100%',
+        display: 'flex', gap: '6px', overflowX: 'auto',
+        padding: '2px 6px', maxWidth: '460px', width: '100%',
         scrollbarWidth: 'none', flexShrink: 0, alignItems: 'center',
       }}>
         {TEMPLATES.map((t, i) => (
           <div key={t.id} onClick={() => setCurrent(i)} style={{
-            flexShrink: 0, width: '44px', height: '54px',
+            flexShrink: 0, width: '40px', height: '48px',
             cursor: 'pointer', borderRadius: '7px', overflow: 'hidden',
             border: i === current ? '2px solid #DF82A3' : '2px solid transparent',
             boxShadow: i === current ? '0 0 0 2px rgba(223,130,163,0.3)' : 'none',
@@ -242,7 +272,7 @@ function PickTemplate({ onSelect }) {
       </div>
 
       {/* ── Button ── */}
-      <div style={{ flexShrink: 0, paddingBottom: '4px' }}>
+      <div style={{ flexShrink: 0 }}>
         <PillButton onClick={() => {
           playClick()
           onSelect(TEMPLATES[current])
@@ -257,25 +287,33 @@ function PickTemplate({ onSelect }) {
 // ══════════════════════════════════════════════════════════════
 function BuildOwn({ onSelect }) {
   const [selectedLayout, setSelectedLayout] = useState(null)
-  const [selectedColor,  setSelectedColor]  = useState(FRAME_COLORS[0])
+  const [selectedColor, setSelectedColor] = useState(FRAME_COLORS[0])
 
-  // Preview box — fixed outer size, inner slots scale to layout
-  // Outer: 80w × 240h (same proportions as a tall 4-strip)
-  const PREV_W = 80
-  const PREV_H = 240
-  const PREV_PAD = 8
+  const previewDims = getFixedPreviewDims()
+  const ICON_W = 22
+  const ICON_MAX_H = 52
+
+  function iconH(rows) {
+    return Math.round(ICON_MAX_H * rows / 4) + (rows < 4 ? 4 : 0)
+  }
 
   function PreviewSlots() {
+    const innerH = previewDims.h - previewDims.pad * 2
+    const innerW = previewDims.w - previewDims.pad * 2
+    const gap = 3
+
     if (!selectedLayout) {
-      return <span style={{ fontSize: '10px', color: '#C4A882', textAlign: 'center', lineHeight: 1.5 }}>Pick a layout</span>
+      return (
+        <span style={{ fontSize: '9px', color: '#C4A882', textAlign: 'center', lineHeight: 1.4 }}>
+          Pick a layout
+        </span>
+      )
     }
+
     const n = selectedLayout.shots
-    const innerH = PREV_H - PREV_PAD * 2
-    const innerW = PREV_W - PREV_PAD * 2
-    const gap = 4
     const slotH = Math.floor((innerH - gap * (n - 1)) / n)
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: `${gap}px`, width: `${innerW}px` }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: `${gap}px`, width: `${innerW}px`, height: `${innerH}px` }}>
         {Array.from({ length: n }).map((_, i) => (
           <div key={i} style={{
             width: '100%', height: `${slotH}px`,
@@ -286,45 +324,54 @@ function BuildOwn({ onSelect }) {
     )
   }
 
-  // Layout icon sizes — proportional to actual strip heights
-  const ICON_W = 26
-  const ICON_MAX_H = 64
-  function iconH(rows) {
-    // 1 row → short, 4 rows → full height
-    return Math.round(ICON_MAX_H * rows / 4) + (rows < 4 ? 8 : 0)
+  const panelLabel = {
+    fontFamily: "'Cause',serif", fontSize: '10px', fontWeight: '700',
+    letterSpacing: '1.5px', textTransform: 'uppercase', color: '#917264', margin: 0,
+    textAlign: 'center',
   }
 
   return (
-    <div style={{ width: '100%', maxWidth: '600px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '22px' }}>
+    <div style={{ width: '100%', maxWidth: '480px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
 
-      {/* ── Layout picker + Preview row ── */}
-      <div style={{ width: '100%', display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
-
-        {/* Layout grid — compact cards, 2×2 */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <p style={{ fontFamily: "'Cause',serif", fontSize: '11px', fontWeight: '700', letterSpacing: '2px', textTransform: 'uppercase', color: '#917264', margin: 0, textAlign: 'center' }}>
-            Choose Layout
-          </p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+      {/* Layout + Preview — tight gap, fixed preview size */}
+      <div style={{
+        width: '100%',
+        display: 'flex',
+        gap: '4px',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        {/* Choose layout — narrow */}
+        <div style={{
+          flexShrink: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '6px',
+          alignItems: 'center',
+        }}>
+          <p style={panelLabel}>Choose Layout</p>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '5px',
+            width: '100%',
+            maxWidth: '148px',
+          }}>
             {NEW_LAYOUTS.map(layout => {
               const isSel = selectedLayout?.id === layout.id
               const ih = iconH(layout.rows)
               return (
                 <div key={layout.id} onClick={() => setSelectedLayout(layout)} style={{
                   cursor: 'pointer',
-                  // Compact padding — tight left/right
-                  padding: '10px 8px 8px',
-                  borderRadius: '12px',
+                  padding: '6px 3px 5px',
+                  borderRadius: '10px',
                   border: isSel ? '2px solid #DF82A3' : '2px solid #D4C49A',
-                  background: isSel ? 'rgba(223,130,163,0.08)' : 'rgba(255,255,255,0.6)',
-                  boxShadow: isSel ? '0 4px 14px rgba(223,130,163,0.22)' : '0 2px 6px rgba(145,114,100,0.08)',
+                  background: isSel ? 'rgba(223,130,163,0.1)' : 'rgba(255,255,255,0.55)',
+                  boxShadow: isSel ? HOME_BTN_SHADOW : '0 2px 4px rgba(145,114,100,0.1)',
                   transition: 'border-color 0.2s, background 0.2s, box-shadow 0.2s',
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px',
-                  // Fixed height — no layout shift
-                  height: '100px',
-                  justifyContent: 'center',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px',
+                  height: '76px', justifyContent: 'center',
                 }}>
-                  {/* Strip icon — height proportional to rows */}
                   <div style={{
                     width: `${ICON_W}px`, height: `${ih}px`,
                     display: 'flex', flexDirection: 'column', gap: '2px', flexShrink: 0,
@@ -336,62 +383,69 @@ function BuildOwn({ onSelect }) {
                       }} />
                     ))}
                   </div>
-                  <span style={{ fontSize: '11px', fontWeight: '700', color: isSel ? '#DF82A3' : '#917264', letterSpacing: '0.3px' }}>{layout.label}</span>
-                  <span style={{ fontSize: '9px', color: '#B09880' }}>{layout.shots} {layout.shots === 1 ? 'pic' : 'pics'}</span>
+                  <span style={{ fontSize: '10px', fontWeight: '700', color: isSel ? '#DF82A3' : '#917264' }}>
+                    {layout.label}
+                  </span>
                 </div>
               )
             })}
           </div>
         </div>
 
-        {/* ── Frame preview — fixed size, proportional inner slots ── */}
-        <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', paddingTop: '24px' }}>
-          <p style={{ fontFamily: "'Cause',serif", fontSize: '11px', fontWeight: '700', letterSpacing: '1.5px', textTransform: 'uppercase', color: '#917264', margin: 0 }}>
-            Preview
-          </p>
-          {/* Outer frame — fixed PREV_W × PREV_H always */}
+        {/* Preview — fixed Trio size */}
+        <div style={{
+          flexShrink: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '6px',
+          alignItems: 'center',
+        }}>
+          <p style={panelLabel}>Preview</p>
           <div style={{
-            width: `${PREV_W}px`, height: `${PREV_H}px`,
+            width: `${previewDims.w}px`,
+            height: `${previewDims.h}px`,
             borderRadius: '12px',
             background: selectedLayout ? selectedColor.hex : 'rgba(255,255,255,0.45)',
             border: '2px solid #D4C49A',
-            boxShadow: '0 4px 16px rgba(145,114,100,0.18)',
+            boxShadow: HOME_BTN_SHADOW,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            padding: `${PREV_PAD}px`,
+            padding: `${previewDims.pad}px`,
             transition: 'background 0.3s',
             flexShrink: 0,
           }}>
             <PreviewSlots />
           </div>
           {selectedLayout && (
-            <p style={{ fontSize: '10px', color: '#917264', fontStyle: 'italic', margin: 0 }}>{selectedColor.label}</p>
+            <p style={{ fontSize: '9px', color: '#917264', fontStyle: 'italic', margin: 0 }}>
+              {selectedColor.label}
+            </p>
           )}
         </div>
       </div>
 
       {/* ── Color picker ── */}
-      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-        <p style={{ fontFamily: "'Cause',serif", fontSize: '11px', fontWeight: '700', letterSpacing: '2px', textTransform: 'uppercase', color: '#917264', margin: 0 }}>
+      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+        <p style={{ fontFamily: "'Cause',serif", fontSize: '10px', fontWeight: '700', letterSpacing: '2px', textTransform: 'uppercase', color: '#917264', margin: 0 }}>
           Frame Color
         </p>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center', maxWidth: '440px' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', justifyContent: 'center', maxWidth: '400px' }}>
           {FRAME_COLORS.map(c => (
-            <div key={c.id} onClick={() => setSelectedColor(c)} style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+            <div key={c.id} onClick={() => setSelectedColor(c)} style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
               <div style={{
-                width: '34px', height: '34px', borderRadius: '9px', background: c.hex,
+                width: '30px', height: '30px', borderRadius: '8px', background: c.hex,
                 border: selectedColor.id === c.id ? '3px solid #917264' : '3px solid transparent',
                 boxShadow: selectedColor.id === c.id ? '0 0 0 2px rgba(145,114,100,0.35)' : '0 2px 5px rgba(0,0,0,0.08)',
-                transform: selectedColor.id === c.id ? 'scale(1.12)' : 'scale(1)',
+                transform: selectedColor.id === c.id ? 'scale(1.1)' : 'scale(1)',
                 transition: 'transform 0.2s, box-shadow 0.2s, border 0.2s',
               }} />
-              <span style={{ fontSize: '9px', color: '#917264', fontWeight: selectedColor.id === c.id ? '700' : '400' }}>{c.label}</span>
+              <span style={{ fontSize: '8px', color: '#917264', fontWeight: selectedColor.id === c.id ? '700' : '400' }}>{c.label}</span>
             </div>
           ))}
         </div>
       </div>
 
       {/* ── Next button ── */}
-      <div style={{ paddingBottom: '4px' }}>
+      <div>
         <PillButton onClick={() => {
           playClick()
           selectedLayout && onSelect({ ...selectedLayout, frameColor: selectedColor.hex, isCustom: true })
@@ -418,26 +472,51 @@ export default function Layout() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', width: '100%', backgroundColor: '#F2E7B4', position: 'relative', fontFamily: "'Cause',serif" }}>
-      <Stripes />
-      <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: '680px', margin: '0 auto', padding: '32px 20px 56px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div style={{
+      height: '100vh', width: '100%', backgroundColor: '#f2e7b4',
+      position: 'relative', overflow: 'hidden', fontFamily: "'Cause',serif",
+    }}>
+      <VerticalStripes />
+      <div style={{
+        position: 'relative', zIndex: 1, width: '100%', maxWidth: '680px',
+        height: '100%', margin: '0 auto', padding: '14px 16px 16px',
+        boxSizing: 'border-box',
+        display: 'flex', flexDirection: 'column', alignItems: 'center',
+      }}>
 
-        <button onClick={() => navigate('/')} style={{ alignSelf: 'flex-start', background: 'none', border: 'none', color: '#917264', cursor: 'pointer', fontFamily: "'Cause',serif", fontSize: '14px', letterSpacing: '1px', padding: '4px 0', marginBottom: '8px' }}>
+        <button onClick={() => navigate('/')} style={{
+          alignSelf: 'flex-start',
+          background: 'rgba(255,255,255,0.55)',
+          border: '2px solid #D4C49A',
+          borderRadius: '100px',
+          color: '#917264',
+          cursor: 'pointer',
+          fontFamily: "'Cause',serif",
+          fontSize: '13px',
+          fontWeight: '600',
+          letterSpacing: '0.5px',
+          padding: '7px 16px',
+          marginBottom: '6px',
+          transition: 'background 0.2s, border-color 0.2s',
+        }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(223,130,163,0.12)'; e.currentTarget.style.borderColor = '#DF82A3' }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.55)'; e.currentTarget.style.borderColor = '#D4C49A' }}
+        >
           ← Back
         </button>
 
-        <h1 style={{ fontFamily: "'Unkempt',cursive", fontSize: 'clamp(28px,6vw,46px)', color: '#DF82A3', margin: '0 0 4px', letterSpacing: '2px', textAlign: 'center' }}>
+        <h1 style={{ fontFamily: "'Unkempt',cursive", fontSize: 'clamp(24px,5vw,40px)', color: '#DF82A3', margin: '0 0 2px', letterSpacing: '2px', textAlign: 'center' }}>
           Your Frame
         </h1>
-        <p style={{ fontFamily: "'Cause',serif", fontSize: '14px', color: '#917264', margin: '0 0 20px', letterSpacing: '0.5px' }}>
+        <p style={{ fontFamily: "'Cause',serif", fontSize: '13px', color: '#917264', margin: '0 0 12px', letterSpacing: '0.5px' }}>
           Pick a template or build your own
         </p>
 
-        <div style={{ display: 'flex', background: 'rgba(255,255,255,0.5)', borderRadius: '100px', padding: '4px', border: '2px solid #D4C49A', marginBottom: '20px', gap: '4px', flexShrink: 0 }}>
+        <div style={{ display: 'flex', background: 'rgba(255,255,255,0.5)', borderRadius: '100px', padding: '4px', border: '2px solid #D4C49A', marginBottom: '12px', gap: '4px', flexShrink: 0 }}>
           {[{ id: 'template', label: '✦ Templates' }, { id: 'build', label: '✐ Build Your Own' }].map(t => (
             <button key={t.id} onClick={() => setTab(t.id)} style={{
               fontFamily: "'Cause',serif", fontSize: 'clamp(12px,2.5vw,14px)', fontWeight: '700', letterSpacing: '1px',
-              padding: '9px clamp(14px,3.5vw,28px)', borderRadius: '100px', border: 'none', cursor: 'pointer',
+              padding: '8px clamp(12px,3vw,24px)', borderRadius: '100px', border: 'none', cursor: 'pointer',
               background: tab === t.id ? '#DF82A3' : 'transparent',
               color: tab === t.id ? '#F2E7B4' : '#917264',
               boxShadow: tab === t.id ? '0 3px 10px rgba(223,130,163,0.35)' : 'none',
@@ -446,7 +525,7 @@ export default function Layout() {
           ))}
         </div>
 
-        <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+        <div style={{ flex: 1, minHeight: 0, width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }}>
           {tab === 'template' ? <PickTemplate onSelect={handleSelect} /> : <BuildOwn onSelect={handleSelect} />}
         </div>
       </div>
