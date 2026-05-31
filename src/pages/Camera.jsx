@@ -67,7 +67,7 @@ const FILTERS = [
     id: 'sunshine',
     label: 'Sunshine',
     source: 'css',
-    css: 'brightness(1.15) saturate(1.4) sepia(0.18) contrast(1.05)',
+    css: 'brightness(1.2) saturate(1.4) sepia(0.18) contrast(0.8)',
   },
   {
     id: 'rosegold',
@@ -82,22 +82,48 @@ const FILTERS = [
     css: 'grayscale(1) brightness(1.12) contrast(1.18)',
   },
   {
+    id: 'pink_glow',
+    label: 'Pink Glow',
+    source: 'css',
+    css: 'brightness(1.1) saturate(2.5) sepia(1) hue-rotate(-30deg) contrast(1.05)',
+  },
+  {
+    id: 'blue_glow',
+    label: 'Blue Glow',
+    source: 'css',
+    css: 'brightness(1.2) saturate(2.5) sepia(1) hue-rotate(160deg) contrast(1.05)',
+  },
+  {
+    id: 'green_glow',
+    label: 'Green Glow',
+    source: 'css',
+    css: 'brightness(1.1) saturate(2.5) sepia(1) hue-rotate(80deg) contrast(1.05)',
+  },
+  {
+    id: 'random_light',
+    label: 'Light Leak',
+    source: 'none',
+    css: 'brightness(1.15) contrast(1.1) saturate(1.3) sepia(0.2)',
+  },
+  {
     id: 'dreamy',
     label: 'Dreamy',
     source: 'css',
-    css: 'brightness(1.1) saturate(0.85) contrast(0.92) blur(0.6px)',
+    css: 'saturate(0.7) brightness(1.1) contrast(1.2)',
   },
   {
-  id: 'sparkle',
-  label: 'Sparkle',
-  source: 'css',
-  css: 'none',
-  desc: 'Star frame',
+    id: 'sparkle',
+    label: 'Sparkle',
+    source: 'css',
+    css: 'none',
+    desc: 'Star frame',
   },
   { id: 'blush', label: 'Blush', source: 'backend' },
   { id: 'cat_ears', label: 'Cat', source: 'backend' },
   { id: 'hearts', label: 'Hearts', source: 'backend' },
-  {id: 'star_face', label: 'Star Face', source: 'backend' },
+  { id: 'star_face', label: 'Star Face', source: 'backend' },
+  { id: 'pixel', label: 'Pixel', desc: 'CRT retro',source: 'backend' },
+  { id: 'heatmap', label: 'Thermal', desc: 'Heat vision', source: 'backend' },
 ]
 
 const ICON_COLOR = '#917264'
@@ -191,9 +217,17 @@ function firstEmptySlotIndex(slots) {
 }
 
 /** Compact vertical frame strip (inside camera view) — matches layout shot count */
-function FrameProgressStrip({ total, slots, activeIndex, onSlotClick }) {
-  const box = total <= 1 ? 64 : total === 2 ? 56 : 48
+function FrameProgressStrip({ total, slots, activeIndex, onSlotClick, slotShapes }) {
+  const shortSide = total <= 1 ? 64 : total === 2 ? 56 : 44
   const gap = total <= 2 ? 10 : 8
+
+  function boxDims(i) {
+    const aspect = slotShapes?.[i]?.aspect ?? 4 / 3
+    if (aspect >= 1) {
+      return { w: Math.round(shortSide * Math.min(aspect, 1.85)), h: shortSide }
+    }
+    return { w: shortSide, h: Math.round(shortSide / aspect) }
+  }
 
   return (
     <div
@@ -215,6 +249,7 @@ function FrameProgressStrip({ total, slots, activeIndex, onSlotClick }) {
         const entry = slots[i]
         const hasPhoto = !!entry?.displayUrl
         const isActive = activeIndex >= 0 && i === activeIndex && !hasPhoto
+        const { w: boxW, h: boxH } = boxDims(i)
         return (
           <button
             key={i}
@@ -222,8 +257,8 @@ function FrameProgressStrip({ total, slots, activeIndex, onSlotClick }) {
             onClick={() => onSlotClick(i)}
             title={hasPhoto ? `Frame ${i + 1} — tap to replace` : `Frame ${i + 1}`}
             style={{
-              width: box,
-              height: box,
+              width: boxW,
+              height: boxH,
               borderRadius: 14,
               border: `2px dashed ${isActive ? '#DF82A3' : 'rgba(223,130,163,0.75)'}`,
               background: hasPhoto
@@ -250,7 +285,7 @@ function FrameProgressStrip({ total, slots, activeIndex, onSlotClick }) {
             ) : (
               <span style={{
                 fontFamily: "'Unkempt',cursive",
-                fontSize: box * 0.38,
+                fontSize: Math.min(boxW, boxH) * 0.38,
                 color: isActive ? '#fff' : '#DF82A3',
                 lineHeight: 1,
                 pointerEvents: 'none',
@@ -292,6 +327,8 @@ export default function Camera() {
   const [targetSlotIndex, setTargetSlotIndex] = useState(null)
 
   const fileInputRef = useRef(null)
+  const glowCanvasRef = useRef(null)
+  const dreamyCanvasRef = useRef(null)
 
   facingModeRef.current = facingMode
   selectedFilterRef.current = selectedFilter
@@ -332,6 +369,74 @@ export default function Camera() {
       alert('Camera access denied. Please allow camera permission and refresh.')
     }
   }
+
+  // ── Random light canvas animation ─────────────────────────────────────────
+  useEffect(() => {
+    if (selectedFilter !== 'random_light') return
+    const canvas = glowCanvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    let frame
+    let t = 0
+
+    const draw = () => {
+      t += 0.02
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      const lights = [
+        { x: 0.5 + 0.4 * Math.sin(t * 0.7),       y: 0.5 + 0.35 * Math.cos(t * 0.5),       c: 'rgba(234, 61, 177, 0.65)' },
+        { x: 0.5 + 0.4 * Math.sin(t * 0.4 + 2),   y: 0.5 + 0.35 * Math.cos(t * 0.8 + 1),   c: 'rgba(180,210,255,0.60)' },
+        { x: 0.5 + 0.4 * Math.sin(t * 1.1 + 4),   y: 0.5 + 0.35 * Math.cos(t * 0.3 + 3),   c: 'rgba(71, 183, 227, 0.58)' },
+      ]
+      lights.forEach(({ x, y, c }) => {
+        const grd = ctx.createRadialGradient(
+          x * canvas.width, y * canvas.height, 0,
+          x * canvas.width, y * canvas.height, canvas.width * 0.55
+        )
+        grd.addColorStop(0, c)
+        grd.addColorStop(1, 'rgba(0,0,0,0)')
+        ctx.fillStyle = grd
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+      })
+      frame = requestAnimationFrame(draw)
+    }
+    draw()
+    return () => cancelAnimationFrame(frame)
+  }, [selectedFilter])
+
+  // ── Dreamy light bloom overlay ────────────────────────────────────────────
+
+  useEffect(() => {
+    if (selectedFilter !== 'dreamy') return
+    const canvas = dreamyCanvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+    // ── White bloom from top-right corner ──────────────────────────────────
+    const grd = ctx.createRadialGradient(
+      canvas.width * 0.25, canvas.height * 0.05, 0,
+      canvas.width * 0.25, canvas.height * 0.05, canvas.width * 0.75
+    )
+    grd.addColorStop(0, 'rgba(100, 180, 255, 0.92)')   // blue core
+    grd.addColorStop(0,   'rgba(241, 141, 246, 0.92)')   // pink core
+    grd.addColorStop(0.6, 'rgba(255, 200, 220, 0.25)')   // soft pink fade    
+    grd.addColorStop(1,   'rgba(255, 255, 255, 0)')       // transparent edge
+    ctx.fillStyle = grd
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+    // ── Dark vignette on edges ──────────────────────────────────────────────
+    const vig = ctx.createRadialGradient(
+      canvas.width * 0.5, canvas.height * 0.5, canvas.width * 0.25,
+      canvas.width * 0.5, canvas.height * 0.5, canvas.width * 0.85
+    )
+    vig.addColorStop(0,   'rgba(0,0,0,0)')
+    vig.addColorStop(0.6, 'rgba(0,0,0,0)')
+    vig.addColorStop(1,   'rgba(0,0,0,0.72)')
+    ctx.fillStyle = vig
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+  }, [selectedFilter])
 
   function cancelFilterPreview() {
     filterRunIdRef.current += 1
@@ -390,9 +495,32 @@ export default function Camera() {
         overlayImg.src = sparkleOverlay
       })
     }
+
+    // ── Bake random light canvas into captured frame ──────────────────────
+      if (!preview && selectedFilterRef.current === 'random_light') {
+        const glowCanvas = glowCanvasRef.current
+        if (glowCanvas) {
+          ctx.globalCompositeOperation = 'screen'   // same blend as CSS mixBlendMode
+          ctx.drawImage(glowCanvas, 0, 0, w, h)
+          ctx.globalCompositeOperation = 'source-over'   // reset to default
+        }
+      }
+
+        // ── Bake dreamy bloom into captured frame ─────────────────────────────
+      if (!preview && selectedFilterRef.current === 'dreamy') {
+        const dreamyCanvas = dreamyCanvasRef.current
+        if (dreamyCanvas) {
+          ctx.globalCompositeOperation = 'screen'
+          ctx.drawImage(dreamyCanvas, 0, 0, w, h)
+          ctx.globalCompositeOperation = 'source-over'
+        }
+      }
+
+
     const quality = preview ? 0.68 : 0.92
     return target.toDataURL('image/jpeg', quality).split(',')[1]
   }
+
 
   async function applyFilterToPhoto(dataUrl, filterId) {
     if (!dataUrl || filterId === 'none') return dataUrl
@@ -724,22 +852,57 @@ export default function Camera() {
                       : undefined,
                   }}
                 />
+
+                {/*random light canvas */}
+                {selectedFilter === 'random_light' && (
+                  <canvas
+                    ref={glowCanvasRef}
+                    width={640}
+                    height={480}
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      width: '100%',
+                      height: '100%',
+                      pointerEvents: 'none',
+                      zIndex: 2,
+                      mixBlendMode: 'screen',
+                    }}
+                  />
+                )}
+
+                {selectedFilter === 'dreamy' && (
+                  <canvas
+                    ref={dreamyCanvasRef}
+                    width={640}
+                    height={480}
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      width: '100%',
+                      height: '100%',
+                      pointerEvents: 'none',
+                      zIndex: 2,
+                      mixBlendMode: 'screen',
+                    }}
+                  />
+                )}
                 {/* Backend filter overlay — INSIDE the relative div */}
-            {filteredFrame && isBackendFilter(selectedFilter) && (
-              <img
-                src={filteredFrame}
-                alt=""
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  pointerEvents: 'none',
-                  zIndex: 2,
-                }}
-              />
-            )}
+                  {filteredFrame && isBackendFilter(selectedFilter) && (
+                    <img
+                      src={filteredFrame}
+                      alt=""
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        pointerEvents: 'none',
+                        zIndex: 2,
+                      }}
+                    />
+                  )}
 
                 {/* Sparkle overlay */}
                 {selectedFilter === 'sparkle' && !allDone && (
@@ -773,6 +936,7 @@ export default function Camera() {
               slots={slots}
               activeIndex={nextCaptureIndex}
               onSlotClick={openUploadForSlot}
+              slotShapes={layoutConfig?.slots?.map(s => ({ aspect: s.width / s.height }))}
             />
           </div>
         ) : (
@@ -1036,23 +1200,69 @@ export default function Camera() {
   )
 }
 
+function clampOffset(ox, oy, vw, vh, drawW, drawH) {
+  const maxX = Math.max(0, (drawW - vw) / 2)
+  const maxY = Math.max(0, (drawH - vh) / 2)
+  return {
+    x: Math.min(maxX, Math.max(-maxX, ox)),
+    y: Math.min(maxY, Math.max(-maxY, oy)),
+  }
+}
+
 function ImageCropModal({ imageSrc, aspect = CROP_ASPECT, onConfirm, onCancel }) {
   const viewportRef = useRef(null)
-  const [scale, setScale] = useState(1)
+  const [imgMeta, setImgMeta] = useState(null)
+  const [viewportSize, setViewportSize] = useState({ w: 0, h: 0 })
+  const [userScale, setUserScale] = useState(1)
   const [offset, setOffset] = useState({ x: 0, y: 0 })
   const dragRef = useRef(null)
 
+  useEffect(() => {
+    let cancelled = false
+    loadImage(imageSrc).then(img => {
+      if (!cancelled) {
+        setImgMeta({ nw: img.naturalWidth, nh: img.naturalHeight })
+        setUserScale(1)
+        setOffset({ x: 0, y: 0 })
+      }
+    })
+    return () => { cancelled = true }
+  }, [imageSrc])
+
+  useEffect(() => {
+    const el = viewportRef.current
+    if (!el) return
+    const measure = () => {
+      setViewportSize({ w: el.clientWidth, h: el.clientHeight })
+    }
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
+  const coverScale = imgMeta && viewportSize.w > 0
+    ? Math.max(viewportSize.w / imgMeta.nw, viewportSize.h / imgMeta.nh)
+    : 1
+  const totalScale = coverScale * userScale
+  const drawW = imgMeta ? imgMeta.nw * totalScale : 0
+  const drawH = imgMeta ? imgMeta.nh * totalScale : 0
+  const clampedOffset = viewportSize.w > 0
+    ? clampOffset(offset.x, offset.y, viewportSize.w, viewportSize.h, drawW, drawH)
+    : offset
+
   function onPointerDown(e) {
-    dragRef.current = { startX: e.clientX, startY: e.clientY, ox: offset.x, oy: offset.y }
+    dragRef.current = { startX: e.clientX, startY: e.clientY, ox: clampedOffset.x, oy: clampedOffset.y }
     e.currentTarget.setPointerCapture(e.pointerId)
   }
 
   function onPointerMove(e) {
-    if (!dragRef.current) return
-    setOffset({
+    if (!dragRef.current || !imgMeta || viewportSize.w <= 0) return
+    const raw = {
       x: dragRef.current.ox + (e.clientX - dragRef.current.startX),
       y: dragRef.current.oy + (e.clientY - dragRef.current.startY),
-    })
+    }
+    setOffset(clampOffset(raw.x, raw.y, viewportSize.w, viewportSize.h, drawW, drawH))
   }
 
   function onPointerUp(e) {
@@ -1060,9 +1270,19 @@ function ImageCropModal({ imageSrc, aspect = CROP_ASPECT, onConfirm, onCancel })
     e.currentTarget.releasePointerCapture(e.pointerId)
   }
 
+  function handleZoomChange(next) {
+    setUserScale(next)
+    if (imgMeta && viewportSize.w > 0) {
+      const cs = Math.max(viewportSize.w / imgMeta.nw, viewportSize.h / imgMeta.nh)
+      const dw = imgMeta.nw * cs * next
+      const dh = imgMeta.nh * cs * next
+      setOffset(prev => clampOffset(prev.x, prev.y, viewportSize.w, viewportSize.h, dw, dh))
+    }
+  }
+
   async function handleApply() {
     const viewport = viewportRef.current
-    if (!viewport) return
+    if (!viewport || !imgMeta) return
     const vw = viewport.clientWidth
     const vh = viewport.clientHeight
     const img = await loadImage(imageSrc)
@@ -1072,32 +1292,41 @@ function ImageCropModal({ imageSrc, aspect = CROP_ASPECT, onConfirm, onCancel })
     canvas.width = outW
     canvas.height = outH
     const ctx = canvas.getContext('2d')
-    ctx.fillStyle = '#2a1f1a'
+    ctx.fillStyle = '#1a1410'
     ctx.fillRect(0, 0, outW, outH)
 
-    const baseScale = Math.max(vw / img.naturalWidth, vh / img.naturalHeight) * scale
-    const drawW = img.naturalWidth * baseScale
-    const drawH = img.naturalHeight * baseScale
-    const dx = (vw - drawW) / 2 + offset.x
-    const dy = (vh - drawH) / 2 + offset.y
-    const sx = (-dx / baseScale)
-    const sy = (-dy / baseScale)
-    const sw = vw / baseScale
-    const sh = vh / baseScale
+    const cs = Math.max(vw / img.naturalWidth, vh / img.naturalHeight)
+    const total = cs * userScale
+    const dW = img.naturalWidth * total
+    const dH = img.naturalHeight * total
+    const off = clampOffset(offset.x, offset.y, vw, vh, dW, dH)
+    const dx = (vw - dW) / 2 + off.x
+    const dy = (vh - dH) / 2 + off.y
+    const sx = -dx / total
+    const sy = -dy / total
+    const sw = vw / total
+    const sh = vh / total
 
     ctx.drawImage(img, sx, sy, sw, sh, 0, 0, outW, outH)
     onConfirm(canvas.toDataURL('image/jpeg', 0.92))
   }
+
+  const aspectLabel = aspect >= 1
+    ? `${aspect.toFixed(2)} : 1`
+    : `1 : ${(1 / aspect).toFixed(2)}`
 
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 100,
       background: 'rgba(42,31,26,0.92)',
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-      padding: 16, gap: 14, fontFamily: "'Cause',serif",
+      padding: 16, gap: 12, fontFamily: "'Cause',serif",
     }}>
       <p style={{ color: '#F2E7B4', fontSize: 14, letterSpacing: 1, margin: 0, textTransform: 'uppercase' }}>
         Crop to fit frame
+      </p>
+      <p style={{ color: '#917264', fontSize: 11, margin: 0 }}>
+        What you see is what appears in your strip ({aspectLabel})
       </p>
       <div
         ref={viewportRef}
@@ -1106,32 +1335,48 @@ function ImageCropModal({ imageSrc, aspect = CROP_ASPECT, onConfirm, onCancel })
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
         style={{
-          width: 'min(92vw, 420px)',
+          width: aspect >= 1 ? 'min(92vw, 420px)' : 'auto',
+          height: aspect < 1 ? 'min(58vh, 520px)' : 'auto',
+          maxWidth: 'min(92vw, 420px)',
+          maxHeight: 'min(58vh, 520px)',
           aspectRatio: `${aspect}`,
           borderRadius: 12,
           overflow: 'hidden',
           border: '3px solid #DF82A3',
           position: 'relative',
-          background: '#2a1f1a',
+          background: '#1a1410',
           touchAction: 'none',
-          cursor: 'grab',
+          cursor: imgMeta ? 'grab' : 'wait',
+          boxShadow: '0 8px 28px rgba(145,114,100,0.35)',
         }}
       >
-        <img
-          src={imageSrc}
-          alt="crop"
-          draggable={false}
-          style={{
-            position: 'absolute',
-            left: '50%',
-            top: '50%',
-            maxWidth: 'none',
-            transform: `translate(calc(-50% + ${offset.x}px), calc(-50% + ${offset.y}px)) scale(${scale})`,
-            transformOrigin: 'center center',
-            userSelect: 'none',
-            pointerEvents: 'none',
-          }}
-        />
+        {imgMeta && drawW > 0 && (
+          <img
+            src={imageSrc}
+            alt="crop preview"
+            draggable={false}
+            style={{
+              position: 'absolute',
+              left: '50%',
+              top: '50%',
+              width: `${drawW}px`,
+              height: `${drawH}px`,
+              maxWidth: 'none',
+              maxHeight: 'none',
+              transform: `translate(calc(-50% + ${clampedOffset.x}px), calc(-50% + ${clampedOffset.y}px))`,
+              userSelect: 'none',
+              pointerEvents: 'none',
+            }}
+          />
+        )}
+        {!imgMeta && (
+          <div style={{
+            position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: '#F2E7B4', fontSize: 12, letterSpacing: 1,
+          }}>
+            Loading…
+          </div>
+        )}
       </div>
       <label style={{ color: '#917264', fontSize: 12, display: 'flex', alignItems: 'center', gap: 10 }}>
         Zoom
@@ -1140,13 +1385,14 @@ function ImageCropModal({ imageSrc, aspect = CROP_ASPECT, onConfirm, onCancel })
           min={1}
           max={3}
           step={0.02}
-          value={scale}
-          onChange={e => setScale(Number(e.target.value))}
-          style={{ width: 180, accentColor: '#DF82A3' }}
+          value={userScale}
+          onChange={e => handleZoomChange(Number(e.target.value))}
+          style={{ width: 200, accentColor: '#DF82A3' }}
+          disabled={!imgMeta}
         />
       </label>
       <p style={{ color: '#917264', fontSize: 11, margin: 0, fontStyle: 'italic' }}>
-        Drag to reposition
+        Drag to reposition · pinch zoom with slider
       </p>
       <div style={{ display: 'flex', gap: 12 }}>
         <button type="button" onClick={onCancel} style={{
@@ -1156,12 +1402,12 @@ function ImageCropModal({ imageSrc, aspect = CROP_ASPECT, onConfirm, onCancel })
           border: '2px solid #D4C49A', borderRadius: '100px',
           padding: '10px 24px', cursor: 'pointer',
         }}>Cancel</button>
-        <button type="button" onClick={handleApply} style={{
+        <button type="button" onClick={handleApply} disabled={!imgMeta} style={{
           fontFamily: "'Cause',serif", fontSize: 13, fontWeight: 700,
           letterSpacing: '1px', textTransform: 'uppercase',
-          color: '#F2E7B4', background: '#DF82A3',
+          color: '#F2E7B4', background: imgMeta ? '#DF82A3' : '#C4A882',
           border: 'none', borderRadius: '100px',
-          padding: '10px 24px', cursor: 'pointer',
+          padding: '10px 24px', cursor: imgMeta ? 'pointer' : 'not-allowed',
         }}>Apply</button>
       </div>
     </div>
