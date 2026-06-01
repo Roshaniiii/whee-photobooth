@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { playClick } from '../utils/sounds'
+import VerticalStripes from '../components/VerticalStripes'
 
 // Import all assets — copy these files into your src/assets/ folder
 import logo from '../assets/whee-logo.png'
@@ -25,22 +26,7 @@ export default function Home() {
       alignItems: 'center',
     }}>
 
-      {/* ── Vertical Stripe Background ── */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        display: 'flex',
-        pointerEvents: 'none',
-        zIndex: 0,
-      }}>
-        {Array.from({ length: 18 }).map((_, i) => (
-          <div key={i} style={{
-            flex: 1,
-            borderRight: '5px solid #917264',
-            opacity: 0.20,
-          }} />
-        ))}
-      </div>
+      <VerticalStripes />
 
       {/* ── Content ── */}
       <div style={{

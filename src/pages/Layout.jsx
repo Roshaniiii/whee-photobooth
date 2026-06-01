@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { playClick } from '../utils/sounds'
+import VerticalStripes from '../components/VerticalStripes'
 import PageHeader from '../components/PageHeader'
 
 import t1a from '../assets/template_1strip_a.png'
@@ -57,16 +58,6 @@ const PREVIEW_PAD = 7
 
 const HOME_BTN_SHADOW = '0 5px 3px #917264, 0 10px 24px rgba(145,114,100,0.25)'
 const HOME_BTN_SHADOW_HOVER = '0 7px 7px #917264, 0 14px 28px rgba(145,114,100,0.3)'
-
-function VerticalStripes() {
-  return (
-    <div style={{ position: 'absolute', inset: 0, display: 'flex', pointerEvents: 'none', zIndex: 0 }}>
-      {Array.from({ length: 18 }).map((_, i) => (
-        <div key={i} style={{ flex: 1, borderRight: '5px solid #917264', opacity: 0.20 }} />
-      ))}
-    </div>
-  )
-}
 
 function getFixedPreviewDims() {
   return { w: PREVIEW_FIXED_W, h: PREVIEW_FIXED_H, pad: PREVIEW_PAD }

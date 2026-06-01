@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import sparkleOverlay from '../assets/sparkle_overlay.png'
 import VerticalStripes from '../components/VerticalStripes'
 import PageHeader from '../components/PageHeader'
+import { playClick, playCapture } from '../utils/sounds'
 
 // ── Template imports — needed to overlay on canvas ────────────
 import t1a from '../assets/template_1strip_a.png'
@@ -122,8 +123,15 @@ const FILTERS = [
   { id: 'cat_ears', label: 'Cat', source: 'backend' },
   { id: 'hearts', label: 'Hearts', source: 'backend' },
   { id: 'star_face', label: 'Star Face', source: 'backend' },
+  { id: 'bg_replace', label: 'BG Replace', source: 'backend' },
   { id: 'pixel', label: 'Pixel', desc: 'CRT retro',source: 'backend' },
   { id: 'heatmap', label: 'Thermal', desc: 'Heat vision', source: 'backend' },
+]
+
+const BACKGROUNDS = [
+  { id: 'bg1.jpg', label: 'Forest',  thumb: '/assets/backgrounds/bg1.jpg' },
+  { id: 'bg2.jpg', label: 'City',    thumb: '/assets/backgrounds/bg2.jpg' },
+  { id: 'bg3.jpg', label: 'Studio',  thumb: '/assets/backgrounds/bg3.jpg' },
 ]
 
 const ICON_COLOR = '#917264'
@@ -300,6 +308,97 @@ function FrameProgressStrip({ total, slots, activeIndex, onSlotClick, slotShapes
   )
 }
 
+function BgPanel({ backgrounds, selected, onSelect, onClose }) {
+  return (
+    <div style={{
+      width: '100%',
+      background: 'rgba(255,255,255,0.85)',
+      border: '2px solid #D4C49A',
+      borderRadius: '12px',
+      padding: '10px 12px',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '8px',
+      position: 'relative',
+    }}>
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label="Close background filter"
+        style={{
+          position: 'absolute',
+          top: '6px',
+          right: '8px',
+          width: '24px',
+          height: '24px',
+          padding: 0,
+          border: 'none',
+          borderRadius: '50%',
+          background: 'rgba(145,114,100,0.15)',
+          color: '#917264',
+          fontSize: '16px',
+          lineHeight: 1,
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontFamily: "'Cause',serif",
+        }}
+      >
+        ×
+      </button>
+      <span style={{
+        fontSize: '10px', color: '#917264',
+        letterSpacing: '2px', textTransform: 'uppercase',
+      }}>
+        Choose Background
+      </span>
+      <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', scrollbarWidth: 'none' }}>
+        {backgrounds.map(bg => (
+          <button
+            key={bg.id}
+            onClick={() => onSelect(bg.id)}
+            style={{
+              flexShrink: 0,
+              width: '72px',
+              height: '52px',
+              borderRadius: '8px',
+              overflow: 'hidden',
+              border: `3px solid ${selected === bg.id ? '#DF82A3' : '#D4C49A'}`,
+              padding: 0,
+              cursor: 'pointer',
+              position: 'relative',
+              boxShadow: selected === bg.id ? '0 0 10px rgba(223,130,163,0.5)' : 'none',
+              transition: 'all 0.2s',
+              background: '#2a1f1a',
+            }}
+          >
+            <img
+              src={bg.thumb}
+              alt={bg.label}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              onError={e => { e.target.style.display = 'none' }}
+            />
+            <div style={{
+              position: 'absolute', bottom: 0, left: 0, right: 0,
+              background: 'rgba(0,0,0,0.45)',
+              color: '#fff',
+              fontSize: '8px',
+              fontFamily: "'Cause',serif",
+              textAlign: 'center',
+              padding: '2px 0',
+              letterSpacing: '0.5px',
+              textTransform: 'uppercase',
+            }}>
+              {bg.label}
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function Camera() {
   const navigate          = useNavigate()
   const videoRef          = useRef(null)
@@ -311,6 +410,8 @@ export default function Camera() {
   const filterRunIdRef    = useRef(0)
   const filterAbortRef    = useRef(null)
   const filterSlotsRunRef = useRef(0)
+  const selectedBgRef = useRef('bg1.jpg')
+
 
   const [cameraReady,    setCameraReady]    = useState(false)
   const [facingMode,     setFacingMode]     = useState('user')
@@ -325,6 +426,7 @@ export default function Camera() {
   const [showCrop,       setShowCrop]       = useState(false)
   const [cropAspect,     setCropAspect]     = useState(CROP_ASPECT)
   const [targetSlotIndex, setTargetSlotIndex] = useState(null)
+  const [selectedBg, setSelectedBg] = useState('bg1.jpg')
 
   const fileInputRef = useRef(null)
   const glowCanvasRef = useRef(null)
@@ -332,7 +434,7 @@ export default function Camera() {
 
   facingModeRef.current = facingMode
   selectedFilterRef.current = selectedFilter
-
+  selectedBgRef.current = selectedBg
   const activeCssFilter = isCssFilter(selectedFilter) ? getCssFilterValue(selectedFilter) : 'none'
 
   const layoutConfig  = JSON.parse(sessionStorage.getItem('layoutConfig') || 'null')
@@ -536,7 +638,7 @@ export default function Camera() {
       const res = await fetch('http://localhost:8000/apply-filter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: b64, filter: selectedFilter, preview: true }),
+        body: JSON.stringify({ image: b64, filter: selectedFilter, preview: true, bg_filename: selectedBgRef.current }),
         signal,
       })
       if (!res.ok) throw new Error(`Filter API ${res.status}`)
@@ -624,6 +726,7 @@ export default function Camera() {
   }, [selectedFilter, stripPreview, capturing])
 
   async function captureOne() {
+    playCapture()
     const frame = await captureRawFrame()
     if (!frame) return null
     const rawUrl = `data:image/jpeg;base64,${frame}`
@@ -705,6 +808,7 @@ export default function Camera() {
   }, [slots, stripPreview, capturing, isProcessing])
 
   function retake() {
+    playClick()
     setStripPreview(null)
     setSlots(emptySlots(totalShots))
     setFilteredFrame(null)
@@ -759,6 +863,7 @@ export default function Camera() {
   }
 
   function handleDownload() {
+    playClick()
     if (!stripPreview) return
     const a = document.createElement('a')
     a.href     = stripPreview
@@ -766,7 +871,10 @@ export default function Camera() {
     a.click()
   }
 
-  function handleCustomise() { navigate('/customise') }
+  function handleCustomise() {
+    playClick()
+    navigate('/customise')
+  }
 
   function flipCamera() {
     if (capturing) return
@@ -817,7 +925,7 @@ export default function Camera() {
               }}>
                 <span style={{
                   fontSize: '120px',
-                  fontWeight: '700', color: '#F2E7B4',
+                  fontWeight: '700', color: '#DF82A3',
                   textShadow: '0 0 40px rgba(223,130,163,0.9)',
                 }}>
                   {countdown}
@@ -1130,7 +1238,16 @@ export default function Camera() {
                 </div>
               </div>
             </div>
-
+            
+            {selectedFilter === 'bg_replace' && (
+              <BgPanel
+                backgrounds={BACKGROUNDS}
+                selected={selectedBg}
+                onSelect={setSelectedBg}
+                onClose={() => setSelectedFilter('none')}
+              />
+            )}
+            
             {/* Hint */}
             <p style={{ fontSize: '12px', color: '#917264', margin: 0, fontStyle: 'italic', textAlign: 'center' }}>
               {capturing

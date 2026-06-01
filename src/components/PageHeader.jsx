@@ -1,7 +1,7 @@
 import BackButton from './BackButton'
 
 export const PAGE_TITLE_STYLE = {
-  fontFamily: "'Unkempt',cursive",
+  fontFamily: "'Cause',serif",
   fontSize: 'clamp(26px, 5vw, 36px)',
   color: '#DF82A3',
   margin: '8px 0 0',
