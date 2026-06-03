@@ -28,10 +28,11 @@ const FRAME_COLORS = [
   { id: 'black',    label: 'Noir',     hex: '#2A2A2A' },
 ]
 
-// ── Each card rendered at its TRUE aspect ratio, but capped at max height ──
-// Center card max-height = 300px. Side cards scale to 0.78.
-const CENTER_MAX_H = 360
-const CENTER_W     = 240
+// Carousel: fixed slot per card so mixed template heights stay aligned
+const CAROUSEL_PREVIEW_W = 200
+const CAROUSEL_PREVIEW_H = 300
+const CAROUSEL_SIDE_SCALE = 0.72
+const CAROUSEL_GAP = 36
 
 // Fixed preview box — always Trio (3-frame) outer size; slots reflow inside
 const PREVIEW_FIXED_W = 112
@@ -98,7 +99,11 @@ function ShotBadge({ shots }) {
 // TAB 1 — Templates carousel
 // ══════════════════════════════════════════════════════════════
 function PickTemplate({ onSelect }) {
-  const [current, setCurrent] = useState(3) // Film Roll first
+  const [current, setCurrent] = useState(0)
+
+  const sideW = Math.round(CAROUSEL_PREVIEW_W * CAROUSEL_SIDE_SCALE)
+  const sideH = Math.round(CAROUSEL_PREVIEW_H * CAROUSEL_SIDE_SCALE)
+  const sideOffsetX = Math.round(CAROUSEL_PREVIEW_W / 2 + sideW / 2 + CAROUSEL_GAP)
 
   function prev() { setCurrent(i => (i - 1 + TEMPLATES.length) % TEMPLATES.length) }
   function next() { setCurrent(i => (i + 1) % TEMPLATES.length) }
@@ -111,15 +116,6 @@ function PickTemplate({ onSelect }) {
     return 'hidden'
   }
 
-  // Each template card: true aspect ratio, capped at CENTER_MAX_H
-  function cardDims(t) {
-    const ratio = t.canvasHeight / t.canvasWidth
-    const naturalH = CENTER_W * ratio
-    const h = Math.min(naturalH, CENTER_MAX_H)
-    const w = h / ratio
-    return { w, h }
-  }
-
   return (
     <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1px' }}>
 
@@ -128,11 +124,12 @@ function PickTemplate({ onSelect }) {
         position: 'relative',
         width: '100%',
         maxWidth: '700px',
-        // height = center max height + label + breathing room
-        height: `${CENTER_MAX_H + 52}px`,
+        height: `${CAROUSEL_PREVIEW_H + 48}px`,
         overflow: 'hidden',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         flexShrink: 0,
+        padding: '0 44px',
+        boxSizing: 'border-box',
       }}>
 
         {/* Left arrow */}
@@ -152,54 +149,56 @@ function PickTemplate({ onSelect }) {
           const pos = getPos(idx)
           if (pos === 'hidden') return null
           const isCenter = pos === 'center'
-          const { w, h } = cardDims(t)
-          const scale = isCenter ? 1 : 0.78
+          const slotW = isCenter ? CAROUSEL_PREVIEW_W : sideW
+          const slotH = isCenter ? CAROUSEL_PREVIEW_H : sideH
+          const xShift = isCenter ? 0 : pos === 'left' ? -sideOffsetX : sideOffsetX
 
           return (
             <div key={t.id} onClick={() => !isCenter && setCurrent(idx)} style={{
               position: 'absolute',
-              // Bring side cards much closer: ±(centerW/2 + sideW/2 + small gap)
-              transform: isCenter
-                ? 'translateX(0) scale(1)'
-                : pos === 'left'
-                  ? `translateX(-${Math.round(w * 0.78 / 2 + w / 2 + 12)}px) scale(0.78)`
-                  : `translateX(${Math.round(w * 0.78 / 2 + w / 2 + 12)}px) scale(0.78)`,
-              transition: 'all 0.4s cubic-bezier(0.25,0.46,0.45,0.94)',
+              left: '50%',
+              top: '44%',
+              width: `${slotW}px`,
+              height: `${slotH}px`,
+              transform: `translate(calc(-50% + ${xShift}px), -50%)`,
+              transition: 'transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.4s ease',
               zIndex: isCenter ? 3 : 1,
-              opacity: isCenter ? 1 : 0.6,
+              opacity: isCenter ? 1 : 0.55,
               cursor: isCenter ? 'default' : 'pointer',
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}>
-
-              {/* Card image — true aspect ratio, overflow hidden */}
-              <div style={{
-                position: 'relative',
-                width: `${w}px`,
-                height: `${h}px`,
-                borderRadius: '12px',
-                overflow: 'hidden',
-                flexShrink: 0,
-                boxShadow: isCenter
-                  ? '0 16px 40px rgba(145,114,100,0.35)'
-                  : '0 6px 16px rgba(145,114,100,0.2)',
-                background: '#fff',
-              }}>
-                <img src={t.file} alt={t.label} style={{
-                  width: '100%', height: '100%',
-                  objectFit: 'cover', objectPosition: 'top', display: 'block',
-                }} />
-                <ShotBadge shots={t.shots} />
-              </div>
-
-              {/* Label only under center card */}
-              {isCenter && (
-                <p style={{ fontFamily: "'Cause',serif", fontSize: '13px', fontWeight: '600', color: '#917264', letterSpacing: '1px', margin: 0 }}>
-                  {t.label}
-                </p>
-              )}
+              <img src={t.file} alt={t.label} style={{
+                maxWidth: '100%',
+                maxHeight: `${slotH}px`,
+                width: 'auto',
+                height: 'auto',
+                objectFit: 'contain',
+                display: 'block',
+              }} />
+              <ShotBadge shots={t.shots} />
             </div>
           )
         })}
+
+        <p style={{
+          position: 'absolute',
+          left: '50%',
+          bottom: 6,
+          transform: 'translateX(-50%)',
+          fontFamily: "'Cause',serif",
+          fontSize: '13px',
+          fontWeight: '600',
+          color: '#917264',
+          letterSpacing: '1px',
+          margin: 0,
+          textAlign: 'center',
+          whiteSpace: 'nowrap',
+          zIndex: 4,
+        }}>
+          {TEMPLATES[current].label}
+        </p>
 
         {/* Right arrow */}
         <button onClick={next} style={{
