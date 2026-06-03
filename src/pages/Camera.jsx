@@ -5,48 +5,17 @@ import VerticalStripes from '../components/VerticalStripes'
 import PageHeader from '../components/PageHeader'
 import { playClick, playCapture } from '../utils/sounds'
 
-// ── Template imports — needed to overlay on canvas ────────────
-import t1a from '../assets/template_1strip_a.png'
-import t1b from '../assets/template_1strip_b.png'
-import t1c from '../assets/template_1strip_c.png'
-import t2a from '../assets/template_2strip_a.png'
-import t2b from '../assets/template_2strip_b.png'
-import t2c from '../assets/template_2strip_c.png'
-import t3a from '../assets/template_3strip_a.png'
-import t4a from '../assets/template_4strip_a.png'
-
-// Map template id → imported asset URL
-const TEMPLATE_ASSETS = {
-  template_1strip_a: t1a,
-  template_1strip_b: t1b,
-  template_1strip_c: t1c,
-  template_2strip_a: t2a,
-  template_2strip_b: t2b,
-  template_2strip_c: t2c,
-  template_3strip_a: t3a,
-  template_4strip_a: t4a,
-}
-
-const TEMPLATE_CONFIGS = {
-  template_1strip_a: { canvasWidth: 900, canvasHeight: 1100, slots: [{ x: 70, y: 80, width: 760, height: 760 }] },
-  template_1strip_b: { canvasWidth: 900, canvasHeight: 1100, slots: [{ x: 70, y: 80, width: 760, height: 760 }] },
-  template_1strip_c: { canvasWidth: 900, canvasHeight: 1100, slots: [{ x: 70, y: 80, width: 760, height: 760 }] },
-  template_2strip_a: { canvasWidth: 900, canvasHeight: 1600, slots: [{ x: 40, y: 50, width: 820, height: 600 }, { x: 40, y: 700, width: 820, height: 600 }] },
-  template_2strip_b: { canvasWidth: 900, canvasHeight: 1600, slots: [{ x: 40, y: 50, width: 820, height: 600 }, { x: 40, y: 700, width: 820, height: 600 }] },
-  template_2strip_c: { canvasWidth: 900, canvasHeight: 1600, slots: [{ x: 40, y: 50, width: 820, height: 600 }, { x: 40, y: 700, width: 820, height: 600 }] },
-  template_3strip_a: { canvasWidth: 900, canvasHeight: 2000, slots: [{ x: 40, y: 40, width: 820, height: 480 }, { x: 40, y: 560, width: 820, height: 480 }, { x: 40, y: 1080, width: 820, height: 480 }] },
-  template_4strip_a: { canvasWidth: 900, canvasHeight: 2400, slots: [{ x: 40, y: 40, width: 820, height: 440 }, { x: 40, y: 530, width: 820, height: 440 }, { x: 40, y: 1020, width: 820, height: 440 }, { x: 40, y: 1510, width: 820, height: 440 }] },
-}
+import { TEMPLATE_ASSETS } from '../config/templates'
 
 /** 4-frame strip height — other layouts scale proportionally for the result page */
-const FOUR_FRAME_REF_HEIGHT = 2400
+const FOUR_FRAME_REF_HEIGHT = 2000
 const STRIP_DISPLAY_MAX_HEIGHT_4 = 620
 const HOME_BTN_SHADOW = '0 5px 3px #917264, 0 10px 24px rgba(145,114,100,0.25)'
 const HOME_BTN_SHADOW_HOVER = '0 7px 7px #917264, 0 14px 28px rgba(145,114,100,0.3)'
 
 function getStripImageStyle(layoutConfig) {
-  const cw = layoutConfig?.canvasWidth ?? 900
-  const ch = layoutConfig?.canvasHeight ?? 1100
+  const cw = layoutConfig?.canvasWidth ?? 600
+  const ch = layoutConfig?.canvasHeight ?? 700
   const scale = ch / FOUR_FRAME_REF_HEIGHT
   const maxH = Math.round(STRIP_DISPLAY_MAX_HEIGHT_4 * scale)
   const maxW = Math.round(maxH * (cw / ch))
@@ -1559,11 +1528,7 @@ async function buildStrip(photos, layoutConfig, templateSrc) {
       ctx.restore()
     })
   } else {
-    // Step 1: White background
-    ctx.fillStyle = '#FFFFFF'
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight)
-
-    // Step 2: Draw photos into slots
+    // Photos first, then transparent template frame on top
     const photoImgs = await Promise.all(photos.map(loadImage))
     slots.forEach((slot, i) => {
       const img = photoImgs[i] ?? photoImgs[photoImgs.length - 1]
@@ -1576,17 +1541,8 @@ async function buildStrip(photos, layoutConfig, templateSrc) {
       ctx.restore()
     })
 
-    // Step 3: Draw template but SKIP the slot rectangles
     const tmpl = await loadImage(templateSrc)
-    ctx.save()
-    ctx.beginPath()
-    ctx.rect(0, 0, canvasWidth, canvasHeight)
-    slots.forEach(slot => {
-      ctx.rect(slot.x, slot.y, slot.width, slot.height)
-    })
-    ctx.clip('evenodd')
     ctx.drawImage(tmpl, 0, 0, canvasWidth, canvasHeight)
-    ctx.restore()
   }
 
   return canvas.toDataURL('image/png')
