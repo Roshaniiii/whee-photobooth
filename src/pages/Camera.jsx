@@ -6,6 +6,7 @@ import PageHeader from '../components/PageHeader'
 import { playClick, playCapture } from '../utils/sounds'
 
 import { TEMPLATE_ASSETS } from '../config/templates'
+import { hasFilterApi, filterApiEndpoint } from '../config/api'
 
 /** 4-frame strip height — other layouts scale proportionally for the result page */
 const FOUR_FRAME_REF_HEIGHT = 2000
@@ -92,7 +93,6 @@ const FILTERS = [
   { id: 'cat_ears', label: 'Cat', source: 'backend' },
   { id: 'hearts', label: 'Hearts', source: 'backend' },
   { id: 'star_face', label: 'Star Face', source: 'backend' },
-  { id: 'bg_replace', label: 'BG Replace', source: 'backend' },
   { id: 'pixel', label: 'Pixel', desc: 'CRT retro',source: 'backend' },
   { id: 'heatmap', label: 'Thermal', desc: 'Heat vision', source: 'backend' },
 ]
@@ -158,6 +158,10 @@ function getFilterById(id) {
 
 function isBackendFilter(id) {
   return getFilterById(id).source === 'backend'
+}
+
+function getVisibleFilters() {
+  return hasFilterApi() ? FILTERS : FILTERS.filter(f => f.source !== 'backend')
 }
 
 function isCssFilter(id) {
@@ -415,6 +419,12 @@ export default function Camera() {
   const filledCount = filledSlotCount(slots)
   const nextCaptureIndex = firstEmptySlotIndex(slots)
 
+  useEffect(() => {
+    if (!hasFilterApi() && isBackendFilter(selectedFilter)) {
+      setSelectedFilter('none')
+    }
+  }, [])
+
   // ── Camera start/stop ─────────────────────────────────────
   useEffect(() => {
     startCamera()
@@ -603,11 +613,17 @@ export default function Camera() {
   async function applyFilter(b64, filter, { signal, preview = false } = {}) {
     if (filter === 'none') return 'data:image/jpeg;base64,' + b64
     if (isCssFilter(filter)) return bakeCssFilter(b64, getCssFilterValue(filter))
+    if (!hasFilterApi()) return 'data:image/jpeg;base64,' + b64
     try {
-      const res = await fetch('http://localhost:8000/apply-filter', {
+      const res = await fetch(filterApiEndpoint('/apply-filter'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: b64, filter: selectedFilter, preview: true, bg_filename: selectedBgRef.current }),
+        body: JSON.stringify({
+          image: b64,
+          filter,
+          preview,
+          bg_filename: selectedBgRef.current,
+        }),
         signal,
       })
       if (!res.ok) throw new Error(`Filter API ${res.status}`)
@@ -1233,7 +1249,7 @@ export default function Camera() {
 
             {/* Filter strip */}
             <div style={{ width: '100%', display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px', scrollbarWidth: 'none' }}>
-              {FILTERS.map(f => (
+              {getVisibleFilters().map(f => (
                 <button key={f.id} onClick={() => {
                   if (capturing) return
                   if (f.id === 'none') {

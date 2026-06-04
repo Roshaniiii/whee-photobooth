@@ -19,13 +19,13 @@ body {
   font-style: normal;
 }
 
-/* Y2K Scrollbar */
+/* Whee scrollbar */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: #1a1a2e; }
 ::-webkit-scrollbar-thumb { background: #ff69b4; border-radius: 4px; }
 
-/* Chunky Y2K button style */
-.btn-y2k {
+/* Legacy chunky button style (unused in app pages) */
+.btn-whee {
   background: #ff69b4;
   color: #000;
   border: 3px solid #fff;
@@ -40,13 +40,13 @@ body {
   transition: all 0.1s;
 }
 
-.btn-y2k:hover {
+.btn-whee:hover {
   background: #ff1493;
   transform: translate(-2px, -2px);
   box-shadow: 6px 6px 0px #c0c0c0;
 }
 
-.btn-y2k:active {
+.btn-whee:active {
   transform: translate(2px, 2px);
   box-shadow: 2px 2px 0px #c0c0c0;
 }
