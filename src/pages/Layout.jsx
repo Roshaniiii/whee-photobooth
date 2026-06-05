@@ -20,12 +20,18 @@ const FRAME_COLORS = [
   { id: 'mauve',    label: 'Mauve',    hex: '#DF82A3' },
   { id: 'sage',     label: 'Sage',     hex: '#B5C9A1' },
   { id: 'mint',     label: 'Mint',     hex: '#A8D8C8' },
-  { id: 'sky',      label: 'Sky',      hex: '#A8C8E8' },
+  { id: 'sky',      label: 'Sky',      hex: '#84B3CE' },
   { id: 'lavender', label: 'Lavender', hex: '#C8B8E8' },
-  { id: 'peach',    label: 'Peach',    hex: '#F4C4A0' },
-  { id: 'butter',   label: 'Slate',    hex: '#8E8E8E' },
+  { id: 'butter',   label: 'Butter',   hex: '#FFF3B4' },
+  { id: 'slate',    label: 'Slate',    hex: '#8E8E8E' },
   { id: 'mocha',    label: 'Mocha',    hex: '#917264' },
   { id: 'black',    label: 'Noir',     hex: '#2A2A2A' },
+  { id: 'green',    label: 'Moss',     hex: '#575527' },
+  { id: 'pink',     label: 'Blossom',  hex: '#B97D7B' },
+  { id: 'brown',    label: 'Espresso', hex: '#3E2723' },
+  { id: 'red',      label: 'Wine',     hex: '#760D46' },
+  { id: 'blue',     label: 'Ocean',    hex: '#1F4072' },
+  { id: 'grass',    label: 'Grass',    hex: '#013E37' },
 ]
 
 // Carousel: fixed slot per card so mixed template heights stay aligned
