@@ -3,7 +3,6 @@ import { playClick } from '../utils/sounds'
 import VerticalStripes from '../components/VerticalStripes'
 
 // Import all assets — copy these files into your src/assets/ folder
-import logo from '../assets/whee-logo.png'
 import frame1 from '../assets/frame_1.png'
 import frame2 from '../assets/frame_2.png'
 import frame3 from '../assets/frame_3.png'
