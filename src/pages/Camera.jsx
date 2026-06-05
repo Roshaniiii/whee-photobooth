@@ -533,6 +533,106 @@ export default function Camera() {
     }
   }
 
+    // ── Apply CSS filter to canvas pixel data ─────────────────
+  function applyCanvasFilter(ctx, w, h, filterId) {
+    const filter = FILTERS.find(f => f.id === filterId)
+    if (!filter || filter.source === 'none' || !filter.css || filter.css === 'none') return
+
+    const imageData = ctx.getImageData(0, 0, w, h)
+    const d = imageData.data
+
+    for (let i = 0; i < d.length; i += 4) {
+      let r = d[i], g = d[i+1], b = d[i+2]
+
+      if (filterId === 'greyglow') {
+        // grayscale(1) brightness(1.12) contrast(1.18)
+        const gray = Math.round(0.299*r + 0.587*g + 0.114*b)
+        const bright = Math.min(255, gray * 1.12)
+        const contrast = Math.min(255, Math.max(0, ((bright - 128) * 1.18) + 128))
+        d[i] = d[i+1] = d[i+2] = contrast
+
+      } else if (filterId === 'sunshine') {
+        // brightness(1.2) saturate(1.4) sepia(0.18) contrast(0.8)
+        r = Math.min(255, r * 1.2); g = Math.min(255, g * 1.2); b = Math.min(255, b * 1.2)
+        const sr = Math.min(255, r*0.393 + g*0.769 + b*0.189)
+        const sg = Math.min(255, r*0.349 + g*0.686 + b*0.168)
+        const sb = Math.min(255, r*0.272 + g*0.534 + b*0.131)
+        r = Math.round(r + (sr - r) * 0.18)
+        g = Math.round(g + (sg - g) * 0.18)
+        b = Math.round(b + (sb - b) * 0.18)
+        d[i]   = Math.min(255, Math.max(0, ((r - 128) * 0.8) + 128))
+        d[i+1] = Math.min(255, Math.max(0, ((g - 128) * 0.8) + 128))
+        d[i+2] = Math.min(255, Math.max(0, ((b - 128) * 0.8) + 128))
+        continue
+
+      } else if (filterId === 'rosegold') {
+        // sepia(0.45) saturate(1.5) brightness(1.08) hue-rotate(-15deg)
+        const sr = Math.min(255, r*0.393 + g*0.769 + b*0.189)
+        const sg = Math.min(255, r*0.349 + g*0.686 + b*0.168)
+        const sb = Math.min(255, r*0.272 + g*0.534 + b*0.131)
+        r = Math.round(r + (sr - r) * 0.45)
+        g = Math.round(g + (sg - g) * 0.45)
+        b = Math.round(b + (sb - b) * 0.45)
+        r = Math.min(255, r * 1.08)
+        g = Math.min(255, g * 1.08)
+        b = Math.min(255, b * 1.08)
+        // hue-rotate(-15deg) approximation — boost red, reduce blue slightly
+        d[i]   = Math.min(255, r * 1.08)
+        d[i+1] = Math.min(255, g * 0.98)
+        d[i+2] = Math.min(255, b * 0.90)
+        continue
+
+      } else if (filterId === 'pink_glow') {
+        // sepia→hue-rotate(-30deg) = warm pink
+        const sr = Math.min(255, r*0.393 + g*0.769 + b*0.189)
+        const sg = Math.min(255, r*0.349 + g*0.686 + b*0.168)
+        const sb = Math.min(255, r*0.272 + g*0.534 + b*0.131)
+        d[i]   = Math.min(255, sr * 1.1 * 1.05)
+        d[i+1] = Math.min(255, sg * 0.85 * 1.05)
+        d[i+2] = Math.min(255, sb * 0.95 * 1.05)
+        continue
+
+      } else if (filterId === 'blue_glow') {
+        // sepia→hue-rotate(160deg) = cool blue
+        const sr = Math.min(255, r*0.393 + g*0.769 + b*0.189)
+        const sg = Math.min(255, r*0.349 + g*0.686 + b*0.168)
+        const sb = Math.min(255, r*0.272 + g*0.534 + b*0.131)
+        d[i]   = Math.min(255, sb * 0.8 * 1.2 * 1.05)
+        d[i+1] = Math.min(255, sg * 0.9 * 1.2 * 1.05)
+        d[i+2] = Math.min(255, sr * 1.2 * 1.2 * 1.05)
+        continue
+
+      } else if (filterId === 'green_glow') {
+        // sepia→hue-rotate(80deg) = green
+        const sr = Math.min(255, r*0.393 + g*0.769 + b*0.189)
+        const sg = Math.min(255, r*0.349 + g*0.686 + b*0.168)
+        const sb = Math.min(255, r*0.272 + g*0.534 + b*0.131)
+        d[i]   = Math.min(255, sg * 0.7 * 1.1 * 1.05)
+        d[i+1] = Math.min(255, sr * 1.1 * 1.1 * 1.05)
+        d[i+2] = Math.min(255, sb * 0.7 * 1.1 * 1.05)
+        continue
+
+      } else if (filterId === 'dreamy') {
+        // saturate(0.7) brightness(1.1) contrast(1.2)
+        const gray = 0.299*r + 0.587*g + 0.114*b
+        r = Math.round(gray + (r - gray) * 0.7)
+        g = Math.round(gray + (g - gray) * 0.7)
+        b = Math.round(gray + (b - gray) * 0.7)
+        r = Math.min(255, r * 1.1); g = Math.min(255, g * 1.1); b = Math.min(255, b * 1.1)
+        d[i]   = Math.min(255, Math.max(0, ((r - 128) * 1.2) + 128))
+        d[i+1] = Math.min(255, Math.max(0, ((g - 128) * 1.2) + 128))
+        d[i+2] = Math.min(255, Math.max(0, ((b - 128) * 1.2) + 128))
+        continue
+      }
+
+      d[i] = Math.min(255, Math.max(0, r))
+      d[i+1] = Math.min(255, Math.max(0, g))
+      d[i+2] = Math.min(255, Math.max(0, b))
+    }
+
+    ctx.putImageData(imageData, 0, 0)
+  }
+
   // ── Capture raw frame → base64 JPEG string (no prefix) ───
     async function captureRawFrame({ preview = false } = {}) {
     const video = videoRef.current
@@ -596,6 +696,8 @@ export default function Camera() {
           ctx.globalCompositeOperation = 'source-over'
         }
       }
+      
+      if (!preview) applyCanvasFilter(ctx, w, h, selectedFilter)
 
 
     const quality = preview ? 0.68 : 0.92
@@ -603,10 +705,24 @@ export default function Camera() {
   }
 
 
-  async function applyFilterToPhoto(dataUrl, filterId) {
+    async function applyFilterToPhoto(dataUrl, filterId) {
     if (!dataUrl || filterId === 'none') return dataUrl
-    const b64 = dataUrl.includes(',') ? dataUrl.split(',')[1] : dataUrl
-    return applyFilter(b64, filterId)
+
+    const filter = FILTERS.find(f => f.id === filterId)
+    if (!filter) return dataUrl
+
+    // CSS filters — already baked into canvas by applyCanvasFilter
+    // during captureRawFrame, so just return as-is
+    if (filter.source === 'css') return dataUrl
+
+    // Backend filters — send to Python API
+    if (filter.source === 'backend') {
+      const b64 = dataUrl.includes(',') ? dataUrl.split(',')[1] : dataUrl
+      return applyFilter(b64, filterId)
+    }
+
+    // source === 'none' or anything else — return as-is
+    return dataUrl
   }
 
   // ── Apply filter (CSS instant, backend via API) ──────────
