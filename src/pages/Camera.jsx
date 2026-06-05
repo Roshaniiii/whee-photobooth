@@ -46,11 +46,29 @@ const FILTERS = [
     source: 'css',
     css: 'sepia(0.45) saturate(1.5) brightness(1.08) hue-rotate(-15deg)',
   },
-  {
-    id: 'greyglow',
-    label: 'Grey Glow',
+    {
+    id: 'modern',
+    label: 'Modern',
     source: 'css',
-    css: 'grayscale(1) brightness(1.12) contrast(1.18)',
+    css: 'brightness(110%) contrast(120%) saturate(130%) sepia(10%) hue-rotate(350deg)',
+  },
+  {
+    id: 'popular',
+    label: 'Popular',
+    source: 'css',
+    css: 'brightness(105%) contrast(115%) saturate(110%) hue-rotate(350deg) drop-shadow(5px 5px 8px #444444)',
+  },
+  {
+    id: 'grey',
+    label: 'Grey',
+    source: 'css',
+    css: 'brightness(100%) contrast(100%) saturate(0%) grayscale(100%)',
+  },
+  {
+    id: 'vintage',
+    label: 'Vintage',
+    source: 'css',
+    css: 'brightness(129%) contrast(62%) saturate(136%) hue-rotate(348deg)',
   },
   {
     id: 'pink_glow',
@@ -544,14 +562,7 @@ export default function Camera() {
     for (let i = 0; i < d.length; i += 4) {
       let r = d[i], g = d[i+1], b = d[i+2]
 
-      if (filterId === 'greyglow') {
-        // grayscale(1) brightness(1.12) contrast(1.18)
-        const gray = Math.round(0.299*r + 0.587*g + 0.114*b)
-        const bright = Math.min(255, gray * 1.12)
-        const contrast = Math.min(255, Math.max(0, ((bright - 128) * 1.18) + 128))
-        d[i] = d[i+1] = d[i+2] = contrast
-
-      } else if (filterId === 'sunshine') {
+      if (filterId === 'sunshine') {
         // brightness(1.2) saturate(1.4) sepia(0.18) contrast(0.8)
         r = Math.min(255, r * 1.2); g = Math.min(255, g * 1.2); b = Math.min(255, b * 1.2)
         const sr = Math.min(255, r*0.393 + g*0.769 + b*0.189)
@@ -623,7 +634,96 @@ export default function Camera() {
         d[i+1] = Math.min(255, Math.max(0, ((g - 128) * 1.2) + 128))
         d[i+2] = Math.min(255, Math.max(0, ((b - 128) * 1.2) + 128))
         continue
-      }
+      } else if (filterId === 'modern') {
+      // brightness(110%)
+      r = r * 1.10; g = g * 1.10; b = b * 1.10
+
+      // sepia(10%)
+      const sr1 = r * 0.393 + g * 0.769 + b * 0.189
+      const sg1 = r * 0.349 + g * 0.686 + b * 0.168
+      const sb1 = r * 0.272 + g * 0.534 + b * 0.131
+      r = r + (sr1 - r) * 0.10
+      g = g + (sg1 - g) * 0.10
+      b = b + (sb1 - b) * 0.10
+
+      // hue-rotate(350deg) = -10deg → very slight warm shift
+      const cos350 =  0.9848
+      const sin350 = -0.1736
+      const nr1 = r * (0.213 + cos350*0.787 - sin350*0.213) + g * (0.715 - cos350*0.715 - sin350*0.715) + b * (0.072 - cos350*0.072 + sin350*0.928)
+      const ng1 = r * (0.213 - cos350*0.213 + sin350*0.143) + g * (0.715 + cos350*0.285 + sin350*0.140) + b * (0.072 - cos350*0.072 - sin350*0.283)
+      const nb1 = r * (0.213 - cos350*0.213 - sin350*0.787) + g * (0.715 - cos350*0.715 + sin350*0.715) + b * (0.072 + cos350*0.928 + sin350*0.072)
+      r = nr1; g = ng1; b = nb1
+
+      // saturate(130%)
+      const gray1 = 0.299*r + 0.587*g + 0.114*b
+      r = gray1 + (r - gray1) * 1.30
+      g = gray1 + (g - gray1) * 1.30
+      b = gray1 + (b - gray1) * 1.30
+
+      // contrast(120%)
+      r = ((r - 128) * 1.20) + 128
+      g = ((g - 128) * 1.20) + 128
+      b = ((b - 128) * 1.20) + 128
+
+    // ── Filter 2 ──────────────────────────────────────────
+    // brightness(105%) contrast(115%) saturate(110%) hue-rotate(350deg)
+    // drop-shadow is ignored on canvas (canvas doesn't support drop-shadow on pixels)
+    } else if (filterId === 'popular') {
+      // brightness(105%)
+      r = r * 1.05; g = g * 1.05; b = b * 1.05
+
+      // hue-rotate(350deg) = -10deg
+      const cos350 =  0.9848
+      const sin350 = -0.1736
+      const nr2 = r * (0.213 + cos350*0.787 - sin350*0.213) + g * (0.715 - cos350*0.715 - sin350*0.715) + b * (0.072 - cos350*0.072 + sin350*0.928)
+      const ng2 = r * (0.213 - cos350*0.213 + sin350*0.143) + g * (0.715 + cos350*0.285 + sin350*0.140) + b * (0.072 - cos350*0.072 - sin350*0.283)
+      const nb2 = r * (0.213 - cos350*0.213 - sin350*0.787) + g * (0.715 - cos350*0.715 + sin350*0.715) + b * (0.072 + cos350*0.928 + sin350*0.072)
+      r = nr2; g = ng2; b = nb2
+
+      // saturate(110%)
+      const gray2 = 0.299*r + 0.587*g + 0.114*b
+      r = gray2 + (r - gray2) * 1.10
+      g = gray2 + (g - gray2) * 1.10
+      b = gray2 + (b - gray2) * 1.10
+
+      // contrast(115%)
+      r = ((r - 128) * 1.15) + 128
+      g = ((g - 128) * 1.15) + 128
+      b = ((b - 128) * 1.15) + 128
+
+    // ── Filter 3 ──────────────────────────────────────────
+    // brightness(100%) contrast(100%) saturate(0%) grayscale(100%)
+    } else if (filterId === 'grey') {
+      // grayscale(100%) — full black and white
+      const gray3 = Math.round(0.299*r + 0.587*g + 0.114*b)
+      r = gray3; g = gray3; b = gray3
+      // brightness(100%) contrast(100%) = no change needed
+
+    // ── Filter 4 ──────────────────────────────────────────
+    // brightness(129%) contrast(62%) saturate(136%) hue-rotate(348deg)
+    } else if (filterId === 'vintage') {
+      // brightness(129%)
+      r = r * 1.29; g = g * 1.29; b = b * 1.29
+
+      // hue-rotate(348deg) = -12deg
+      const cos348 =  0.9781
+      const sin348 = -0.2079
+      const nr4 = r * (0.213 + cos348*0.787 - sin348*0.213) + g * (0.715 - cos348*0.715 - sin348*0.715) + b * (0.072 - cos348*0.072 + sin348*0.928)
+      const ng4 = r * (0.213 - cos348*0.213 + sin348*0.143) + g * (0.715 + cos348*0.285 + sin348*0.140) + b * (0.072 - cos348*0.072 - sin348*0.283)
+      const nb4 = r * (0.213 - cos348*0.213 - sin348*0.787) + g * (0.715 - cos348*0.715 + sin348*0.715) + b * (0.072 + cos348*0.928 + sin348*0.072)
+      r = nr4; g = ng4; b = nb4
+
+      // saturate(136%)
+      const gray4 = 0.299*r + 0.587*g + 0.114*b
+      r = gray4 + (r - gray4) * 1.36
+      g = gray4 + (g - gray4) * 1.36
+      b = gray4 + (b - gray4) * 1.36
+
+      // contrast(62%) — reduces contrast significantly
+      r = ((r - 128) * 0.62) + 128
+      g = ((g - 128) * 0.62) + 128
+      b = ((b - 128) * 0.62) + 128
+    }
 
       d[i] = Math.min(255, Math.max(0, r))
       d[i+1] = Math.min(255, Math.max(0, g))
