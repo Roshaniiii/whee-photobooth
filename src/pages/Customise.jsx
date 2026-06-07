@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PageHeader from '../components/PageHeader'
 import VerticalStripes from '../components/VerticalStripes'
+import { Eraser, PenLine, Sparkles, Undo2, Redo2 } from 'lucide-react'
 
 const THEME = {
   pageBg: '#F2E7B4',
@@ -21,24 +22,6 @@ const PALETTE = [
 
 const SIZES = [6, 12, 20]
 
-function IconEraser({ size = 18, color = '#917264' }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path
-        d="M15.5 5.5l3 3L9 18H6v-3l9.5-9.5z"
-        stroke={color}
-        strokeWidth="1.75"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M13 7l4 4M5 21h14"
-        stroke={color}
-        strokeWidth="1.75"
-        strokeLinecap="round"
-      />
-    </svg>
-  )
-}
 
 function drawImageCover(ctx, img, x, y, w, h) {
   const iw = img.naturalWidth || img.width
@@ -431,13 +414,21 @@ export default function Customise() {
               Tools
             </span>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
-              <button type="button" title="Pen" onClick={() => { setTool('pen'); setIsGlow(false); glowWasUsedRef.current = false }} style={toolBtn(tool === 'pen' && !isGlow)}>✏️</button>
-              <button type="button" title="Eraser" onClick={() => { setTool('eraser'); setIsGlow(false); glowWasUsedRef.current = false }} style={toolBtn(tool === 'eraser')}>
-                <IconEraser color={tool === 'eraser' ? THEME.accent : THEME.text} />
+              <button type="button" title="Pen" onClick={() => { setTool('pen'); setIsGlow(false); glowWasUsedRef.current = false }} style={toolBtn(tool === 'pen' && !isGlow)}>
+                <PenLine size={16} color={tool === 'pen' && !isGlow ? THEME.accent : THEME.text} />
               </button>
-              <button type="button" title="Glow" onClick={toggleGlow} style={toolBtn(isGlow)}>✦</button>
-              <button type="button" title="Undo" onClick={undo} style={toolBtn(false)}>↩</button>
-              <button type="button" title="Redo" onClick={redo} style={toolBtn(false)}>↪</button>
+              <button type="button" title="Eraser" onClick={() => { setTool('eraser'); setIsGlow(false); glowWasUsedRef.current = false }} style={toolBtn(tool === 'eraser')}>
+                <Eraser size={18} color={tool === 'eraser' ? THEME.accent : THEME.text} />
+              </button>
+              <button type="button" title="Glow" onClick={toggleGlow} style={toolBtn(isGlow)}>
+                <Sparkles size={16} color={isGlow ? THEME.accent : THEME.text} />
+              </button>
+              <button type="button" title="Undo" onClick={undo} style={toolBtn(false)}>
+                <Undo2 size={16} color={THEME.text} />
+              </button>
+              <button type="button" title="Redo" onClick={redo} style={toolBtn(false)}>
+                <Redo2 size={16} color={THEME.text} />
+              </button>
             </div>
 
             <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: THEME.text, textAlign: 'center' }}>

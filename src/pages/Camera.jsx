@@ -4,6 +4,7 @@ import sparkleOverlay from '../assets/sparkle_overlay.png'
 import VerticalStripes from '../components/VerticalStripes'
 import PageHeader from '../components/PageHeader'
 import { playClick, playCapture } from '../utils/sounds'
+import { Upload, FlipHorizontal2 } from 'lucide-react'
 
 import { TEMPLATE_ASSETS } from '../config/templates'
 import { hasFilterApi, filterApiEndpoint } from '../config/api'
@@ -117,54 +118,6 @@ const FILTERS = [
 
 const ICON_COLOR = '#917264'
 
-function IconUpload({ size = 22, color = ICON_COLOR }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path
-        d="M12 15V5M12 5L8 9M12 5l4 4"
-        stroke={color}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M5 19h14"
-        stroke={color}
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-    </svg>
-  )
-}
-
-function IconFlip({ size = 22, color = ICON_COLOR }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
-      {/* Camera body */}
-      <path
-        d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"
-        stroke={color}
-        strokeWidth="1.75"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      {/* Flip arrows around lens */}
-      <path
-        d="M12 10.5a3 3 0 100 4"
-        stroke={color}
-        strokeWidth="1.6"
-        strokeLinecap="round"
-      />
-      <path
-        d="M14.5 10.5l1.5-1.5 1.5 1.5"
-        stroke={color}
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
 
 function getFilterById(id) {
   return FILTERS.find(f => f.id === id) ?? FILTERS[0]
@@ -960,14 +913,7 @@ export default function Camera() {
     setTargetSlotIndex(null)
   }
 
-  function clearSlot(index) {
-    setSlots(prev => {
-      const next = [...prev]
-      next[index] = null
-      return next
-    })
-  }
-
+  
   function handleDownload() {
     playClick()
     if (!stripPreview) return
@@ -1278,7 +1224,7 @@ export default function Camera() {
                 onMouseEnter={e => { if (!capturing) e.currentTarget.style.background = '#F4B8CC' }}
                 onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.75)' }}
               >
-                <IconUpload />
+                <Upload size={22} color={capturing ? ICON_COLOR : ICON_COLOR} />
               </button>
 
               {/* Flip */}
@@ -1299,7 +1245,7 @@ export default function Camera() {
                 onMouseEnter={e => { if (!capturing) e.currentTarget.style.background = '#F4B8CC' }}
                 onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.75)' }}
               >
-                <IconFlip />
+                <FlipHorizontal2 size={22} color={ICON_COLOR} />
               </button>
 
               {/* Capture — clean circle, NO emoji */}
