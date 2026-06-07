@@ -104,8 +104,7 @@ const FILTERS = [
     id: 'sparkle',
     label: 'Sparkle',
     source: 'css',
-    css: 'none',
-    desc: 'Star frame',
+    css: 'none', // sparkle is a special case — it's a PNG overlay, not a CSS filter
   },
   { id: 'blush', label: 'Blush', source: 'backend' },
   { id: 'cat_ears', label: 'Cat', source: 'backend' },
@@ -115,11 +114,6 @@ const FILTERS = [
   { id: 'heatmap', label: 'Thermal', desc: 'Heat vision', source: 'backend' },
 ]
 
-const BACKGROUNDS = [
-  { id: 'bg1.jpg', label: 'Forest',  thumb: '/assets/backgrounds/bg1.jpg' },
-  { id: 'bg2.jpg', label: 'City',    thumb: '/assets/backgrounds/bg2.jpg' },
-  { id: 'bg3.jpg', label: 'Studio',  thumb: '/assets/backgrounds/bg3.jpg' },
-]
 
 const ICON_COLOR = '#917264'
 
@@ -146,23 +140,25 @@ function IconUpload({ size = 22, color = ICON_COLOR }) {
 function IconFlip({ size = 22, color = ICON_COLOR }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
+      {/* Camera body */}
       <path
-        d="M7 8h4.5l1.2-1.8h2.6L16.5 8H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2v-7a2 2 0 012-2z"
-        stroke={color}
-        strokeWidth="1.75"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M12 16.5V12M9.5 14.5L12 12l2.5 2.5"
+        d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"
         stroke={color}
         strokeWidth="1.75"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
+      {/* Flip arrows around lens */}
       <path
-        d="M9.2 7.2L12 4.8l2.8 2.4"
+        d="M12 10.5a3 3 0 100 4"
         stroke={color}
-        strokeWidth="1.75"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+      <path
+        d="M14.5 10.5l1.5-1.5 1.5 1.5"
+        stroke={color}
+        strokeWidth="1.6"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -299,96 +295,6 @@ function FrameProgressStrip({ total, slots, activeIndex, onSlotClick, slotShapes
   )
 }
 
-function BgPanel({ backgrounds, selected, onSelect, onClose }) {
-  return (
-    <div style={{
-      width: '100%',
-      background: 'rgba(255,255,255,0.85)',
-      border: '2px solid #D4C49A',
-      borderRadius: '12px',
-      padding: '10px 12px',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '8px',
-      position: 'relative',
-    }}>
-      <button
-        type="button"
-        onClick={onClose}
-        aria-label="Close background filter"
-        style={{
-          position: 'absolute',
-          top: '6px',
-          right: '8px',
-          width: '24px',
-          height: '24px',
-          padding: 0,
-          border: 'none',
-          borderRadius: '50%',
-          background: 'rgba(145,114,100,0.15)',
-          color: '#917264',
-          fontSize: '16px',
-          lineHeight: 1,
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontFamily: "'Cause',serif",
-        }}
-      >
-        ×
-      </button>
-      <span style={{
-        fontSize: '10px', color: '#917264',
-        letterSpacing: '2px', textTransform: 'uppercase',
-      }}>
-        Choose Background
-      </span>
-      <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', scrollbarWidth: 'none' }}>
-        {backgrounds.map(bg => (
-          <button
-            key={bg.id}
-            onClick={() => onSelect(bg.id)}
-            style={{
-              flexShrink: 0,
-              width: '72px',
-              height: '52px',
-              borderRadius: '8px',
-              overflow: 'hidden',
-              border: `3px solid ${selected === bg.id ? '#DF82A3' : '#D4C49A'}`,
-              padding: 0,
-              cursor: 'pointer',
-              position: 'relative',
-              boxShadow: selected === bg.id ? '0 0 10px rgba(223,130,163,0.5)' : 'none',
-              transition: 'all 0.2s',
-              background: '#2a1f1a',
-            }}
-          >
-            <img
-              src={bg.thumb}
-              alt={bg.label}
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-              onError={e => { e.target.style.display = 'none' }}
-            />
-            <div style={{
-              position: 'absolute', bottom: 0, left: 0, right: 0,
-              background: 'rgba(0,0,0,0.45)',
-              color: '#fff',
-              fontSize: '8px',
-              fontFamily: "'Cause',serif",
-              textAlign: 'center',
-              padding: '2px 0',
-              letterSpacing: '0.5px',
-              textTransform: 'uppercase',
-            }}>
-              {bg.label}
-            </div>
-          </button>
-        ))}
-      </div>
-    </div>
-  )
-}
 
 export default function Camera() {
   const navigate          = useNavigate()
@@ -401,14 +307,13 @@ export default function Camera() {
   const filterRunIdRef    = useRef(0)
   const filterAbortRef    = useRef(null)
   const filterSlotsRunRef = useRef(0)
-  const selectedBgRef = useRef('bg1.jpg')
 
 
   const [cameraReady,    setCameraReady]    = useState(false)
   const [facingMode,     setFacingMode]     = useState('user')
   const [selectedFilter, setSelectedFilter] = useState('none')
   const [filteredFrame,  setFilteredFrame]  = useState(null)
-  const [timerSecs,      setTimerSecs]      = useState(0)
+  const [timerSecs,      setTimerSecs]      = useState(3)
   const [countdown,      setCountdown]      = useState(null)
   const [capturing,      setCapturing]      = useState(false)
   const [stripPreview,   setStripPreview]   = useState(null)
@@ -417,7 +322,6 @@ export default function Camera() {
   const [showCrop,       setShowCrop]       = useState(false)
   const [cropAspect,     setCropAspect]     = useState(CROP_ASPECT)
   const [targetSlotIndex, setTargetSlotIndex] = useState(null)
-  const [selectedBg, setSelectedBg] = useState('bg1.jpg')
 
   const fileInputRef = useRef(null)
   const glowCanvasRef = useRef(null)
@@ -425,7 +329,6 @@ export default function Camera() {
 
   facingModeRef.current = facingMode
   selectedFilterRef.current = selectedFilter
-  selectedBgRef.current = selectedBg
   const activeCssFilter = isCssFilter(selectedFilter) ? getCssFilterValue(selectedFilter) : 'none'
 
   const layoutConfig  = JSON.parse(sessionStorage.getItem('layoutConfig') || 'null')
@@ -811,9 +714,12 @@ export default function Camera() {
     const filter = FILTERS.find(f => f.id === filterId)
     if (!filter) return dataUrl
 
-    // CSS filters — already baked into canvas by applyCanvasFilter
-    // during captureRawFrame, so just return as-is
-    if (filter.source === 'css') return dataUrl
+    // CSS filters — bake using bakeCssFilter for uploaded photos
+    // (captured photos already have it baked via captureRawFrame)
+    if (filter.source === 'css') {
+      const b64 = dataUrl.includes(',') ? dataUrl.split(',')[1] : dataUrl
+      return bakeCssFilter(b64, getCssFilterValue(filterId))
+    }
 
     // Backend filters — send to Python API
     if (filter.source === 'backend') {
@@ -838,7 +744,6 @@ export default function Camera() {
           image: b64,
           filter,
           preview,
-          bg_filename: selectedBgRef.current,
         }),
         signal,
       })
@@ -1440,14 +1345,6 @@ export default function Camera() {
               </div>
             </div>
             
-            {selectedFilter === 'bg_replace' && (
-              <BgPanel
-                backgrounds={BACKGROUNDS}
-                selected={selectedBg}
-                onSelect={setSelectedBg}
-                onClose={() => setSelectedFilter('none')}
-              />
-            )}
             
             {/* Hint */}
             <p style={{ fontSize: '12px', color: '#917264', margin: 0, fontStyle: 'italic', textAlign: 'center' }}>
