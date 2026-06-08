@@ -15,9 +15,9 @@ const THEME = {
 const HOME_BTN_SHADOW = '0 5px 3px #917264, 0 10px 24px rgba(145,114,100,0.25)'
 
 const PALETTE = [
-  '#917264', '#DF82A3', '#F4B8CC', '#2A2A2A', '#ffffff',
-  '#ff61ab', '#ffb561', '#76ff61', '#bee1e6', '#cddafd',
-  '#eae4e9', '#fde2e4', '#ec91d8', '#ff6176', '#abff61',
+  '#D20000', '#DF82A3', '#FE693A', '#FFDF2E', '#7EC636',
+  '#2987C2', '#0B5CB4', '#230AAE', '#B9ABFA', '#82218B',
+  '#A6615A', '#635A56', '#Fc759E', '#070707', '#ffffff',
 ]
 
 const SIZES = [6, 12, 20]
