@@ -1,10 +1,24 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { useEffect } from 'react'
 import Home from './pages/Home'
 import Layout from './pages/Layout'
 import Camera from './pages/Camera'
 import Customise from './pages/Customise'
 
 function App() {
+
+  // ── Keep backend alive ──────────────────────────────────
+  useEffect(() => {
+    const wake = () => {
+      fetch(`${import.meta.env.VITE_API_URL}/health`)
+        .catch(() => {})
+    }
+    wake()
+    const interval = setInterval(wake, 10 * 60 * 1000)
+    return () => clearInterval(interval)
+  }, [])
+  // ────────────────────────────────────────────────────────
+
   return (
     <BrowserRouter>
       <Routes>
