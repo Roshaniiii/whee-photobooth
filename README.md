@@ -1,6 +1,22 @@
-# Whee! Photobooth
+# Whee! Photobooth 📷
 
-Whee photobooth built with React + Vite. Pick a template, capture photos, apply filters, and download your strip.
+> Pose. Capture. Repeat.
+
+A web-based photobooth built with React + Vite. Pick a template, capture photos with live filters, customize with drawing tools, and download your photo strip.
+
+<img width="1427" height="665" alt="image" src="https://github.com/user-attachments/assets/12947717-d8ab-4663-9480-a09c5b90a280" />
+
+
+**Live site:** https://whee-photobooth.vercel.app
+**API repo:** https://github.com/Roshaniiii/whee-photobooth-api.git
+
+## Tech Stack
+- **Frontend:** React + Vite
+- **Styling:** Inline styles + CSS filters
+- **Camera:** WebRTC (MediaDevices API)
+- **Canvas:** HTML5 Canvas API
+- **Routing:** React Router v6
+- **Filter API:** FastAPI + OpenCV (separate repo)
 
 ## Local development
 
@@ -59,7 +75,7 @@ If the site is not at the domain root, set `base` in `vite.config.js` to your re
 The frontend calls `POST {VITE_API_URL}/apply-filter` with JSON:
 
 ```json
-{ "image": "<base64>", "filter": "<id>", "preview": true, "bg_filename": "bg1.jpg" }
+{ "image": "<base64>", "filter": "<id>", "preview": true}
 ```
 
 **Backend recommendations:**
@@ -70,14 +86,6 @@ The frontend calls `POST {VITE_API_URL}/apply-filter` with JSON:
 - Do not expose secrets in the frontend
 
 Without the API, the app still works with CSS filters and template strips.
-
-## Background images (BG Replace)
-
-Place JPEGs in `public/assets/backgrounds/`:
-
-- `bg1.jpg`, `bg2.jpg`, `bg3.jpg`
-
-These paths match `Camera.jsx` (`/assets/backgrounds/...`).
 
 ## Privacy note
 
