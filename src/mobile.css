@@ -1,0 +1,123 @@
+/* ============================================
+   MOBILE OVERRIDES — only applies below 640px
+   Desktop & iPad are completely untouched
+   ============================================ */
+@media (max-width: 640px) {
+
+  /* ───────── HOME PAGE ───────── */
+
+  /* Frame container — shrink overall area */
+  .home-frames-wrap {
+    transform: scale(0.78);
+    transform-origin: top center;
+    margin-bottom: -40px; /* compensate for scale gap */
+  }
+
+  /* Heading + subheading */
+  .home-title {
+    font-size: 28px !important;
+    margin-top: 4px !important;
+  }
+  .home-subtitle {
+    font-size: 13px !important;
+    margin-top: 2px !important;
+  }
+
+  /* Feedback button smaller on mobile */
+  .feedback-button {
+    padding: 7px 14px !important;
+    font-size: 11px !important;
+    top: 14px !important;
+    right: 14px !important;
+  }
+  .feedback-button svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  /* Footer — remove extra space below */
+  html, body, #root {
+    height: 100%;
+  }
+  .page-wrapper {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+  .page-content {
+    flex: 1;
+  }
+  footer {
+    margin-top: 0 !important;
+  }
+
+
+  /* ───────── LAYOUT PAGE ───────── */
+
+  /* Reduce gap between back button and heading */
+  .layout-header {
+    margin-bottom: 4px !important;
+  }
+  .layout-title {
+    margin-top: 2px !important;
+  }
+
+  /* Reduce gap between subtitle text and carousel */
+  .layout-subtitle {
+    margin-bottom: 6px !important;
+  }
+  .layout-carousel-wrap {
+    margin-top: 4px !important;
+  }
+
+
+  /* ───────── CAMERA PAGE ───────── */
+
+  /* Reduce gap between back button and heading */
+  .camera-header {
+    margin-bottom: 4px !important;
+  }
+  .camera-title {
+    margin-top: 2px !important;
+  }
+
+  /* Flip / Capture / Timer row — tighter spacing */
+  .camera-controls-row {
+    gap: 12px !important;
+    justify-content: center !important;
+  }
+  .camera-flip-btn,
+  .camera-timer-group {
+    transform: scale(0.9);
+  }
+
+  /* Allow page to scroll so Customise button is reachable */
+  .camera-page-wrapper {
+    height: auto !important;
+    min-height: 100dvh !important;
+    overflow-y: auto !important;
+  }
+  .camera-strip-preview {
+    max-height: 50vh !important;
+  }
+  .camera-actions-row {
+    margin-bottom: 24px !important;
+    padding-bottom: 16px !important;
+  }
+
+
+  /* ───────── CUSTOMISE PAGE ───────── */
+
+  .customise-title {
+    font-size: 18px !important;
+    margin-top: -8px !important;
+  }
+  .customise-header {
+    padding-top: 4px !important;
+  }
+  /* Fix inherited fixed height from strip-download page */
+  .customise-page-wrapper {
+    height: auto !important;
+    min-height: 100dvh !important;
+  }
+}

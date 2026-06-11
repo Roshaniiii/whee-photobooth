@@ -5,6 +5,7 @@ import Layout from './pages/Layout'
 import Camera from './pages/Camera'
 import Customise from './pages/Customise'
 import FeedbackButton from './components/FeedbackButton'
+import './mobile.css'
 
 function App() {
 

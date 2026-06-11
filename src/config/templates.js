@@ -11,6 +11,7 @@ import template4_strip2 from '../assets/template4_strip2.png'
 import template1_strip3 from '../assets/template1_strip3.png'
 import template2_strip3 from '../assets/template2_strip3.png'
 import template3_strip3 from '../assets/template3_strip3.png'
+import template2_strip4 from '../assets/template2_strip4.png'
 import template4_strip3 from '../assets/template4_strip3.png'
 
 const PHOTO_W = 500
@@ -76,6 +77,14 @@ export const TEMPLATES = [
     label: 'Duo — C',
     shots: 2,
     file: template2_strip3,
+    canvasWidth: 600, canvasHeight: 1100,
+    slots: [slot(50, 50), slot(50, 500)],
+  },
+  {
+    id: 'template2_strip4',
+    label: 'Duo — D',
+    shots: 2,
+    file: template2_strip4,
     canvasWidth: 600, canvasHeight: 1100,
     slots: [slot(50, 50), slot(50, 500)],
   },
