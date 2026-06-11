@@ -1,3 +1,5 @@
+import { MessageCircleHeart } from 'lucide-react'
+
 export default function FeedbackButton() {
   return (
     <button
@@ -28,8 +30,7 @@ export default function FeedbackButton() {
       onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
       onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
     >
-      {/* 💌 */}
-      🩷
+      <MessageCircleHeart size={16} strokeWidth={2.2} />
     </button>
   )
 }

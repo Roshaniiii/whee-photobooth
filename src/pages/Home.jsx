@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { playClick } from '../utils/sounds'
 import VerticalStripes from '../components/VerticalStripes'
+import Footer from '../components/Footer'
 
 // Import all assets — copy these files into your src/assets/ folder
 import frame1 from '../assets/frame_1.png'
@@ -166,7 +167,7 @@ export default function Home() {
           />
 
         </div>
-
+      
         {/* ── START Button ── */}
         <button
           onClick={() => {
@@ -210,6 +211,8 @@ export default function Home() {
           Start
         </button>
       </div>
+      <Footer /> 
+      
     </div>
   )
 }
