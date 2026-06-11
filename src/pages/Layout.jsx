@@ -433,25 +433,25 @@ export default function Layout() {
   }
 
   return (
-    <div style={{
+    <div className="page-wrapper layout-page-wrapper" style={{
       height: '100vh', width: '100%', backgroundColor: '#f2e7b4',
       position: 'relative', overflow: 'hidden', fontFamily: "'Cause',serif",
     }}>
       <VerticalStripes />
-      <div style={{
+      <div className="page-content layout-page-content" style={{
         position: 'relative', zIndex: 1, width: '100%', maxWidth: '680px',
         height: '100%', margin: '0 auto', padding: '24px 16px 16px',
         boxSizing: 'border-box',
         display: 'flex', flexDirection: 'column', alignItems: 'center',
       }}>
 
-        <PageHeader onBack={() => navigate('/')} title="Your Frame" />
+        <PageHeader onBack={() => navigate('/')} title="Your Frame" className="layout-header" titleClassName="layout-title" />
 
-        <p style={{ fontFamily: "'Cause',serif", fontSize: '13px', color: '#917264', margin: '0 0 12px', letterSpacing: '0.5px' }}>
+        <p className="layout-subtitle" style={{ fontFamily: "'Cause',serif", fontSize: '13px', color: '#917264', margin: '0 0 12px', letterSpacing: '0.5px' }}>
           Pick a template or build your own
         </p>
 
-        <div style={{ display: 'flex', background: 'rgba(255,255,255,0.5)', borderRadius: '100px', padding: '4px', border: '2px solid #D4C49A', marginBottom: '12px', gap: '4px', flexShrink: 0 }}>
+        <div className="layout-carousel-wrap" style={{ display: 'flex', background: 'rgba(255,255,255,0.5)', borderRadius: '100px', padding: '4px', border: '2px solid #D4C49A', marginBottom: '12px', gap: '4px', flexShrink: 0 }}>
           {[{ id: 'template', label: '✦ Templates' }, { id: 'build', label: '✐ Build Your Own' }].map(t => (
             <button key={t.id} onClick={() => setTab(t.id)} style={{
               fontFamily: "'Cause',serif", fontSize: 'clamp(12px,2.5vw,14px)', fontWeight: '700', letterSpacing: '1px',

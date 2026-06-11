@@ -357,7 +357,7 @@ export default function Customise() {
     : { maxWidth: '100%', maxHeight: 'calc(100dvh - 200px)', width: 'auto', height: 'auto' }
 
   return (
-    <div style={{
+    <div className="page-wrapper customise-page-wrapper" style={{
       height: '100dvh',
       width: '100%',
       overflow: 'hidden',
@@ -384,7 +384,7 @@ export default function Customise() {
         boxSizing: 'border-box',
       }}>
 
-        <PageHeader onBack={() => navigate('/camera')} title="Doodle your strip" />
+        <PageHeader onBack={() => navigate('/camera')} title="Doodle your strip" className="customise-header" titleClassName="customise-title" />
 
         <div style={{
           flex: 1,

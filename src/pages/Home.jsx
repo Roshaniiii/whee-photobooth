@@ -15,7 +15,7 @@ export default function Home() {
   const navigate = useNavigate()
 
   return (
-    <div style={{
+    <div className="page-wrapper home-page-wrapper" style={{
       minHeight: '100vh',
       width: '100%',
       backgroundColor: '#f2e7b4',
@@ -29,7 +29,7 @@ export default function Home() {
       <VerticalStripes />
 
       {/* ── Content ── */}
-      <div style={{
+      <div className="page-content home-page-content" style={{
         position: 'relative',
         zIndex: 1,
         width: '100%',
@@ -42,7 +42,7 @@ export default function Home() {
 
         {/* ── Logo + Title ── */}
         <div style={{ textAlign: 'center', marginBottom: '3px' }}>
-          <h1 style={{
+          <h1 className="home-title" style={{
             fontFamily: "'Unkempt', 'Cause', cursive",
             fontSize: 'clamp(38px, 7vw, 55px)',
             color: '#DF82A3',
@@ -54,7 +54,7 @@ export default function Home() {
           </h1>
 
           {/* Tagline — shifted right */}
-          <p style={{
+          <p className="home-subtitle" style={{
             fontFamily: "'Cause', serif",
             fontSize: 'clamp(13px, 2vw, 16px)',
             color: '#917264',
@@ -66,7 +66,7 @@ export default function Home() {
         </div>
 
         {/* ── Frames scattered layout — clustered like Image 1 ── */}
-        <div style={{
+        <div className="home-frames-wrap" style={{
           position: 'relative',
           width: '100%',
           maxWidth: '680px',
@@ -75,7 +75,7 @@ export default function Home() {
         }}>
 
           {/* Frame 3 — top left, small */}
-          <img src={frame3} alt="photo frame 3" style={{
+          <img className="home-frame frame-3" src={frame3} alt="photo frame 3" style={{
             position: 'absolute',
             width: 'clamp(110px, 13vw, 130px)',
             left: '7%',
@@ -90,7 +90,7 @@ export default function Home() {
           />
 
           {/* Frame 1 — top center, large — most prominent */}
-          <img src={frame1} alt="photo frame 1" style={{
+          <img className="home-frame frame-1" src={frame1} alt="photo frame 1" style={{
             position: 'absolute',
             width: 'clamp(170px, 22vw, 200px)',
             left: '45%',
@@ -106,7 +106,7 @@ export default function Home() {
           />
 
           {/* Frame 2 — top right, medium */}
-          <img src={frame6} alt="photo frame 6" style={{
+          <img className="home-frame frame-6" src={frame6} alt="photo frame 6" style={{
             position: 'absolute',
             width: 'clamp(140px, 16vw, 160px)',
             right: '15%',
@@ -121,7 +121,7 @@ export default function Home() {
           />
 
           {/* Frame 3 — bottom left, medium */}
-          <img src={frame2} alt="photo frame 2" style={{
+          <img className="home-frame frame-2" src={frame2} alt="photo frame 2" style={{
             position: 'absolute',
             width: 'clamp(140px, 15vw, 150px)',
             left: '12%',
@@ -136,7 +136,7 @@ export default function Home() {
           />
 
           {/* Frame 4 — bottom center, large */}
-          <img src={frame4} alt="photo frame 4" style={{
+          <img className="home-frame frame-4" src={frame4} alt="photo frame 4" style={{
             position: 'absolute',
             width: 'clamp(200px, 22vw, 210px)',
             left: '53%',
@@ -152,7 +152,7 @@ export default function Home() {
           />
 
           {/* Frame 6 — bottom right, small */}
-          <img src={frame5} alt="photo frame 5" style={{
+          <img className="home-frame frame-5" src={frame5} alt="photo frame 5" style={{
             position: 'absolute',
             width: 'clamp(120px, 13vw, 130px)',
             right: '9%',

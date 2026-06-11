@@ -938,10 +938,10 @@ export default function Camera() {
   const allDone = !!stripPreview
 
   return (
-    <div style={{ minHeight: '100vh', width: '100%', backgroundColor: '#F2E7B4', position: 'relative', fontFamily: "'Cause',serif", overflow: 'hidden' }}>
+    <div className="page-wrapper camera-page-wrapper" style={{ minHeight: '100vh', width: '100%', backgroundColor: '#F2E7B4', position: 'relative', fontFamily: "'Cause',serif", overflow: 'hidden' }}>
       <VerticalStripes />
 
-      <div style={{
+      <div className="page-content camera-page-content" style={{
         position: 'relative', zIndex: 1, width: '100%',
         maxWidth: allDone ? 'min(1100px, 98vw)' : '720px',
         margin: '0 auto',
@@ -955,6 +955,8 @@ export default function Camera() {
         <PageHeader
           onBack={() => navigate('/layout')}
           title={allDone ? 'Your Strip!' : 'Strike a Pose'}
+          className="camera-header"
+          titleClassName="camera-title"
         />
 
         {/* ── Camera view + frame strip overlay ── */}
@@ -1204,7 +1206,7 @@ export default function Camera() {
           <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
 
             {/* Upload | Flip | Capture | Timer */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '24px', width: '100%' }}>
+            <div className="camera-controls-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '24px', width: '100%' }}>
 
               {/* Upload */}
               <button
@@ -1293,7 +1295,7 @@ export default function Camera() {
             
             
             {/* Hint */}
-            <p style={{ fontSize: '12px', color: '#917264', margin: 0, fontStyle: 'italic', textAlign: 'center' }}>
+            <p className="camera-actions-row" style={{ fontSize: '12px', color: '#917264', margin: 0, fontStyle: 'italic', textAlign: 'center' }}>
               {capturing
                 ? (timerSecs > 0
                   ? `Taking photo ${filledCount + 1} of ${totalShots}...`

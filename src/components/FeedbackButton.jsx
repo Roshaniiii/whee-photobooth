@@ -3,6 +3,7 @@ import { MessageCircleHeart } from 'lucide-react'
 export default function FeedbackButton() {
   return (
     <button
+      className="feedback-button"
       data-tally-open="2EoW4V"
       // data-tally-layout="modal"
       data-tally-hide-title="1"

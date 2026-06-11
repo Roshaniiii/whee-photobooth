@@ -8,36 +8,77 @@
 
   /* Frame container — shrink overall area */
   .home-frames-wrap {
-    transform: scale(0.78);
+    transform: none !important;
     transform-origin: top center;
-    margin-bottom: -40px; /* compensate for scale gap */
+    margin-bottom: 22px !important;
+    height: 340px !important;
+    max-width: 100% !important;
+  }
+  .home-frame {
+    position: absolute !important;
+    border-radius: 14px !important;
+  }
+  .home-frame.frame-1 {
+    left: 50% !important;
+    top: 7% !important;
+    transform: translateX(-50%) rotate(0deg) !important;
+    width: clamp(130px, 24vw, 150px) !important;
+    z-index: 2 !important;
+  }
+  .home-frame.frame-2 {
+    left: -1% !important;
+    top: 50% !important;
+    width: clamp(110px, 18vw, 120px) !important;
+  }
+  .home-frame.frame-3 {
+    left: 3% !important;
+    top: 15% !important;
+    width: clamp(95px, 16vw, 110px) !important;
+  }
+  .home-frame.frame-4 {
+    left: 52% !important;
+    bottom: 10% !important;
+    transform: translateX(-50%) rotate(0deg) !important;
+    width: clamp(140px, 28vw, 160px) !important;
+    z-index: 1 !important;
+  }
+  .home-frame.frame-5 {
+    right: 0% !important;
+    bottom: 20% !important;
+    width: clamp(95px, 18vw, 110px) !important;
+  }
+  .home-frame.frame-6 {
+    right: 4% !important;
+    bottom: 24% !important;
+    width: clamp(90px, 16vw, 100px) !important;
   }
 
   /* Heading + subheading */
   .home-title {
-    font-size: 28px !important;
-    margin-top: 4px !important;
+    font-size: 30px !important;
+    margin-top: 6px !important;
+    line-height: 1.08 !important;
   }
   .home-subtitle {
-    font-size: 13px !important;
-    margin-top: 2px !important;
+    font-size: 12px !important;
+    margin-top: 4px !important;
   }
 
   /* Feedback button smaller on mobile */
   .feedback-button {
-    padding: 7px 14px !important;
+    padding: 6px 12px !important;
     font-size: 11px !important;
-    top: 14px !important;
-    right: 14px !important;
+    top: 12px !important;
+    right: 12px !important;
   }
   .feedback-button svg {
-    width: 14px !important;
-    height: 14px !important;
+    width: 12px !important;
+    height: 12px !important;
   }
 
   /* Footer — remove extra space below */
   html, body, #root {
-    height: 100%;
+    min-height: 100%;
   }
   .page-wrapper {
     min-height: 100dvh;
@@ -46,9 +87,11 @@
   }
   .page-content {
     flex: 1;
+    display: flex;
+    flex-direction: column;
   }
-  footer {
-    margin-top: 0 !important;
+  .page-wrapper > footer {
+    margin-top: auto !important;
   }
 
 
@@ -56,15 +99,18 @@
 
   /* Reduce gap between back button and heading */
   .layout-header {
-    margin-bottom: 4px !important;
+    margin-bottom: 6px !important;
+    min-height: 52px !important;
   }
   .layout-title {
-    margin-top: 2px !important;
+    font-size: 24px !important;
+    margin-top: 0 !important;
+    line-height: 1.08 !important;
   }
 
   /* Reduce gap between subtitle text and carousel */
   .layout-subtitle {
-    margin-bottom: 6px !important;
+    margin-bottom: 8px !important;
   }
   .layout-carousel-wrap {
     margin-top: 4px !important;
@@ -75,20 +121,26 @@
 
   /* Reduce gap between back button and heading */
   .camera-header {
-    margin-bottom: 4px !important;
+    margin-bottom: 6px !important;
+    min-height: 52px !important;
   }
   .camera-title {
-    margin-top: 2px !important;
+    font-size: 24px !important;
+    margin-top: 0 !important;
+    line-height: 1.08 !important;
   }
 
   /* Flip / Capture / Timer row — tighter spacing */
   .camera-controls-row {
-    gap: 12px !important;
+    gap: 10px !important;
     justify-content: center !important;
+    flex-wrap: wrap !important;
   }
-  .camera-flip-btn,
-  .camera-timer-group {
-    transform: scale(0.9);
+  .camera-controls-row > button,
+  .camera-controls-row > div {
+    flex: 0 1 auto !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
   }
 
   /* Allow page to scroll so Customise button is reachable */
@@ -97,27 +149,66 @@
     min-height: 100dvh !important;
     overflow-y: auto !important;
   }
+  .camera-page-content {
+    overflow-y: auto !important;
+  }
   .camera-strip-preview {
     max-height: 50vh !important;
   }
   .camera-actions-row {
-    margin-bottom: 24px !important;
-    padding-bottom: 16px !important;
+    margin-bottom: 18px !important;
+    padding-bottom: 12px !important;
   }
 
 
   /* ───────── CUSTOMISE PAGE ───────── */
 
   .customise-title {
-    font-size: 18px !important;
-    margin-top: -8px !important;
+    font-size: 20px !important;
+    margin-top: 0 !important;
+    line-height: 1.08 !important;
   }
   .customise-header {
-    padding-top: 4px !important;
+    padding-top: 0 !important;
+    margin-bottom: 6px !important;
   }
   /* Fix inherited fixed height from strip-download page */
   .customise-page-wrapper {
     height: auto !important;
     min-height: 100dvh !important;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  html, body, #root {
+    min-height: 100%;
+  }
+  .page-wrapper {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+  .page-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .page-wrapper > footer {
+    margin-top: auto !important;
+  }
+
+  .layout-header {
+    margin-bottom: 6px !important;
+  }
+  .layout-title {
+    font-size: clamp(28px, 4vw, 32px) !important;
+    margin-top: 0 !important;
+    line-height: 1.08 !important;
+  }
+  .layout-subtitle {
+    margin-bottom: 6px !important;
+  }
+  .layout-carousel-wrap {
+    margin-top: 4px !important;
   }
 }

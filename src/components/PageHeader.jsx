@@ -10,9 +10,9 @@ export const PAGE_TITLE_STYLE = {
   lineHeight: 1.1,
 }
 
-export default function PageHeader({ onBack, title }) {
+export default function PageHeader({ onBack, title, className = '', titleClassName = '' }) {
   return (
-    <div style={{
+    <div className={`page-header ${className}`} style={{
       width: '100%',
       position: 'relative',
       flexShrink: 0,
@@ -26,7 +26,7 @@ export default function PageHeader({ onBack, title }) {
       <div style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)' }}>
         <BackButton onClick={onBack} />
       </div>
-      <h1 style={PAGE_TITLE_STYLE}>{title}</h1>
+      <h1 className={`page-header-title ${titleClassName}`} style={PAGE_TITLE_STYLE}>{title}</h1>
     </div>
   )
 }
