@@ -209,7 +209,6 @@ export default function Home() {
         >
           Start
         </button>
-
       </div>
     </div>
   )

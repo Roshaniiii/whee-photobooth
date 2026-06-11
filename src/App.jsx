@@ -4,10 +4,10 @@ import Home from './pages/Home'
 import Layout from './pages/Layout'
 import Camera from './pages/Camera'
 import Customise from './pages/Customise'
+import FeedbackButton from './components/FeedbackButton'
 
 function App() {
 
-  // ── Keep backend alive ──────────────────────────────────
   useEffect(() => {
     const wake = () => {
       fetch(`${import.meta.env.VITE_API_URL}/health`)
@@ -17,7 +17,6 @@ function App() {
     const interval = setInterval(wake, 10 * 60 * 1000)
     return () => clearInterval(interval)
   }, [])
-  // ────────────────────────────────────────────────────────
 
   return (
     <BrowserRouter>
@@ -27,6 +26,7 @@ function App() {
         <Route path="/camera" element={<Camera />} />
         <Route path="/customise" element={<Customise />} />
       </Routes>
+      <FeedbackButton />
     </BrowserRouter>
   )
 }
