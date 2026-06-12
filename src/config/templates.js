@@ -8,6 +8,7 @@ import template4_strip1 from '../assets/template4_strip1.png'
 import template4_strip2 from '../assets/template4_strip2.png'
 
 // ── Different dimension template imports ──────────────────────────────────
+import template1_strip4 from '../assets/template1_strip4.png'
 import template1_strip3 from '../assets/template1_strip3.png'
 import template2_strip3 from '../assets/template2_strip3.png'
 import template3_strip3 from '../assets/template3_strip3.png'
@@ -17,7 +18,9 @@ import template4_strip3 from '../assets/template4_strip3.png'
 const PHOTO_W = 500
 const PHOTO_H = 410
 
-// New dimensions for strip 3 and 4
+// New dimensions for strip 1, strip 3 and 4
+const PHOTO_W1 = 550
+const PHOTO_H1 = 440
 const PHOTO_W3 = 520
 const PHOTO_H3 = 430
 const PHOTO_W4 = 540
@@ -53,6 +56,14 @@ export const TEMPLATES = [
     file: template1_strip3,
     canvasWidth: 600, canvasHeight: 700,
     slots: [slot(50, 60)],
+  },
+  {
+    id: 'template1_strip4',
+    label: 'Solo — D',
+    shots: 1,
+    file: template1_strip4,
+    canvasWidth: 600, canvasHeight: 700,
+    slots: [slot(25, 25, PHOTO_W1, PHOTO_H1)],
   },
   {
     id: 'template2_strip1',
