@@ -7,10 +7,10 @@ import PageHeader from '../components/PageHeader'
 import { TEMPLATES } from '../config/templates'
 
 const NEW_LAYOUTS = [
-  { id: 'new_1', label: 'Solo', shots: 1, canvasWidth: 900, canvasHeight: 1100,  slots: [{ x: 70, y: 80, width: 760, height: 760 }], rows: 1 },
+  { id: 'new_1', label: 'Solo', shots: 1, canvasWidth: 900, canvasHeight: 1100,  slots: [{ x: 40, y: 40, width: 820, height: 760 }], rows: 1 },
   { id: 'new_2', label: 'Duo',  shots: 2, canvasWidth: 900, canvasHeight: 1600,  slots: [{ x: 40, y: 50, width: 820, height: 600 }, { x: 40, y: 700, width: 820, height: 600 }], rows: 2 },
-  { id: 'new_3', label: 'Trio', shots: 3, canvasWidth: 900, canvasHeight: 2000,  slots: [{ x: 40, y: 40, width: 820, height: 480 }, { x: 40, y: 560, width: 820, height: 480 }, { x: 40, y: 1080, width: 820, height: 480 }], rows: 3 },
-  { id: 'new_4', label: 'Quad', shots: 4, canvasWidth: 900, canvasHeight: 2400,  slots: [{ x: 40, y: 40, width: 820, height: 440 }, { x: 40, y: 530, width: 820, height: 440 }, { x: 40, y: 1020, width: 820, height: 440 }, { x: 40, y: 1510, width: 820, height: 440 }], rows: 4 },
+  { id: 'new_3', label: 'Trio', shots: 3, canvasWidth: 900, canvasHeight: 2000,  slots: [{ x: 40, y: 40, width: 820, height: 550 }, { x: 40, y: 630, width: 820, height: 550 }, { x: 40, y: 1220, width: 820, height: 550 }], rows: 3 },
+  { id: 'new_4', label: 'Quad', shots: 4, canvasWidth: 900, canvasHeight: 2400,  slots: [{ x: 40, y: 40, width: 820, height: 550 }, { x: 40, y: 630, width: 820, height: 550 }, { x: 40, y: 1220, width: 820, height: 550 }, { x: 40, y: 1810, width: 820, height: 550 }], rows: 4 },
 ]
 
 const FRAME_COLORS = [

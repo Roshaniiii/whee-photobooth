@@ -12,6 +12,7 @@ import template1_strip4 from '../assets/template1_strip4.png'
 import template1_strip3 from '../assets/template1_strip3.png'
 import template2_strip3 from '../assets/template2_strip3.png'
 import template3_strip3 from '../assets/template3_strip3.png'
+import template3_strip4 from '../assets/template3_strip4.png'
 import template2_strip4 from '../assets/template2_strip4.png'
 import template4_strip3 from '../assets/template4_strip3.png'
 
@@ -128,6 +129,15 @@ export const TEMPLATES = [
       slot(40, 490, PHOTO_W3, PHOTO_H3),
       slot(40, 950, PHOTO_W3, PHOTO_H3),
     ],
+  },
+  {
+    id: 'template3_strip4',
+    label: 'Trio — D',
+    shots: 3,
+    file: template3_strip4,
+    canvasWidth: 600,
+    canvasHeight: 1600,
+    slots: [slot(50, 45), slot(50, 500), slot(50, 955)],
   },
   {
     id: 'template4_strip1',
