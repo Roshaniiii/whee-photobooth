@@ -20,6 +20,7 @@ export default function Footer() {
       justifyContent: 'center',
       gap:            '14px',
       fontFamily:     "'Cause', serif",
+      
     }}>
 
       {/* Logo + name — centered */}
