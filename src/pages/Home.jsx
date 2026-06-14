@@ -75,7 +75,7 @@ export default function Home() {
         }}>
 
           {/* Frame 3 — top left, small */}
-          <img className="home-frame frame-3" src={frame3} alt="photo frame 3" style={{
+          <img className="home-frame frame-3" src={frame3} alt="Photo strip template preview - Whee Photobooth" style={{
             position: 'absolute',
             width: 'clamp(110px, 13vw, 130px)',
             left: '7%',
@@ -90,7 +90,7 @@ export default function Home() {
           />
 
           {/* Frame 1 — top center, large — most prominent */}
-          <img className="home-frame frame-1" src={frame1} alt="photo frame 1" style={{
+          <img className="home-frame frame-1" src={frame1} alt="Photo strip template preview - Whee Photobooth" style={{
             position: 'absolute',
             width: 'clamp(170px, 22vw, 200px)',
             left: '45%',
@@ -106,7 +106,7 @@ export default function Home() {
           />
 
           {/* Frame 2 — top right, medium */}
-          <img className="home-frame frame-6" src={frame6} alt="photo frame 6" style={{
+          <img className="home-frame frame-6" src={frame6} alt="Photo strip template preview - Whee Photobooth" style={{
             position: 'absolute',
             width: 'clamp(140px, 16vw, 160px)',
             right: '15%',
@@ -121,7 +121,7 @@ export default function Home() {
           />
 
           {/* Frame 3 — bottom left, medium */}
-          <img className="home-frame frame-2" src={frame2} alt="photo frame 2" style={{
+          <img className="home-frame frame-2" src={frame2} alt="Photo strip template preview - Whee Photobooth" style={{
             position: 'absolute',
             width: 'clamp(140px, 15vw, 150px)',
             left: '12%',
@@ -136,7 +136,7 @@ export default function Home() {
           />
 
           {/* Frame 4 — bottom center, large */}
-          <img className="home-frame frame-4" src={frame4} alt="photo frame 4" style={{
+          <img className="home-frame frame-4" src={frame4} alt="Photo strip template preview - Whee Photobooth" style={{
             position: 'absolute',
             width: 'clamp(200px, 22vw, 210px)',
             left: '53%',
@@ -152,7 +152,7 @@ export default function Home() {
           />
 
           {/* Frame 6 — bottom right, small */}
-          <img className="home-frame frame-5" src={frame5} alt="photo frame 5" style={{
+          <img className="home-frame frame-5" src={frame5} alt="Photo strip template preview - Whee Photobooth" style={{
             position: 'absolute',
             width: 'clamp(120px, 13vw, 130px)',
             right: '9%',
@@ -210,6 +210,17 @@ export default function Home() {
         >
           Start
         </button>
+        {/* <section style={{ maxWidth: '500px', margin: '24px auto 0', textAlign: 'center', padding: '0 16px' }}>
+          <h2 style={{
+            fontFamily: "'Networkand', cursive",
+            fontSize: '15px',
+            color: '#917264',
+            fontWeight: '400',
+            letterSpacing: '0.5px',
+          }}>
+            Free Online Photo Booth — Capture, Filter & Customize Your Photo Strips
+          </h2>
+        </section> */}
       </div>
       <Footer /> 
       
