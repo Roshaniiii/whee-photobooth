@@ -7,7 +7,7 @@ A web-based photobooth built with React + Vite. Pick a template, capture photos 
 <img width="1427" height="665" alt="image" src="https://github.com/user-attachments/assets/12947717-d8ab-4663-9480-a09c5b90a280" />
 
 
-**Live site:** https://whee-photobooth.vercel.app
+**Live site:** https://wheephotobooth.site
 **API repo:** https://github.com/Roshaniiii/whee-photobooth-api.git
 
 ## Tech Stack
@@ -99,3 +99,15 @@ Photos are processed in the browser and stored in `sessionStorage` until the tab
 | `npm run build` | Production bundle → `dist/` |
 | `npm run preview` | Serve `dist/` locally |
 | `npm run lint` | ESLint |
+
+
+## Author
+
+**Roshani**
+
+* Website: https://wheephotobooth.site
+* LinkedIn: https://linkedin.com/roshaniiii
+* X (Twitter): https://x.com/Roshaniii7
+* Email: contactroshaniiii@gmail.com
+
+If you have feedback or suggestions, feel free to reach out!
