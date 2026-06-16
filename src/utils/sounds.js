@@ -3,8 +3,6 @@ const PLAYBACK_RATE = 1.45
 const clickSound = new Audio('/click_sound.mp3')
 clickSound.volume = 0.5
 
-const hoverSound = new Audio('/hover_sound.mp3')
-hoverSound.volume = 0.4
 
 const captureSound = new Audio('/capture_sound.mp3')
 captureSound.volume = 0.55
@@ -19,9 +17,7 @@ export function playClick() {
   play(clickSound)
 }
 
-export function playHover() {
-  play(hoverSound)
-}
+// hover sound removed
 
 export function playCapture() {
   play(captureSound)
