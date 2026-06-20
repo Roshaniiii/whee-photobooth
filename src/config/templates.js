@@ -1,5 +1,6 @@
 import template1_strip1 from '../assets/template1_strip1.png'
 import template1_strip2 from '../assets/template1_strip2.png'
+import template1_strip5 from '../assets/template1_strip5.png'
 import template2_strip1 from '../assets/template2_strip1.png'
 import template2_strip2 from '../assets/template2_strip2.png'
 import template3_strip1 from '../assets/template3_strip1.png'
@@ -65,6 +66,14 @@ export const TEMPLATES = [
     file: template1_strip4,
     canvasWidth: 600, canvasHeight: 700,
     slots: [slot(25, 25, PHOTO_W1, PHOTO_H1)],
+  },
+  {
+    id: 'template1_strip5',
+    label: 'Solo — E',
+    shots: 1,
+    file: template1_strip5,
+    canvasWidth: 600, canvasHeight: 700,
+    slots: [slot(50, 60)],
   },
   {
     id: 'template2_strip1',
