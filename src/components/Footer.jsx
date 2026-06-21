@@ -3,7 +3,7 @@ import linkedinIcon from '../assets/linkedin.png'
 import twitterIcon from '../assets/twitter.png'
 
 const SOCIAL = {
-  linkedin: 'https://www.linkedin.com/in/roshaniiii',
+  linkedin: 'https://linkedin.com/in/roshani-gusain',
   twitter:  'https://x.com/Roshaniii7',
 }
 
