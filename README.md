@@ -106,8 +106,9 @@ Photos are processed in the browser and stored in `sessionStorage` until the tab
 **Roshani**
 
 * Website: https://wheephotobooth.site
+* Email: contactroshaniiii@gmail.com
 * LinkedIn: https://linkedin.com/in/roshani-gusain
 * X (Twitter): https://x.com/Roshaniii7
-* Email: contactroshaniiii@gmail.com
+
 
 If you have feedback or suggestions, feel free to reach out!
