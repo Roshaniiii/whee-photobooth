@@ -166,19 +166,31 @@ function firstEmptySlotIndex(slots) {
 
 /** Compact vertical frame strip (inside camera view) — matches layout shot count */
 function FrameProgressStrip({ total, slots, activeIndex, onSlotClick, slotShapes }) {
-  const shortSide = total <= 1 ? 64 : total === 2 ? 56 : 44
+  const stripRef = useRef(null)
+  const buttonRefs = useRef([])
   const gap = total <= 2 ? 10 : 8
+  const buttonSize = total <= 1 ? 82 : total <= 4 ? 74 : total <= 8 ? 62 : 54
 
-  function boxDims(i) {
-    const aspect = slotShapes?.[i]?.aspect ?? 4 / 3
-    if (aspect >= 1) {
-      return { w: Math.round(shortSide * Math.min(aspect, 1.85)), h: shortSide }
+  useEffect(() => {
+    if (activeIndex < 0) return
+
+    const container = stripRef.current
+    const button = buttonRefs.current[activeIndex]
+    if (!container || !button) return
+
+    const buttonTop = button.offsetTop
+    const buttonBottom = buttonTop + button.offsetHeight
+    const containerTop = container.scrollTop
+    const containerHeight = container.clientHeight
+
+    if (buttonBottom > containerTop + containerHeight || buttonTop < containerTop) {
+      button.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
     }
-    return { w: shortSide, h: Math.round(shortSide / aspect) }
-  }
+  }, [activeIndex, slots, total])
 
   return (
     <div
+      ref={stripRef}
       style={{
         position: 'absolute',
         right: 12,
@@ -189,24 +201,30 @@ function FrameProgressStrip({ total, slots, activeIndex, onSlotClick, slotShapes
         flexDirection: 'column',
         gap,
         pointerEvents: 'auto',
+        width: buttonSize + 4,
         maxHeight: '88%',
-        justifyContent: 'center',
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        padding: '2px 0',
+        scrollBehavior: 'smooth',
+        scrollbarWidth: 'thin',
       }}
     >
       {Array.from({ length: total }).map((_, i) => {
         const entry = slots[i]
         const hasPhoto = !!entry?.displayUrl
         const isActive = activeIndex >= 0 && i === activeIndex && !hasPhoto
-        const { w: boxW, h: boxH } = boxDims(i)
+
         return (
           <button
             key={i}
+            ref={el => { buttonRefs.current[i] = el }}
             type="button"
             onClick={() => onSlotClick(i)}
             title={hasPhoto ? `Frame ${i + 1} — tap to replace` : `Frame ${i + 1}`}
             style={{
-              width: boxW,
-              height: boxH,
+              width: buttonSize,
+              height: buttonSize,
               borderRadius: 14,
               border: `2px dashed ${isActive ? '#DF82A3' : 'rgba(223,130,163,0.75)'}`,
               background: hasPhoto
@@ -222,6 +240,8 @@ function FrameProgressStrip({ total, slots, activeIndex, onSlotClick, slotShapes
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              scrollMarginTop: 6,
+              scrollMarginBottom: 6,
             }}
           >
             {hasPhoto ? (
@@ -233,7 +253,7 @@ function FrameProgressStrip({ total, slots, activeIndex, onSlotClick, slotShapes
             ) : (
               <span style={{
                 fontFamily: "'Unkempt',cursive",
-                fontSize: Math.min(boxW, boxH) * 0.38,
+                fontSize: Math.max(16, buttonSize * 0.38),
                 color: isActive ? '#fff' : '#DF82A3',
                 lineHeight: 1,
                 pointerEvents: 'none',

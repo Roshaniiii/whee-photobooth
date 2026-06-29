@@ -17,6 +17,9 @@ import template3_strip4 from '../assets/template3_strip4.png'
 import template2_strip4 from '../assets/template2_strip4.png'
 import template4_strip3 from '../assets/template4_strip3.png'
 
+// ── Collage template imports ──────────────────────────────────
+import collage_strip1 from '../assets/collage_strip1.png'
+
 const PHOTO_W = 500
 const PHOTO_H = 410
 
@@ -27,6 +30,7 @@ const PHOTO_W3 = 520
 const PHOTO_H3 = 430
 const PHOTO_W4 = 540
 const PHOTO_H4 = 410
+
 
 function slot(x, y, w = PHOTO_W, h = PHOTO_H) {
   return { x, y, width: w, height: h }
@@ -177,6 +181,27 @@ export const TEMPLATES = [
       slot(30, 470,  PHOTO_W4, PHOTO_H4),
       slot(30, 910,  PHOTO_W4, PHOTO_H4),
       slot(30, 1350, PHOTO_W4, PHOTO_H4),
+    ],
+  },
+  {
+  id: 'collage_strip1',
+    label: 'Collage — A',
+    shots: 1,
+    file: collage_strip1,
+    canvasWidth: 1200,
+    canvasHeight: 1200,
+    slots: [
+      slot(217.5, 120,   310, 180),
+      slot(672.5, 120,   310, 180),
+      slot(52.5,  309,   320, 300),
+      slot(382.5, 309,   435, 300),
+      slot(827.5, 309,   320, 300),
+      slot(231.5, 618,   240, 140),
+      slot(480.3, 618,   240, 140),
+      slot(729.3, 618,   240, 140),
+      slot(380,   766.6, 220, 140),
+      slot(608.5, 766.6, 220, 140),
+      slot(528.3, 915.6, 150, 150),
     ],
   },
 ]
