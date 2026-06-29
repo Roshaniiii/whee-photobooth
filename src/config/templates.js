@@ -19,6 +19,7 @@ import template4_strip3 from '../assets/template4_strip3.png'
 
 // ── Collage template imports ──────────────────────────────────
 import collage_strip1 from '../assets/collage_strip1.png'
+import collage_strip2 from '../assets/collage_strip2.png'
 
 const PHOTO_W = 500
 const PHOTO_H = 410
@@ -186,7 +187,7 @@ export const TEMPLATES = [
   {
   id: 'collage_strip1',
     label: 'Collage — A',
-    shots: 1,
+    shots: 11,
     file: collage_strip1,
     canvasWidth: 1200,
     canvasHeight: 1200,
@@ -202,6 +203,25 @@ export const TEMPLATES = [
       slot(380,   766.6, 220, 140),
       slot(608.5, 766.6, 220, 140),
       slot(528.3, 915.6, 150, 150),
+    ],
+  },
+  {
+    id: 'collage_strip2',
+    label: 'Collage — B',
+    shots: 9,
+    file: collage_strip2,
+    canvasWidth: 1200,
+    canvasHeight: 1200,
+    slots: [
+      slot(0,   0,   396, 396),
+      slot(402, 0,   396, 396),
+      slot(804, 0,   396, 396),
+      slot(0,   402, 396, 396),
+      slot(402, 402, 396, 396),
+      slot(804, 402, 396, 396),
+      slot(0,   804, 396, 396),
+      slot(402, 804, 396, 396),
+      slot(804, 804, 396, 396),
     ],
   },
 ]
