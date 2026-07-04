@@ -804,38 +804,66 @@ export default function Camera() {
     return () => { cancelled = true }
   }, [selectedFilter, stripPreview, capturing])
 
-  async function captureOne() {
-    playCapture()
-    const frame = await captureRawFrame()
-    if (!frame) return null
-    const rawUrl = `data:image/jpeg;base64,${frame}`
-    const displayUrl = await applyFilterToPhoto(rawUrl, selectedFilter)
-    return { displayUrl, rawUrl }
-  }
+  async function finishStrip(photos) {
+  if (photos.length < totalShots) return
+  setIsProcessing(true)
+  const strip = await buildStrip(photos, layoutConfig, templateSrc)
+  setIsProcessing(false)
 
-  function setSlotPhoto(index, displayUrl, source, rawUrl) {
+  if (strip) {
+    stopCamera()
+    setStripPreview(strip)
+    sessionStorage.setItem('stripPreview', strip)
+    sessionStorage.setItem('capturedPhotos', JSON.stringify(photos))
+
+    // ── Trigger email popup — once per session only ────
+    setTimeout(() => {
+      const alreadyShown = sessionStorage.getItem('emailPopupShown')
+      if (!alreadyShown) {
+        try {
+          if (window.Tally?.openPopup) {
+            window.Tally.openPopup('2EoW4V', {
+              width: 400,
+              overlay: true,
+              autoClose: 4000,
+            })
+          } else if (window.Tally?.open) {
+            window.Tally.open('2EoW4V')
+          } else {
+            window.dispatchEvent(new CustomEvent('tally:open', { detail: { formId: '2EoW4V' } }))
+          }
+          sessionStorage.setItem('emailPopupShown', 'true')
+        } catch (err) {
+          console.warn('Tally popup trigger failed:', err)
+        }
+      }
+    }, 1500)
+    // ──────────────────────────────────────────────────
+  }
+}
+
+  function setSlotPhoto(index, displayUrl, source = 'camera', rawUrl = null) {
+    if (index < 0) return
     setSlots(prev => {
       const next = [...prev]
-      next[index] = {
-        displayUrl,
-        source,
-        rawUrl: rawUrl || displayUrl,
-      }
+      next[index] = { displayUrl, source, rawUrl }
       return next
     })
   }
 
-  async function finishStrip(photos) {
-    if (photos.length < totalShots) return
-    setIsProcessing(true)
-    const strip = await buildStrip(photos, layoutConfig, templateSrc)
-    setIsProcessing(false)
+  async function captureOne() {
+    try {
+      const raw = await captureRawFrame()
+      if (!raw) return null
 
-    if (strip) {
-      stopCamera()
-      setStripPreview(strip)
-      sessionStorage.setItem('stripPreview', strip)
-      sessionStorage.setItem('capturedPhotos', JSON.stringify(photos))
+      const displayUrl = await applyFilterToPhoto(`data:image/jpeg;base64,${raw}`, selectedFilterRef.current)
+      return {
+        rawUrl: `data:image/jpeg;base64,${raw}`,
+        displayUrl,
+      }
+    } catch (err) {
+      console.error('Capture failed:', err)
+      return null
     }
   }
 
@@ -847,36 +875,38 @@ export default function Camera() {
     cancelFilterPreview()
     setFilteredFrame(null)
 
-    if (timerSecs === 0) {
-      const shot = await captureOne()
-      if (shot) setSlotPhoto(nextCaptureIndex, shot.displayUrl, 'camera', shot.rawUrl)
-      setCapturing(false)
-      return
-    }
-
-    let working = [...slots]
-    let index = firstEmptySlotIndex(working)
-    while (index >= 0) {
-      for (let t = timerSecs; t >= 1; t--) {
-        setCountdown(t)
-        await sleep(1000)
+    try {
+      if (timerSecs === 0) {
+        const shot = await captureOne()
+        if (shot) setSlotPhoto(nextCaptureIndex, shot.displayUrl, 'camera', shot.rawUrl)
+        return
       }
+
+      let working = [...slots]
+      let index = firstEmptySlotIndex(working)
+      while (index >= 0) {
+        for (let t = timerSecs; t >= 1; t--) {
+          setCountdown(t)
+          await sleep(1000)
+        }
+        setCountdown(null)
+        await sleep(250)
+
+        const shot = await captureOne()
+        if (shot) {
+          working[index] = { displayUrl: shot.displayUrl, source: 'camera', rawUrl: shot.rawUrl }
+          setSlots([...working])
+        }
+
+        index = firstEmptySlotIndex(working)
+        if (index < 0) break
+        await sleep(600)
+      }
+
       setCountdown(null)
-      await sleep(250)
-
-      const shot = await captureOne()
-      if (shot) {
-        working[index] = { displayUrl: shot.displayUrl, source: 'camera', rawUrl: shot.rawUrl }
-        setSlots([...working])
-      }
-
-      index = firstEmptySlotIndex(working)
-      if (index < 0) break
-      await sleep(600)
+    } finally {
+      setCapturing(false)
     }
-
-    setCountdown(null)
-    setCapturing(false)
   }
 
   useEffect(() => {
