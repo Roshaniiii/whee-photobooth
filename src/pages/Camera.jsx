@@ -818,7 +818,7 @@ export default function Camera() {
 
     // ── Trigger email popup — once per session only ────
     setTimeout(() => {
-      const alreadyShown = sessionStorage.getItem('emailPopupShown')
+      const alreadyShown = localStorage.getItem('emailPopupShown')
       if (!alreadyShown) {
         try {
           if (window.Tally?.openPopup) {
@@ -832,7 +832,7 @@ export default function Camera() {
           } else {
             window.dispatchEvent(new CustomEvent('tally:open', { detail: { formId: '2EoW4V' } }))
           }
-          sessionStorage.setItem('emailPopupShown', 'true')
+          localStorage.setItem('emailPopupShown', 'true')
         } catch (err) {
           console.warn('Tally popup trigger failed:', err)
         }
