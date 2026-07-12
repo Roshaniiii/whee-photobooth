@@ -1259,46 +1259,56 @@ export default function Camera() {
             <div className="camera-controls-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '24px', width: '100%' }}>
 
               {/* Upload */}
-              <button
-                type="button"
-                onClick={() => openUploadForSlot()}
-                disabled={capturing}
-                title="Upload photo"
-                aria-label="Upload photo"
-                style={{
-                  width: '48px', height: '48px', borderRadius: '50%',
-                  background: 'rgba(255,255,255,0.75)', border: '2px solid #D4C49A',
-                  cursor: capturing ? 'not-allowed' : 'pointer',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: '0 3px 10px rgba(145,114,100,0.15)', transition: 'all 0.2s',
-                  opacity: capturing ? 0.4 : 1, padding: 0,
-                }}
-                onMouseEnter={e => { if (!capturing) e.currentTarget.style.background = '#F4B8CC' }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.75)' }}
-              >
-                <Upload size={22} color={capturing ? ICON_COLOR : ICON_COLOR} />
-              </button>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+                <button
+                  type="button"
+                  onClick={() => openUploadForSlot()}
+                  disabled={capturing}
+                  title="Upload photo"
+                  aria-label="Upload photo"
+                  style={{
+                    width: '48px', height: '48px', borderRadius: '50%',
+                    background: 'rgba(255,255,255,0.75)', border: '2px solid #D4C49A',
+                    cursor: capturing ? 'not-allowed' : 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: '0 3px 10px rgba(145,114,100,0.15)', transition: 'all 0.2s',
+                    opacity: capturing ? 0.4 : 1, padding: 0,
+                  }}
+                  onMouseEnter={e => { if (!capturing) e.currentTarget.style.background = '#F4B8CC' }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.75)' }}
+                >
+                  <Upload size={22} color={capturing ? ICON_COLOR : ICON_COLOR} />
+                </button>
+                <span style={{ fontFamily: "'Cause',serif", fontSize: '11px', fontWeight: '700', letterSpacing: '0.8px', textTransform: 'uppercase', color: '#917264' }}>
+                  Upload
+                </span>
+              </div>
 
               {/* Flip */}
-              <button
-                type="button"
-                onClick={flipCamera}
-                disabled={capturing}
-                title="Flip camera"
-                aria-label="Flip camera"
-                style={{
-                  width: '48px', height: '48px', borderRadius: '50%',
-                  background: 'rgba(255,255,255,0.75)', border: '2px solid #D4C49A',
-                  cursor: capturing ? 'not-allowed' : 'pointer',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: '0 3px 10px rgba(145,114,100,0.15)', transition: 'all 0.2s',
-                  opacity: capturing ? 0.4 : 1, padding: 0,
-                }}
-                onMouseEnter={e => { if (!capturing) e.currentTarget.style.background = '#F4B8CC' }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.75)' }}
-              >
-                <FlipHorizontal2 size={22} color={ICON_COLOR} />
-              </button>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+                <button
+                  type="button"
+                  onClick={flipCamera}
+                  disabled={capturing}
+                  title="Flip camera"
+                  aria-label="Flip camera"
+                  style={{
+                    width: '48px', height: '48px', borderRadius: '50%',
+                    background: 'rgba(255,255,255,0.75)', border: '2px solid #D4C49A',
+                    cursor: capturing ? 'not-allowed' : 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: '0 3px 10px rgba(145,114,100,0.15)', transition: 'all 0.2s',
+                    opacity: capturing ? 0.4 : 1, padding: 0,
+                  }}
+                  onMouseEnter={e => { if (!capturing) e.currentTarget.style.background = '#F4B8CC' }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.75)' }}
+                >
+                  <FlipHorizontal2 size={22} color={ICON_COLOR} />
+                </button>
+                <span style={{ fontFamily: "'Cause',serif", fontSize: '11px', fontWeight: '700', letterSpacing: '0.8px', textTransform: 'uppercase', color: '#917264' }}>
+                  Flip
+                </span>
+              </div>
 
               {/* Capture — clean circle, NO emoji */}
               <button onClick={startCapture} disabled={!cameraReady || capturing || nextCaptureIndex < 0} style={{
@@ -1324,7 +1334,7 @@ export default function Camera() {
 
               {/* Timer */}
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                <span style={{ fontSize: '10px', color: '#917264', letterSpacing: '1px', textTransform: 'uppercase' }}>Timer</span>
+                <span style={{ fontSize: '10px', color: '#917264', letterSpacing: '1.2px', textTransform: 'uppercase' }}>Timer</span>
                 <div style={{ display: 'flex', gap: '4px' }}>
                   {[0, 3, 5, 10].map(t => (
                     <button key={t} onClick={() => !capturing && setTimerSecs(t)} style={{
