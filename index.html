@@ -20,7 +20,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cause:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Unkempt:wght@400;700&display=swap" rel="stylesheet">
 
-    <!-- Open Graph — looks good when shared on WhatsApp/Instagram -->
+    <!-- Open Graph -->
     <meta property="og:site_name" content="Whee! Photobooth" />
     <meta property="og:title" content="Whee! Photobooth — Free Online Photo Booth | Photo Strips with Filters" />
     <meta property="og:description" content="Whee! Photobooth is a free online photo booth — pick a template, capture photos with your webcam, add filters, doodle on your strip, and download it instantly. No app needed." />
@@ -34,12 +34,24 @@
     <meta name="twitter:description" content="Pose, capture, and create cute photo strips — right from your browser." />
     <meta name="twitter:image" content="https://wheephotobooth.site/favicon.png" />
 
-    <!-- Structured Data (Schema Markup) -->
+    <!-- WebSite Schema — fixes site name in Google search results -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Whee! Photobooth",
+      "alternateName": "Whee Photobooth",
+      "url": "https://wheephotobooth.site"
+    }
+    </script>
+
+    <!-- WebApplication Schema -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
       "name": "Whee! Photobooth",
+      "alternateName": "Whee Photobooth",
       "url": "https://wheephotobooth.site",
       "logo": "https://wheephotobooth.site/favicon.png",
       "description": "A free online photo booth where you can pick a template, capture photos with your webcam, apply filters, doodle on your strip, and download it instantly.",
@@ -49,6 +61,14 @@
         "@type": "Offer",
         "price": "0",
         "priceCurrency": "USD"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "Roshani",
+        "sameAs": [
+          "https://www.linkedin.com/in/roshaniiii",
+          "https://x.com/Roshaniii7"
+        ]
       },
       "author": {
         "@type": "Person",
@@ -63,7 +83,7 @@
 
     <script async src="https://tally.so/widgets/embed.js"></script>
 
-    <!-- Google tag (gtag.js) -->
+    <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-KTCQ3F6Z7Q"></script>
     <script>
       window.dataLayer = window.dataLayer || [];

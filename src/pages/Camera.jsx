@@ -8,6 +8,7 @@ import { Upload, FlipHorizontal2 } from 'lucide-react'
 
 import { TEMPLATE_ASSETS } from '../config/templates'
 import { hasFilterApi, filterApiEndpoint } from '../config/api'
+import { drawImageWithRotation } from '../utils/canvasUtils'
 
 /** 4-frame strip height — other layouts scale proportionally for the result page */
 const FOUR_FRAME_REF_HEIGHT = 2000
@@ -1657,12 +1658,12 @@ async function buildStrip(photos, layoutConfig, templateSrc) {
     slots.forEach((slot, i) => {
       const img = photoImgs[i] ?? photoImgs[photoImgs.length - 1]
       if (!img) return
-      ctx.save()
-      ctx.beginPath()
-      ctx.rect(slot.x, slot.y, slot.width, slot.height)
-      ctx.clip()
-      drawCover(ctx, img, slot.x, slot.y, slot.width, slot.height)
-      ctx.restore()
+      drawImageWithRotation(
+        ctx, img,
+        slot.x, slot.y, slot.width, slot.height,
+        slot.rotation ?? 0,
+        slot.clipShape ?? null
+      )
     })
   } else {
     // Photos first, then transparent template frame on top
@@ -1670,12 +1671,12 @@ async function buildStrip(photos, layoutConfig, templateSrc) {
     slots.forEach((slot, i) => {
       const img = photoImgs[i] ?? photoImgs[photoImgs.length - 1]
       if (!img) return
-      ctx.save()
-      ctx.beginPath()
-      ctx.rect(slot.x, slot.y, slot.width, slot.height)
-      ctx.clip()
-      drawCover(ctx, img, slot.x, slot.y, slot.width, slot.height)
-      ctx.restore()
+      drawImageWithRotation(
+        ctx, img,
+        slot.x, slot.y, slot.width, slot.height,
+        slot.rotation ?? 0,
+        slot.clipShape ?? null
+      )
     })
 
     const tmpl = await loadImage(templateSrc)

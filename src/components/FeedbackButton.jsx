@@ -1,12 +1,6 @@
-﻿import hideyLogo from '../assets/hidey_logo.png'
-import { MessageCircleHeart, ArrowRight } from 'lucide-react'
-import { useLocation } from 'react-router-dom'
-
-const HIDEY_URL = 'https://tryhidey.xyz'
+﻿import { MessageCircleHeart } from 'lucide-react'
 
 export default function FeedbackButton() {
-  const location = useLocation()
-  const showHideyCallout = location.pathname === '/camera' || location.pathname === '/customise'
 
   return (
     <div style={{
@@ -20,33 +14,6 @@ export default function FeedbackButton() {
       justifyContent: 'flex-end',
       gap: '10px',
     }}>
-      {showHideyCallout && (
-        <a
-          href={HIDEY_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            background: 'rgba(255,255,255,0.96)',
-            border: '1px solid rgba(145,114,100,0.18)',
-            borderRadius: '999px',
-            padding: '8px 12px',
-            textDecoration: 'none',
-            color: '#917264',
-            fontFamily: "'Cause', serif",
-            fontSize: '12px',
-            fontWeight: 700,
-            boxShadow: '0 10px 24px rgba(145,114,100,0.12)',
-          }}
-        >
-          <span>Check Out Hidey</span>
-          <ArrowRight size={15} color="#DF82A3" />
-          <img src={hideyLogo} alt="Hidey" style={{ width: '23px', height: '23px', borderRadius: '10%' }} />
-        </a>
-      )}
-
       <button
         className="feedback-button"
         data-tally-open="2EoW4V"

@@ -20,6 +20,8 @@ import template4_strip3 from '../assets/template4_strip3.png'
 // ── Collage template imports ──────────────────────────────────
 import collage_strip1 from '../assets/collage_strip1.png'
 import collage_strip2 from '../assets/collage_strip2.png'
+import collage_strip3 from '../assets/collage_strip3.png'
+import collage_strip4 from '../assets/collage_strip4.png'
 
 const PHOTO_W = 500
 const PHOTO_H = 410
@@ -33,8 +35,8 @@ const PHOTO_W4 = 540
 const PHOTO_H4 = 410
 
 
-function slot(x, y, w = PHOTO_W, h = PHOTO_H) {
-  return { x, y, width: w, height: h }
+function slot(x, y, w = PHOTO_W, h = PHOTO_H, rotation = 0, clipShape = null) {
+  return { x, y, width: w, height: h, rotation, clipShape }
 }
 
 export const TEMPLATES = [
@@ -80,7 +82,7 @@ export const TEMPLATES = [
     canvasWidth: 600, canvasHeight: 700,
     slots: [slot(50, 60)],
   },
-  {
+ {
     id: 'template2_strip1',
     label: 'Duo — A',
     shots: 2,
@@ -222,6 +224,31 @@ export const TEMPLATES = [
       slot(0,   804, 396, 396),
       slot(402, 804, 396, 396),
       slot(804, 804, 396, 396),
+    ],
+  },
+  {
+    id: 'heart_duo',
+    label: 'Heart Duo',
+    shots: 2,
+    file: collage_strip3, 
+    canvasWidth: 1200,
+    canvasHeight: 1200,
+    slots: [
+      slot(120, 392, 450, 496, -12, 'heart'),  // Left image with -25° rotation
+      slot(630, 260, 450, 496, 0, 'heart'),   // Right image with no rotation
+    ],
+  },
+  {
+    id: 'collage_strip4',
+    label: 'Collage — D',
+    shots: 3,
+    file: collage_strip4,
+    canvasWidth: 600, 
+    canvasHeight: 700,
+    slots: [
+      slot( 7,  72,  185, 160), 
+      slot(210, 255, 185, 160),
+      slot(410, 432, 185, 160),
     ],
   },
 ]

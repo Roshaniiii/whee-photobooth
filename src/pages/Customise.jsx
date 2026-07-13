@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import PageHeader from '../components/PageHeader'
 import VerticalStripes from '../components/VerticalStripes'
 import { Eraser, PenLine, Sparkles, Undo2, Redo2 } from 'lucide-react'
+import { createHeartClipPath, drawImageWithRotation } from '../utils/canvasUtils'
 
 const THEME = {
   pageBg: '#F2E7B4',
@@ -34,7 +35,7 @@ function drawImageCover(ctx, img, x, y, w, h) {
   const dy = y + (h - dh) / 2
   ctx.drawImage(img, dx, dy, dw, dh)
 }
-
+// ── Draw image with rotation and optional clipping ────────────
 export default function Customise() {
   const navigate = useNavigate()
   const canvasRef = useRef(null)
