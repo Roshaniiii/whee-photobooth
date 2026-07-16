@@ -817,32 +817,50 @@ export default function Camera() {
     sessionStorage.setItem('stripPreview', strip)
     sessionStorage.setItem('capturedPhotos', JSON.stringify(photos))
 
-    // ── Trigger email popup — once per session only ────
-    setTimeout(() => {
-      const alreadyShown = localStorage.getItem('emailPopupShown')
-      if (!alreadyShown) {
+
+   // ── Trigger support popup → then Tally form ───────────
+   setTimeout(() => {
+    const supportShown = localStorage.getItem('supportPopupShown')
+    const emailShown   = localStorage.getItem('emailPopupShown')
+
+    function triggerTally() {
+      if (emailShown) return
+      setTimeout(() => {
         try {
           if (window.Tally?.openPopup) {
             window.Tally.openPopup('2EoW4V', {
-              width: 400,
-              overlay: true,
+              width:     400,
+              overlay:   true,
               autoClose: 4000,
             })
           } else if (window.Tally?.open) {
             window.Tally.open('2EoW4V')
-          } else {
-            window.dispatchEvent(new CustomEvent('tally:open', { detail: { formId: '2EoW4V' } }))
           }
           localStorage.setItem('emailPopupShown', 'true')
         } catch (err) {
           console.warn('Tally popup trigger failed:', err)
         }
-      }
-    }, 1500)
-    // ──────────────────────────────────────────────────
-  }
-}
+      }, 1000) // 1 second gap between support popup closing and Tally opening
+    }
 
+    if (!supportShown) {
+      // Show support popup first
+      // Dispatch custom event that SupportButton listens to
+      window.dispatchEvent(new CustomEvent('whee:openSupport', {
+        detail: { onClose: triggerTally }
+      }))
+      localStorage.setItem('supportPopupShown', 'true')
+    } else {
+      // Support already shown before — go straight to Tally
+      triggerTally()
+    }
+
+  }, 1500)
+  // ──────────────────────────────────────────────────────
+
+    }
+  }
+  
   function setSlotPhoto(index, displayUrl, source = 'camera', rawUrl = null) {
     if (index < 0) return
     setSlots(prev => {

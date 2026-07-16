@@ -5,6 +5,7 @@ import Layout from './pages/Layout'
 import Camera from './pages/Camera'
 import Customise from './pages/Customise'
 import FeedbackButton from './components/FeedbackButton'
+import SupportButton from './components/SupportButton'
 import './mobile.css'
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
         <Route path="/customise" element={<Customise />} />
       </Routes>
       <FeedbackButton />
+      <SupportButton/>
     </BrowserRouter>
   )
 }
