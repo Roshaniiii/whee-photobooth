@@ -1,10 +1,12 @@
 import logo from '../assets/favicon.png'
 import linkedinIcon from '../assets/linkedin.png'
 import twitterIcon from '../assets/twitter.png'
+import instagramIcon from '../assets/instagram.png'
 
 const SOCIAL = {
   linkedin: 'https://linkedin.com/in/roshani-gusain',
   twitter:  'https://x.com/Roshaniii7',
+  instagram: 'https://instagram.com/wheephotobooth',
 }
 
 export default function Footer() {
@@ -43,6 +45,9 @@ export default function Footer() {
         </a>
         <a href={SOCIAL.twitter} target="_blank" rel="noopener noreferrer" title="Twitter / X">
           <img src={twitterIcon} alt="Twitter / X" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
+        </a>
+        <a href={SOCIAL.instagram} target="_blank" rel="noopener noreferrer" title="Instagram">
+          <img src={instagramIcon} alt="Instagram" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
         </a>
       </div>
 

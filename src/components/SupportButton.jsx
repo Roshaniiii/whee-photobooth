@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { X } from 'lucide-react'
+import donateIcon from '../assets/donate.png'
 
 export default function SupportButton() {
   const [open, setOpen] = useState(false)
@@ -117,15 +118,14 @@ export default function SupportButton() {
             {/* Icon */}
             <div style={{
               fontSize: '48px',
-              marginBottom: '12px',
               filter: 'drop-shadow(0 3px 6px rgba(145,114,100,0.15))',
             }}>
-              🧁
+              <img src={donateIcon} alt="donate" style={{ width: '90px', height: '90px' }} />
             </div>
 
             {/* Title */}
             <h2 style={{
-              fontFamily:    "'Networkand', cursive",
+              fontFamily:    "'Unkempt', 'Networkand', cursive",
               fontSize:      '22px',
               color:         '#DF82A3',
               margin:        '0 0 10px',
@@ -136,7 +136,7 @@ export default function SupportButton() {
 
             {/* Description */}
             <p style={{
-              fontSize: '13px',
+              fontSize: '14px',
               color: '#917264',
               margin: '0 0 6px',
               lineHeight: 1.6,
