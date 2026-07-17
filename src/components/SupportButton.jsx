@@ -3,16 +3,14 @@ import { X } from 'lucide-react'
 
 export default function SupportButton() {
   const [open, setOpen] = useState(false)
-  const onCloseRef            = useRef(null)
 
-  // Listen for Camera.jsx trigger
+  // Listen for trigger from Camera.jsx
   useEffect(() => {
-    function handleOpenEvent(e) {
-      onCloseRef.current = e.detail?.onClose || null
+    function handleOpen() {
       setOpen(true)
     }
-    window.addEventListener('whee:openSupport', handleOpenEvent)
-    return () => window.removeEventListener('whee:openSupport', handleOpenEvent)
+    window.addEventListener('whee:openSupport', handleOpen)
+    return () => window.removeEventListener('whee:openSupport', handleOpen)
   }, [])
 
   function handleClose() {

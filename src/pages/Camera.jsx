@@ -817,29 +817,46 @@ export default function Camera() {
     sessionStorage.setItem('stripPreview', strip)
     sessionStorage.setItem('capturedPhotos', JSON.stringify(photos))
 
-// ── Trigger email popup — once per session only ────
+    // ── Popup logic ───────────────────────────────────
     setTimeout(() => {
-      const alreadyShown = localStorage.getItem('emailPopupShown')
-      if (!alreadyShown) {
-        try {
-          if (window.Tally?.openPopup) {
-            window.Tally.openPopup('2EoW4V', {
-              width: 400,
-              overlay: true,
-              autoClose: 4000,
-            })
-          } else if (window.Tally?.open) {
-            window.Tally.open('2EoW4V')
-          } else {
-            window.dispatchEvent(new CustomEvent('tally:open', { detail: { formId: '2EoW4V' } }))
+      const emailShown   = localStorage.getItem('emailPopupShown')
+      const supportShown = localStorage.getItem('supportPopupShown')
+      const visitCount   = parseInt(localStorage.getItem('visitCount') || '0')
+
+      // Increment visit count every time user captures
+      localStorage.setItem('visitCount', visitCount + 1)
+
+      if (visitCount === 0) {
+        // ── First time ever → show Tally form only ──
+        if (!emailShown) {
+          try {
+            if (window.Tally?.openPopup) {
+              window.Tally.openPopup('2EoW4V', {
+                width:     400,
+                overlay:   true,
+                autoClose: 4000,
+              })
+            } else if (window.Tally?.open) {
+              window.Tally.open('2EoW4V')
+            }
+            localStorage.setItem('emailPopupShown', 'true')
+          } catch (err) {
+            console.warn('Tally popup trigger failed:', err)
           }
-          localStorage.setItem('emailPopupShown', 'true')
-        } catch (err) {
-          console.warn('Tally popup trigger failed:', err)
         }
+
+      } else if (visitCount === 1) {
+        // ── Second time → show Support popup only ──
+        if (!supportShown) {
+          window.dispatchEvent(new CustomEvent('whee:openSupport'))
+          localStorage.setItem('supportPopupShown', 'true')
+        }
+
       }
-    }, 1500)
-    // ──────────────────────────────────────────────────
+      // ── After both shown → no more popups ever ──
+
+    }, 1000)
+    // ─────────────────────────────────────────────────
   }
 }
   
