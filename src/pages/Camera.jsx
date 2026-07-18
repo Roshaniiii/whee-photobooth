@@ -9,6 +9,7 @@ import { Upload, FlipHorizontal2 } from 'lucide-react'
 import { TEMPLATE_ASSETS } from '../config/templates'
 import { hasFilterApi, filterApiEndpoint } from '../config/api'
 import { drawImageWithRotation } from '../utils/canvasUtils'
+import CurvedLoop from '../components/CurvedLoop'
 
 /** 4-frame strip height — other layouts scale proportionally for the result page */
 const FOUR_FRAME_REF_HEIGHT = 2000
@@ -1009,6 +1010,8 @@ export default function Camera() {
     <div className="page-wrapper camera-page-wrapper" style={{ minHeight: '100vh', width: '100%', backgroundColor: '#F2E7B4', position: 'relative', fontFamily: "'Cause',serif", overflow: 'hidden' }}>
       <VerticalStripes />
 
+      {/* CurvedLoop shown inline below the PageHeader when the strip is ready */}
+
       <div className="page-content camera-page-content" style={{
         position: 'relative', zIndex: 1, width: '100%',
         maxWidth: allDone ? 'min(1100px, 98vw)' : '720px',
@@ -1026,6 +1029,20 @@ export default function Camera() {
           className="camera-header"
           titleClassName="camera-title"
         />
+
+        {allDone && (
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', pointerEvents: 'none', marginTop: 8 }}>
+            <CurvedLoop
+              marqueeText="Tag @wheephotobooth ✦ Share your strip! ✦ "
+              speed={0.8}
+              curveAmount={0}
+              direction="right"
+              interactive={true}
+              className="curved-loop-text"
+              style={{ width: '100%', maxWidth: 500 }}
+            />
+          </div>
+        )}
 
         {/* ── Camera view + frame strip overlay ── */}
         {!allDone ? (

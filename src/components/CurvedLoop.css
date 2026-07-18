@@ -1,0 +1,89 @@
+.curved-loop-jacket {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  overflow: visible;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  margin: 0;
+}
+
+.curved-loop-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.curved-loop-reference {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  height: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* Pink pill background */
+.curved-loop-reference .ref-bar {
+  position: absolute;
+  inset: 0;
+  background: rgba(223, 130, 163, 0.25);
+  }
+
+.curved-loop-reference .ref-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.curved-loop-reference .ref-left  { left: -14px; }
+.curved-loop-reference .ref-right { right: -14px; }
+
+/* Vertical line */
+.ref-line {
+  width: 3px;
+  height: 120%;
+  background: #DF82A3;
+  border-radius: 2px;
+}
+
+/* Circle at opposite end */
+.ref-circle {
+  width: 14px;
+  height: 14px;
+  background: #DF82A3;
+  border-radius: 50%;
+  position: absolute;
+}
+
+/* Left handle: line top, circle bottom */
+.ref-left .ref-line   { align-self: flex-start; margin-top: 0px; }
+.ref-left .ref-circle { bottom: -12px; left: 50%; transform: translateX(-50%); }
+
+/* Right handle: line bottom, circle top — opposite of left */
+.ref-right .ref-line   { align-self: flex-end; margin-bottom: 0px; }
+.ref-right .ref-circle { top: -12px; left: 50%; transform: translateX(-50%); }
+
+.curved-loop-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: hidden;
+  font-size: 45px;
+  fill: #917264;
+  font-weight: 600;
+}
+
+.curved-loop-text {
+  font-family: 'Cause', serif;
+  text-transform: none;
+}
