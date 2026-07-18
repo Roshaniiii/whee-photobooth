@@ -1034,7 +1034,7 @@ export default function Camera() {
           <div style={{ width: '100%', display: 'flex', justifyContent: 'center', pointerEvents: 'none', marginTop: 8 }}>
             <CurvedLoop
               marqueeText="Tag @wheephotobooth ✦ Share your strip! ✦ "
-              speed={0.8}
+              speed={1.5}
               curveAmount={0}
               direction="right"
               interactive={true}
