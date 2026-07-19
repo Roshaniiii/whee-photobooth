@@ -1033,7 +1033,7 @@ export default function Camera() {
         {allDone && (
           <div style={{ width: '100%', display: 'flex', justifyContent: 'center', pointerEvents: 'none', marginTop: 8 }}>
             <CurvedLoop
-              marqueeText="Tag @wheephotobooth ✦ Share your strip! ✦ "
+              marqueeText="Tag @wheephotobooth ✦ Share your strip! ✦ Instagram ✦"
               speed={1.5}
               curveAmount={0}
               direction="right"
