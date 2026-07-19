@@ -193,7 +193,6 @@ function FrameProgressStrip({ total, slots, activeIndex, onSlotClick, slotShapes
   return (
     <div
       ref={stripRef}
-      className="frame-progress-strip"
       style={{
         position: 'absolute',
         right: 12,
@@ -1047,7 +1046,7 @@ export default function Camera() {
 
         {/* ── Camera view + frame strip overlay ── */}
         {!allDone ? (
-          <div className="camera-view-shell" style={{
+          <div style={{
             width: '100%',
             borderRadius: '16px',
             overflow: 'hidden',
@@ -1188,7 +1187,7 @@ export default function Camera() {
             />
           </div>
         ) : (
-          <div className="camera-results-shell" style={{
+          <div style={{
             flex: 1,
             width: 'fit-content',
             minWidth: 100,
@@ -1245,7 +1244,7 @@ export default function Camera() {
               alignItems: 'stretch',
               gap: 10,
             }}>
-              <button className="camera-results-button" type="button" onClick={retake} style={{
+              <button type="button" onClick={retake} style={{
                 fontFamily: "'Cause',serif", fontSize: '13px', fontWeight: '700',
                 letterSpacing: '1.5px', textTransform: 'uppercase',
                 color: '#917264', background: 'rgba(255,255,255,0.75)',
@@ -1258,7 +1257,7 @@ export default function Camera() {
                 onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.75)'; e.currentTarget.style.borderColor = '#D4C49A' }}
               >Retake</button>
 
-              <button className="camera-results-button" type="button" onClick={handleDownload} style={{
+              <button type="button" onClick={handleDownload} style={{
                 fontFamily: "'Cause',serif", fontSize: '13px', fontWeight: '700',
                 letterSpacing: '1.5px', textTransform: 'uppercase',
                 color: '#F2E7B4', background: '#917264',
@@ -1271,7 +1270,7 @@ export default function Camera() {
                 onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = HOME_BTN_SHADOW }}
               >Download</button>
 
-              <button className="camera-results-button" type="button" onClick={handleCustomise} style={{
+              <button type="button" onClick={handleCustomise} style={{
                 fontFamily: "'Cause',serif", fontSize: '13px', fontWeight: '700',
                 letterSpacing: '1.5px', textTransform: 'uppercase',
                 color: '#F2E7B4', background: '#DF82A3',
@@ -1371,9 +1370,9 @@ export default function Camera() {
               {/* Timer */}
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
                 <span style={{ fontSize: '10px', color: '#917264', letterSpacing: '1.2px', textTransform: 'uppercase' }}>Timer</span>
-                <div className="camera-timer-row" style={{ display: 'flex', gap: '4px' }}>
+                <div style={{ display: 'flex', gap: '4px' }}>
                   {[0, 3, 5, 10].map(t => (
-                    <button className="camera-timer-button" key={t} onClick={() => !capturing && setTimerSecs(t)} style={{
+                    <button key={t} onClick={() => !capturing && setTimerSecs(t)} style={{
                       width: '30px', height: '28px', borderRadius: '6px',
                       background: timerSecs === t ? '#DF82A3' : 'rgba(255,255,255,0.75)',
                       color: timerSecs === t ? '#fff' : '#917264',
@@ -1405,7 +1404,7 @@ export default function Camera() {
             </p>
 
             {/* Filter strip */}
-            <div className="camera-filter-row" style={{ width: '100%', display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px', scrollbarWidth: 'none' }}>
+            <div style={{ width: '100%', display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px', scrollbarWidth: 'none' }}>
               {getVisibleFilters().map(f => (
                 <button key={f.id} onClick={() => {
                   if (capturing) return
@@ -1418,7 +1417,7 @@ export default function Camera() {
                     return
                   }
                   setSelectedFilter(f.id)
-                }} title={f.label} className="camera-filter-chip" style={{
+                }} title={f.label} style={{
                   flexShrink: 0, minWidth: '62px', padding: '10px 8px',
                   borderRadius: '10px',
                   background: selectedFilter === f.id ? '#DF82A3' : 'rgba(255,255,255,0.75)',

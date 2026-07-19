@@ -54,7 +54,7 @@ function getFixedPreviewDims() {
 
 function PillButton({ onClick, disabled, children }) {
   return (
-    <button className="pill-button" onClick={onClick} disabled={disabled} style={{
+    <button onClick={onClick} disabled={disabled} style={{
       fontFamily: "'Cause',serif", fontSize: '15px', fontWeight: '700',
       letterSpacing: '2px', textTransform: 'uppercase', color: '#F2E7B4',
       background: disabled ? '#C4A882' : '#DF82A3', border: 'none', borderRadius: '100px',
@@ -123,7 +123,7 @@ function PickTemplate({ onSelect }) {
   }
 
   return (
-    <div className="pick-template-panel" style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1px' }}>
+    <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1px' }}>
 
       {/* ── Carousel ── */}
       <div style={{
@@ -291,7 +291,7 @@ function BuildOwn({ onSelect }) {
   }
 
   return (
-    <div className="build-own-panel" style={{ width: '100%', maxWidth: '480px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+    <div style={{ width: '100%', maxWidth: '480px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
 
       {/* Layout + Preview — tight gap, fixed preview size */}
       <div style={{

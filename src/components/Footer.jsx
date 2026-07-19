@@ -1,4 +1,3 @@
-// import { useEffect, useState } from 'react'
 import logo from '../assets/favicon.png'
 import linkedinIcon from '../assets/linkedin.png'
 import twitterIcon from '../assets/twitter.png'
@@ -10,41 +9,7 @@ const SOCIAL = {
   instagram: 'https://instagram.com/wheephotobooth',
 }
 
-// const affiliateUrl = import.meta.env.VITE_AFFILIATE_URL || ''
-// const affiliateLabel = import.meta.env.VITE_AFFILIATE_LABEL || 'View affiliate picks'
-
 export default function Footer() {
-  // const [showAffiliateLink, setShowAffiliateLink] = useState(false)
-
-  // useEffect(() => {
-  //   if (!affiliateUrl) {
-  //     setShowAffiliateLink(false)
-  //     return
-  //   }
-
-  //   let cancelled = false
-
-  //   fetch('https://ipapi.co/json/')
-  //     .then((response) => {
-  //       if (!response.ok) throw new Error('Country lookup failed')
-  //       return response.json()
-  //     })
-  //     .then((data) => {
-  //       if (!cancelled && data.country_code === 'US') {
-  //         setShowAffiliateLink(true)
-  //       } else {
-  //         setShowAffiliateLink(false)
-  //       }
-  //     })
-  //     .catch(() => {
-  //       if (!cancelled) setShowAffiliateLink(false)
-  //     })
-
-  //   return () => {
-  //     cancelled = true
-  //   }
-  // }, [affiliateUrl])
-
   return (
     <footer style={{
       width:          '100%',
@@ -57,24 +22,8 @@ export default function Footer() {
       justifyContent: 'center',
       gap:            '14px',
       fontFamily:     "'Cause', serif",
+      
     }}>
-
-      {/* {showAffiliateLink && (
-        <a
-          href={affiliateUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            color: '#F2E7B4',
-            textDecoration: 'underline',
-            fontSize: '13px',
-            fontWeight: '600',
-            letterSpacing: '0.4px',
-          }}
-        >
-          {affiliateLabel}
-        </a>
-      )} */}
 
       {/* Logo + name — centered */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>

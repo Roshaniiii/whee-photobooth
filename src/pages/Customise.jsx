@@ -370,7 +370,7 @@ export default function Customise() {
     }}>
       <VerticalStripes />
 
-      <div className="customise-page-content" style={{
+      <div style={{
         position: 'relative',
         zIndex: 1,
         flex: 1,
@@ -398,7 +398,7 @@ export default function Customise() {
         }}>
 
           {/* Left — framed tools */}
-          <div className="customise-tool-panel" style={{
+          <div style={{
             flexShrink: 0,
             width: '80px',
             display: 'flex',
@@ -469,7 +469,7 @@ export default function Customise() {
           </div>
 
           {/* Center — canvas + download */}
-          <div className="customise-canvas-panel" style={{
+          <div style={{
             flex: 1,
             minWidth: 0,
             minHeight: 0,
@@ -483,7 +483,6 @@ export default function Customise() {
           }}>
             <div
               ref={canvasWrapRef}
-              className="customise-canvas-wrap"
               style={{
                 flex: '1 1 auto',
                 minHeight: 0,
@@ -549,7 +548,6 @@ export default function Customise() {
 
             <button
               type="button"
-              className="customise-download-button"
               onClick={handleDownload}
               style={{
                 fontFamily: "'Cause',serif",
