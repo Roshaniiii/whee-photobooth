@@ -2,6 +2,7 @@ export default function BackButton({ onClick, label = '← Back' }) {
   return (
     <button
       type="button"
+      className="back-button"
       onClick={onClick}
       style={{
         background: 'rgba(255,255,255,0.55)',
