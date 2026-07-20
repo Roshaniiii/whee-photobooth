@@ -125,7 +125,7 @@ export default function SupportButton() {
 
             {/* Title */}
             <h2 style={{
-              fontFamily:    "'Unkempt', 'Networkand', cursive",
+              fontFamily:    "'Unkempt', cursive",
               fontSize:      '22px',
               color:         '#DF82A3',
               margin:        '0 0 10px',

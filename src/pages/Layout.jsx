@@ -27,7 +27,7 @@ const FRAME_COLORS = [
   { id: 'mocha',    label: 'Mocha',    hex: '#917264' },
   { id: 'black',    label: 'Noir',     hex: '#2A2A2A' },
   { id: 'green',    label: 'Moss',     hex: '#575527' },
-  { id: 'pink',     label: 'Blossom',  hex: '#B97D7B' },
+  { id: 'pinky',    label: 'Pinky',    hex: '#B97D7B' },
   { id: 'brown',    label: 'Espresso', hex: '#3E2723' },
   { id: 'red',      label: 'Wine',     hex: '#760D46' },
   { id: 'blue',     label: 'Ocean',    hex: '#1F4072' },

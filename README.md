@@ -15,7 +15,7 @@ A web-based photobooth built with React + Vite. Pick a template, capture photos 
 - **Styling:** Inline styles + CSS filters
 - **Canvas:** HTML5 Canvas API
 - **Camera:** WebRTC (MediaDevices API)
-- **Routing:** React Router v6
+- **Routing:** React Router v7
 - **Filter API:** FastAPI + OpenCV (separate repo)
 
 ## Local development
@@ -28,7 +28,7 @@ npm run dev
 
 Copy `.env.example` to `.env` and set `VITE_API_URL` if you run the filter backend locally (default `http://localhost:8000`). Leave it empty to develop without the API—only CSS filters will appear.
 
-Optional: start **whee-photobooth-api** on port 8000 for backend filters (Blush, Cat Ears, BG Replace, etc.).
+Optional: start **whee-photobooth-api** on port 8000 for backend filters (Blush, Cat Ears, Heart, etc.).
 
 ## Environment variables
 
