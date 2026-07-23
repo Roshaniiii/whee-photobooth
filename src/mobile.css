@@ -1,215 +1,225 @@
 /* ============================================
-   MOBILE OVERRIDES — only applies below 640px
-   Desktop & iPad are completely untouched
+   MOBILE & SMALL SCREEN STYLES
+   Applies below 640px viewport width
+   Desktop & iPad (>=641px) are completely untouched
    ============================================ */
+
+/* Root & layout overflow guards */
+html, body, #root {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
 @media (max-width: 640px) {
+
+  /* ───────── GLOBAL WRAPPERS & HEADERS ───────── */
+
+  .page-wrapper {
+    min-height: 100dvh !important;
+    height: auto !important;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+  }
+
+  .page-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  /* Fixed Top Buttons (Support & Feedback) */
+  .feedback-button {
+    padding: 5px 10px !important;
+    font-size: 10px !important;
+    top: 10px !important;
+    right: 10px !important;
+    min-width: 36px !important;
+    min-height: 32px !important;
+    border-width: 1.5px !important;
+  }
+  .feedback-button svg {
+    width: 13px !important;
+    height: 13px !important;
+  }
+
+  .support-button {
+    top: 10px !important;
+    right: 50px !important;
+    padding: 4px 8px !important;
+    min-height: 32px !important;
+    font-size: 9px !important;
+    gap: 4px !important;
+    border-width: 1.5px !important;
+  }
+  .support-button span {
+    font-size: 11px !important;
+  }
+
+  /* Page Header Title spacing on mobile */
+  .page-header {
+    padding-top: 6px !important;
+    margin-bottom: 6px !important;
+    min-height: 44px !important;
+    padding-left: 54px !important;
+    padding-right: 104px !important;
+    box-sizing: border-box;
+  }
+  .page-header-title {
+    font-size: clamp(19px, 5vw, 24px) !important;
+    margin-top: 0 !important;
+    line-height: 1.1 !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .page-header-back button {
+    padding: 5px 12px !important;
+    font-size: 11px !important;
+  }
 
   /* ───────── HOME PAGE ───────── */
 
-  /* Frame container — shrink overall area */
-  .home-frames-wrap {
-    transform: none !important;
-    transform-origin: top center;
-    margin-bottom: 22px !important;
-    height: 340px !important;
-    max-width: 100% !important;
-  }
-  .home-frame {
-    position: absolute !important;
-    border-radius: 14px !important;
-  }
-  .home-frame.frame-1 {
-    left: 50% !important;
-    top: 7% !important;
-    transform: translateX(-50%) rotate(0deg) !important;
-    width: clamp(130px, 24vw, 150px) !important;
-    z-index: 2 !important;
-  }
-  .home-frame.frame-2 {
-    left: -1% !important;
-    top: 50% !important;
-    width: clamp(110px, 18vw, 120px) !important;
-  }
-  .home-frame.frame-3 {
-    left: 3% !important;
-    top: 15% !important;
-    width: clamp(95px, 16vw, 110px) !important;
-  }
-  .home-frame.frame-4 {
-    left: 52% !important;
-    bottom: 10% !important;
-    transform: translateX(-50%) rotate(0deg) !important;
-    width: clamp(140px, 28vw, 160px) !important;
-    z-index: 1 !important;
-  }
-  .home-frame.frame-5 {
-    right: 0% !important;
-    bottom: 20% !important;
-    width: clamp(95px, 18vw, 110px) !important;
-  }
-  .home-frame.frame-6 {
-    right: 4% !important;
-    bottom: 24% !important;
-    width: clamp(90px, 16vw, 100px) !important;
-  }
-
-  /* Heading + subheading */
   .home-title {
-    font-size: 30px !important;
-    margin-top: 6px !important;
-    line-height: 1.08 !important;
+    font-size: clamp(28px, 8vw, 36px) !important;
+    margin-top: 4px !important;
+    line-height: 1.05 !important;
   }
   .home-subtitle {
     font-size: 12px !important;
     margin-top: 4px !important;
   }
 
-  /* Feedback + support buttons smaller on mobile */
-  .feedback-button {
-    padding: 6px 12px !important;
-    font-size: 11px !important;
-    top: 12px !important;
-    right: 12px !important;
+  /* Frame scatter container — stay strictly within screen bounds */
+  .home-frames-wrap {
+    transform: none !important;
+    margin: 8px auto 20px !important;
+    height: clamp(240px, 58vw, 320px) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    position: relative !important;
   }
-  .feedback-button svg {
-    width: 12px !important;
-    height: 12px !important;
+  .home-frame {
+    position: absolute !important;
+    border-radius: 12px !important;
   }
-  .support-button {
-    top: 10px !important;
-    right: 56px !important;
-    padding: 5px 10px !important;
-    min-height: 32px !important;
-    font-size: 9px !important;
-    gap: 4px !important;
+  .home-frame.frame-1 {
+    left: 50% !important;
+    top: 2% !important;
+    transform: translateX(-50%) rotate(0deg) !important;
+    width: clamp(125px, 33vw, 150px) !important;
+    z-index: 2 !important;
   }
-  .support-button svg {
-    width: 12px !important;
-    height: 12px !important;
+  .home-frame.frame-2 {
+    left: 2% !important;
+    top: 48% !important;
+    width: clamp(95px, 25vw, 110px) !important;
+  }
+  .home-frame.frame-3 {
+    left: 3% !important;
+    top: 10% !important;
+    width: clamp(85px, 22vw, 100px) !important;
+  }
+  .home-frame.frame-4 {
+    left: 50% !important;
+    bottom: 2% !important;
+    transform: translateX(-50%) rotate(0deg) !important;
+    width: clamp(135px, 35vw, 160px) !important;
+    z-index: 1 !important;
+  }
+  .home-frame.frame-5 {
+    right: 2% !important;
+    bottom: 12% !important;
+    width: clamp(85px, 22vw, 100px) !important;
+  }
+  .home-frame.frame-6 {
+    right: 3% !important;
+    top: 10% !important;
+    width: clamp(85px, 22vw, 100px) !important;
   }
 
   /* Footer — remove extra space below */
-  html, body, #root {
-    min-height: 100%;
-  }
-  .page-wrapper {
-    min-height: 100dvh;
-    display: flex;
-    flex-direction: column;
-  }
-  .page-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
   .page-wrapper > footer {
     margin-top: auto !important;
+    padding: 16px 16px !important;
   }
 
-
-  /* Curved loop reference bar and guide line — smaller on mobile */
+  /* Curved loop reference bar — smaller on mobile */
   .curved-loop-reference {
     height: 28px !important;
     left: 4% !important;
     right: 4% !important;
   }
-  .curved-loop-reference .ref-bar {
-    border-radius: 14px !important;
-  }
-  .curved-loop-reference .ref-handle {
-    width: 22px !important;
-  }
-  .curved-loop-reference .ref-left {
-    left: -10px !important;
-  }
-  .curved-loop-reference .ref-right {
-    right: -10px !important;
-  }
-  .ref-line {
-    width: 2px !important;
-    height: 100% !important;
-  }
-  .ref-circle {
-    width: 10px !important;
-    height: 10px !important;
-  }
-  .ref-left .ref-circle {
-    bottom: -8px !important;
-  }
-  .ref-right .ref-circle {
-    top: -8px !important;
-  }
 
   /* ───────── LAYOUT PAGE ───────── */
 
-  /* Reduce gap between back button and heading */
   .layout-header {
     margin-bottom: 6px !important;
-    min-height: 52px !important;
+    min-height: 48px !important;
   }
   .layout-title {
-    font-size: 24px !important;
+    font-size: clamp(20px, 5.5vw, 26px) !important;
     margin-top: 0 !important;
     line-height: 1.08 !important;
   }
-
-  /* Reduce gap between subtitle text and carousel */
   .layout-subtitle {
+    font-size: 12px !important;
     margin-bottom: 8px !important;
   }
   .layout-carousel-wrap {
-    margin-top: 4px !important;
+    margin-top: 2px !important;
+    margin-bottom: 8px !important;
   }
-
+  .layout-carousel-wrap button {
+    padding: 6px 14px !important;
+    font-size: 12px !important;
+  }
 
   /* ───────── CAMERA PAGE ───────── */
 
-  /* Reduce gap between back button and heading */
   .camera-header {
     margin-bottom: 6px !important;
-    min-height: 52px !important;
+    min-height: 48px !important;
   }
   .camera-title {
-    font-size: 24px !important;
+    font-size: clamp(20px, 5.5vw, 26px) !important;
     margin-top: 0 !important;
     line-height: 1.08 !important;
   }
-
-  /* Flip / Capture / Timer row — tighter spacing */
   .camera-controls-row {
-    gap: 10px !important;
-    justify-content: center !important;
+    gap: 8px !important;
+    justify-content: space-evenly !important;
+    width: 100% !important;
     flex-wrap: wrap !important;
   }
   .camera-controls-row > button,
   .camera-controls-row > div {
     flex: 0 1 auto !important;
-    min-width: 44px !important;
-    min-height: 44px !important;
+    min-width: 40px !important;
   }
-
-  /* Allow page to scroll so Customise button is reachable */
   .camera-page-wrapper {
     height: auto !important;
     min-height: 100dvh !important;
     overflow-y: auto !important;
   }
   .camera-page-content {
+    padding: 12px 10px 24px !important;
     overflow-y: auto !important;
   }
   .camera-strip-preview {
     max-height: 50vh !important;
   }
   .camera-actions-row {
-    margin-bottom: 18px !important;
-    padding-bottom: 12px !important;
+    margin-bottom: 12px !important;
+    padding-bottom: 8px !important;
   }
-
 
   /* ───────── CUSTOMISE PAGE ───────── */
 
   .customise-title {
-    font-size: 20px !important;
+    font-size: clamp(19px, 5vw, 24px) !important;
     margin-top: 0 !important;
     line-height: 1.08 !important;
   }
@@ -217,10 +227,44 @@
     padding-top: 0 !important;
     margin-bottom: 6px !important;
   }
-  /* Fix inherited fixed height from strip-download page */
   .customise-page-wrapper {
     height: auto !important;
     min-height: 100dvh !important;
+    overflow-y: auto !important;
+  }
+  .customise-page-content {
+    padding: 12px 8px 16px !important;
+  }
+
+  /* Switch main layout from horizontal row to vertical column on mobile */
+  .customise-main-row {
+    flex-direction: column-reverse !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
+  /* Tools Bar becomes horizontal bottom bar */
+  .customise-toolbar {
+    width: 100% !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px 10px !important;
+    padding: 8px 10px !important;
+    align-self: stretch !important;
+  }
+  .customise-toolbar > span {
+    display: none !important; /* Hide label text to keep toolbar compact */
+  }
+  .customise-toolbar > div {
+    flex-direction: row !important;
+    gap: 4px !important;
+  }
+
+  .customise-canvas-container {
+    width: 100% !important;
+    max-width: 100% !important;
   }
 }
 
@@ -246,7 +290,7 @@
     margin-bottom: 6px !important;
   }
   .layout-title {
-    font-size: clamp(28px, 4vw, 32px) !important;
+    font-size: clamp(26px, 4vw, 32px) !important;
     margin-top: 0 !important;
     line-height: 1.08 !important;
   }

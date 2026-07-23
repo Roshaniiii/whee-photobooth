@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import logo from '../assets/favicon.png'
 import linkedinIcon from '../assets/linkedin.png'
 import twitterIcon from '../assets/twitter.png'
@@ -49,6 +50,35 @@ export default function Footer() {
         <a href={SOCIAL.instagram} target="_blank" rel="noopener noreferrer" title="Instagram">
           <img src={instagramIcon} alt="Instagram" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
         </a>
+      </div>
+
+      {/* Links */}
+      <div style={{ display: 'flex', gap: '20px', fontSize: '12px' }}>
+        <Link to="/contact" style={{
+          color: '#F2E7B4',
+          textDecoration: 'none',
+          opacity: 0.9,
+          transition: 'opacity 0.2s ease',
+          letterSpacing: '0.3px',
+        }}
+          onMouseEnter={(e) => { e.target.style.opacity = '1' }}
+          onMouseLeave={(e) => { e.target.style.opacity = '0.9' }}
+        >
+          Get in Touch
+        </Link>
+        <span style={{ color: '#F2E7B4', opacity: 0.5 }}>•</span>
+        <Link to="/privacy-policy" style={{
+          color: '#F2E7B4',
+          textDecoration: 'none',
+          opacity: 0.9,
+          transition: 'opacity 0.2s ease',
+          letterSpacing: '0.3px',
+        }}
+          onMouseEnter={(e) => { e.target.style.opacity = '1' }}
+          onMouseLeave={(e) => { e.target.style.opacity = '0.9' }}
+        >
+          Privacy Policy
+        </Link>
       </div>
 
       {/* Copyright */}

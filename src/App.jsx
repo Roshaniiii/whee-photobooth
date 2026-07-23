@@ -4,6 +4,8 @@ import Home from './pages/Home'
 import Layout from './pages/Layout'
 import Camera from './pages/Camera'
 import Customise from './pages/Customise'
+import Contact from './pages/Contact'
+import PrivacyPolicy from './pages/PrivacyPolicy'
 import FeedbackButton from './components/FeedbackButton'
 import SupportButton from './components/SupportButton'
 import './mobile.css'
@@ -13,7 +15,7 @@ function App() {
   useEffect(() => {
     const wake = () => {
       fetch(`${import.meta.env.VITE_API_URL}/health`)
-        .catch(() => {})
+        .catch(() => { })
     }
     wake()
     const interval = setInterval(wake, 10 * 60 * 1000)
@@ -27,9 +29,11 @@ function App() {
         <Route path="/layout" element={<Layout />} />
         <Route path="/camera" element={<Camera />} />
         <Route path="/customise" element={<Customise />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       </Routes>
       <FeedbackButton />
-      <SupportButton/>
+      <SupportButton />
     </BrowserRouter>
   )
 }
