@@ -4,10 +4,12 @@ import donateIcon from '../assets/donate.png'
 
 export default function SupportButton() {
   const [open, setOpen] = useState(false)
+  const onCloseRef = useRef(null)
 
-  // Listen for trigger from Camera.jsx
+  // Listen for trigger from Camera.jsx or Navbar
   useEffect(() => {
-    function handleOpen() {
+    function handleOpen(e) {
+      onCloseRef.current = e?.detail?.onClose ?? null
       setOpen(true)
     }
     window.addEventListener('whee:openSupport', handleOpen)
@@ -16,7 +18,6 @@ export default function SupportButton() {
 
   function handleClose() {
     setOpen(false)
-    // Trigger Tally after support popup closes
     if (onCloseRef.current) {
       onCloseRef.current()
       onCloseRef.current = null
@@ -25,53 +26,19 @@ export default function SupportButton() {
 
   return (
     <>
-      <button
-        className="support-button"
-        onClick={() => setOpen(true)}
-        style={{
-          position: 'fixed',
-          top: '24px',
-          right: '96px',
-          zIndex: 1000,
-          background: 'rgba(223, 130, 163, 0.12)',
-          color: 'rgb(145, 114, 100)',
-          border: '2px solid rgb(223, 130, 163)',
-          borderRadius: '100px',
-          padding: '7px 16px',
-          minHeight: '42px',
-          fontSize: 'clamp(10px, 1.2vw, 13px)',
-          fontWeight: '600',
-          fontFamily: "'Cause', serif",
-          cursor: 'pointer',
-          letterSpacing: '0.5px',
-          textTransform: 'uppercase',
-          transition: 'transform 0.2s ease, background 0.2s ease',
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '8px',
-          whiteSpace: 'nowrap',
-        }}
-        onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-        onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
-      >
-        <span style={{ fontSize: '14px' }}>🧁</span>
-        <span>Support Whee</span>
-      </button>
-
       {/* ── Popup overlay ── */}
       {open && (
         <div
-          onClick={() => setOpen(false)}
+          onClick={handleClose}
           style={{
-            position:       'fixed',
-            inset:          0,
-            background:     'rgba(145,114,100,0.45)',
-            zIndex:         2000,
-            display:        'flex',
-            alignItems:     'center',
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(145,114,100,0.45)',
+            zIndex: 2000,
+            display: 'flex',
+            alignItems: 'center',
             justifyContent: 'center',
-            padding:        '20px',
+            padding: '20px',
           }}
         >
           {/* ── Card ── */}
@@ -92,7 +59,7 @@ export default function SupportButton() {
           >
             {/* Close button */}
             <button
-              onClick={() => setOpen(false)}
+              onClick={handleClose}
               style={{
                 position: 'absolute',
                 top: '12px',
@@ -102,10 +69,8 @@ export default function SupportButton() {
                 borderRadius: '999px',
                 width: '32px',
                 height: '32px',
-                fontSize: '16px',
                 cursor: 'pointer',
                 color: '#917264',
-                lineHeight: 1,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -116,39 +81,26 @@ export default function SupportButton() {
             </button>
 
             {/* Icon */}
-            <div style={{
-              fontSize: '48px',
-              filter: 'drop-shadow(0 3px 6px rgba(145,114,100,0.15))',
-            }}>
+            <div style={{ filter: 'drop-shadow(0 3px 6px rgba(145,114,100,0.15))' }}>
               <img src={donateIcon} alt="donate" style={{ width: '90px', height: '90px' }} />
             </div>
 
             {/* Title */}
             <h2 style={{
-              fontFamily:    "'Unkempt', cursive",
-              fontSize:      '22px',
-              color:         '#DF82A3',
-              margin:        '0 0 10px',
+              fontFamily: "'Unkempt', cursive",
+              fontSize: '22px',
+              color: '#DF82A3',
+              margin: '0 0 10px',
               letterSpacing: '1px',
             }}>
               Support Whee!
             </h2>
 
             {/* Description */}
-            <p style={{
-              fontSize: '14px',
-              color: '#917264',
-              margin: '0 0 6px',
-              lineHeight: 1.6,
-            }}>
+            <p style={{ fontSize: '14px', color: '#917264', margin: '0 0 6px', lineHeight: 1.6 }}>
               Whee is completely free for everyone ♡
             </p>
-            <p style={{
-              fontSize: '13px',
-              color: '#917264',
-              margin: '0 0 18px',
-              lineHeight: 1.6,
-            }}>
+            <p style={{ fontSize: '13px', color: '#917264', margin: '0 0 18px', lineHeight: 1.6 }}>
               If this made you smile, a small donation helps keep it going.
             </p>
 
@@ -165,28 +117,19 @@ export default function SupportButton() {
                 '🎨  Funds new templates & filters',
                 '✨  Helps Whee stay free for everyone',
               ].map(item => (
-                <p key={item} style={{
-                  fontSize:   '12px',
-                  color:      '#917264',
-                  margin:     '4px 0',
-                  lineHeight: 1.5,
-                }}>
+                <p key={item} style={{ fontSize: '12px', color: '#917264', margin: '4px 0', lineHeight: 1.5 }}>
                   {item}
                 </p>
               ))}
             </div>
 
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '8px',
-            }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
               {/* Donate button */}
               <a
                 href="https://razorpay.me/@wheephotobooth"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={handleClose}
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -219,7 +162,7 @@ export default function SupportButton() {
 
               {/* Skip link */}
               <button
-                onClick={() => setOpen(false)}
+                onClick={handleClose}
                 style={{
                   background: 'none',
                   border: 'none',
@@ -234,7 +177,6 @@ export default function SupportButton() {
                 Maybe later
               </button>
             </div>
-
           </div>
         </div>
       )}

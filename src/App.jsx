@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { useEffect } from 'react'
+import Navbar from './components/Navbar'
 import Home from './pages/Home'
 import Layout from './pages/Layout'
 import Camera from './pages/Camera'
@@ -24,6 +25,8 @@ function App() {
 
   return (
     <BrowserRouter>
+      <Navbar />
+      <SupportButton />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/layout" element={<Layout />} />
@@ -32,8 +35,6 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       </Routes>
-      <FeedbackButton />
-      <SupportButton />
     </BrowserRouter>
   )
 }

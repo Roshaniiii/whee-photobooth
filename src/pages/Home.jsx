@@ -16,6 +16,7 @@ export default function Home() {
 
   return (
     <div className="page-wrapper home-page-wrapper" style={{
+      paddingTop: '52px',
       minHeight: '100vh',
       width: '100%',
       backgroundColor: '#f2e7b4',
@@ -167,7 +168,7 @@ export default function Home() {
           />
 
         </div>
-      
+
         {/* ── START Button ── */}
         <button
           onClick={() => {
@@ -210,20 +211,9 @@ export default function Home() {
         >
           Start
         </button>
-        {/* <section style={{ maxWidth: '500px', margin: '24px auto 0', textAlign: 'center', padding: '0 16px' }}>
-          <h2 style={{
-            fontFamily: "'Networkand', cursive",
-            fontSize: '15px',
-            color: '#917264',
-            fontWeight: '400',
-            letterSpacing: '0.5px',
-          }}>
-            Free Online Photo Booth — Capture, Filter & Customize Your Photo Strips
-          </h2>
-        </section> */}
       </div>
-      <Footer /> 
-      
+      <Footer />
+
     </div>
   )
 }

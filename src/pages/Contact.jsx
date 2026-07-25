@@ -1,24 +1,14 @@
 import { useForm, ValidationError } from '@formspree/react'
-import { useNavigate } from 'react-router-dom'
 import { playClick } from '../utils/sounds'
 import VerticalStripes from '../components/VerticalStripes'
 import Footer from '../components/Footer'
-import BackButton from '../components/BackButton'
 
 export default function Contact() {
-  const navigate = useNavigate()
   const [state, handleSubmit] = useForm('mnjegawo')
 
   const handleFormSubmit = (e) => {
     playClick()
     handleSubmit(e)
-  }
-
-  // Auto-navigate on successful submission
-  if (state.succeeded) {
-    setTimeout(() => {
-      navigate('/')
-    }, 2000)
   }
 
   return (
@@ -34,19 +24,13 @@ export default function Contact() {
     }}>
       <VerticalStripes />
 
-      {/* Back Button */}
-      <BackButton onClick={() => {
-        playClick()
-        navigate('/')
-      }} />
-
       {/* Content */}
       <div className="page-content contact-page-content" style={{
         position: 'relative',
         zIndex: 1,
         width: '100%',
         maxWidth: '600px',
-        padding: '40px 32px',
+        padding: '80px 32px',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',

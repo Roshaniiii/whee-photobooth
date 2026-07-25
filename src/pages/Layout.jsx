@@ -7,31 +7,31 @@ import PageHeader from '../components/PageHeader'
 import { TEMPLATES } from '../config/templates'
 
 const NEW_LAYOUTS = [
-  { id: 'new_1', label: 'Solo', shots: 1, canvasWidth: 900, canvasHeight: 1100,  slots: [{ x: 40, y: 40, width: 820, height: 760 }], rows: 1 },
-  { id: 'new_2', label: 'Duo',  shots: 2, canvasWidth: 900, canvasHeight: 1600,  slots: [{ x: 40, y: 50, width: 820, height: 600 }, { x: 40, y: 700, width: 820, height: 600 }], rows: 2 },
-  { id: 'new_3', label: 'Trio', shots: 3, canvasWidth: 900, canvasHeight: 2000,  slots: [{ x: 40, y: 40, width: 820, height: 550 }, { x: 40, y: 630, width: 820, height: 550 }, { x: 40, y: 1220, width: 820, height: 550 }], rows: 3 },
-  { id: 'new_4', label: 'Quad', shots: 4, canvasWidth: 900, canvasHeight: 2400,  slots: [{ x: 40, y: 40, width: 820, height: 550 }, { x: 40, y: 630, width: 820, height: 550 }, { x: 40, y: 1220, width: 820, height: 550 }, { x: 40, y: 1810, width: 820, height: 550 }], rows: 4 },
+  { id: 'new_1', label: 'Solo', shots: 1, canvasWidth: 900, canvasHeight: 1100, slots: [{ x: 40, y: 40, width: 820, height: 760 }], rows: 1 },
+  { id: 'new_2', label: 'Duo', shots: 2, canvasWidth: 900, canvasHeight: 1600, slots: [{ x: 40, y: 50, width: 820, height: 600 }, { x: 40, y: 700, width: 820, height: 600 }], rows: 2 },
+  { id: 'new_3', label: 'Trio', shots: 3, canvasWidth: 900, canvasHeight: 2000, slots: [{ x: 40, y: 40, width: 820, height: 550 }, { x: 40, y: 630, width: 820, height: 550 }, { x: 40, y: 1220, width: 820, height: 550 }], rows: 3 },
+  { id: 'new_4', label: 'Quad', shots: 4, canvasWidth: 900, canvasHeight: 2400, slots: [{ x: 40, y: 40, width: 820, height: 550 }, { x: 40, y: 630, width: 820, height: 550 }, { x: 40, y: 1220, width: 820, height: 550 }, { x: 40, y: 1810, width: 820, height: 550 }], rows: 4 },
 ]
 
 const FRAME_COLORS = [
-  { id: 'white',    label: 'Snow',     hex: '#FFFFFF' },
-  { id: 'cream',    label: 'Grey',     hex: '#B5B5B5' },
-  { id: 'pink',     label: 'Blossom',  hex: '#F4B8CC' },
-  { id: 'mauve',    label: 'Mauve',    hex: '#DF82A3' },
-  { id: 'sage',     label: 'Sage',     hex: '#B5C9A1' },
-  { id: 'mint',     label: 'Mint',     hex: '#A8D8C8' },
-  { id: 'sky',      label: 'Sky',      hex: '#84B3CE' },
+  { id: 'white', label: 'Snow', hex: '#FFFFFF' },
+  { id: 'cream', label: 'Grey', hex: '#B5B5B5' },
+  { id: 'pink', label: 'Blossom', hex: '#F4B8CC' },
+  { id: 'mauve', label: 'Mauve', hex: '#DF82A3' },
+  { id: 'sage', label: 'Sage', hex: '#B5C9A1' },
+  { id: 'mint', label: 'Mint', hex: '#A8D8C8' },
+  { id: 'sky', label: 'Sky', hex: '#84B3CE' },
   { id: 'lavender', label: 'Lavender', hex: '#C8B8E8' },
-  { id: 'butter',   label: 'Butter',   hex: '#FFF3B4' },
-  { id: 'slate',    label: 'Slate',    hex: '#8E8E8E' },
-  { id: 'mocha',    label: 'Mocha',    hex: '#917264' },
-  { id: 'black',    label: 'Noir',     hex: '#2A2A2A' },
-  { id: 'green',    label: 'Moss',     hex: '#575527' },
-  { id: 'pinky',    label: 'Pinky',    hex: '#B97D7B' },
-  { id: 'brown',    label: 'Espresso', hex: '#3E2723' },
-  { id: 'red',      label: 'Wine',     hex: '#760D46' },
-  { id: 'blue',     label: 'Ocean',    hex: '#1F4072' },
-  { id: 'grass',    label: 'Grass',    hex: '#013E37' },
+  { id: 'butter', label: 'Butter', hex: '#FFF3B4' },
+  { id: 'slate', label: 'Slate', hex: '#8E8E8E' },
+  { id: 'mocha', label: 'Mocha', hex: '#917264' },
+  { id: 'black', label: 'Noir', hex: '#2A2A2A' },
+  { id: 'green', label: 'Moss', hex: '#575527' },
+  { id: 'pinky', label: 'Pinky', hex: '#B97D7B' },
+  { id: 'brown', label: 'Espresso', hex: '#3E2723' },
+  { id: 'red', label: 'Wine', hex: '#760D46' },
+  { id: 'blue', label: 'Ocean', hex: '#1F4072' },
+  { id: 'grass', label: 'Grass', hex: '#013E37' },
 ]
 
 // Carousel: fixed slot per card so mixed template heights stay aligned
@@ -123,7 +123,7 @@ function PickTemplate({ onSelect }) {
   }
 
   return (
-    <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1px' }}>
+    <div className="pick-template-carousel" style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1px' }}>
 
       {/* ── Carousel ── */}
       <div style={{
@@ -291,7 +291,7 @@ function BuildOwn({ onSelect }) {
   }
 
   return (
-    <div style={{ width: '100%', maxWidth: '480px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+    <div className="build-own-layout" style={{ width: '100%', maxWidth: '480px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
 
       {/* Layout + Preview — tight gap, fixed preview size */}
       <div style={{
@@ -451,7 +451,7 @@ export default function Layout() {
           Pick a template or build your own
         </p>
 
-        <div className="layout-carousel-wrap" style={{ display: 'flex', background: 'rgba(255,255,255,0.5)', borderRadius: '100px', padding: '4px', border: '2px solid #D4C49A', marginBottom: '12px', gap: '4px', flexShrink: 0 }}>
+        <div className="layout-tab-container layout-carousel-wrap" style={{ display: 'flex', background: 'rgba(255,255,255,0.5)', borderRadius: '100px', padding: '4px', border: '2px solid #D4C49A', marginBottom: '12px', gap: '4px', flexShrink: 0 }}>
           {[{ id: 'template', label: '✦ Templates' }, { id: 'build', label: '✐ Build Your Own' }].map(t => (
             <button key={t.id} onClick={() => setTab(t.id)} style={{
               fontFamily: "'Cause',serif", fontSize: 'clamp(12px,2.5vw,14px)', fontWeight: '700', letterSpacing: '1px',

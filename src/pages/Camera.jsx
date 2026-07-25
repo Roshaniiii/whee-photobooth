@@ -193,6 +193,7 @@ function FrameProgressStrip({ total, slots, activeIndex, onSlotClick, slotShapes
   return (
     <div
       ref={stripRef}
+      className="frame-progress-strip"
       style={{
         position: 'absolute',
         right: 12,
@@ -1044,7 +1045,7 @@ export default function Camera() {
           </div>
         )}
 
-        {/* ── Camera view + frame strip overlay ── */}
+{/* ── Camera view + frame strip overlay ── */}
         {!allDone ? (
           <div style={{
             width: '100%',
@@ -1082,92 +1083,92 @@ export default function Camera() {
                 </p>
               </div>
             )}
-          <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-                <video
-                  ref={videoRef}
-                  autoPlay
-                  playsInline
-                  muted
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    display: 'block',
-                    objectFit: 'cover',
-                    transform: facingMode === 'user' ? 'scaleX(-1)' : 'none',
-                    filter: activeCssFilter !== 'none'
-                      ? activeCssFilter
-                      : undefined,
-                  }}
-                />
-
-                {/*random light canvas */}
-                {selectedFilter === 'random_light' && (
-                  <canvas
-                    ref={glowCanvasRef}
-                    width={640}
-                    height={480}
+            <div className="camera-viewfinder" style={{ position: 'relative', width: '100%', height: '100%' }}>
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    playsInline
+                    muted
                     style={{
-                      position: 'absolute',
-                      inset: 0,
                       width: '100%',
                       height: '100%',
-                      pointerEvents: 'none',
-                      zIndex: 2,
-                      mixBlendMode: 'screen',
-                    }}
-                  />
-                )}
-
-                {selectedFilter === 'dreamy' && (
-                  <canvas
-                    ref={dreamyCanvasRef}
-                    width={640}
-                    height={480}
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      width: '100%',
-                      height: '100%',
-                      pointerEvents: 'none',
-                      zIndex: 2,
-                      mixBlendMode: 'screen',
-                    }}
-                  />
-                )}
-                {/* Backend filter overlay — INSIDE the relative div */}
-                  {filteredFrame && isBackendFilter(selectedFilter) && (
-                    <img
-                      src={filteredFrame}
-                      alt=""
-                      style={{
-                        position: 'absolute',
-                        inset: 0,
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        pointerEvents: 'none',
-                        zIndex: 2,
-                      }}
-                    />
-                  )}
-
-                {/* Sparkle overlay */}
-                {selectedFilter === 'sparkle' && !allDone && (
-                  <img
-                    src={sparkleOverlay}
-                    alt=""
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      width: '100%',
-                      height: '100%',
+                      display: 'block',
                       objectFit: 'cover',
-                      pointerEvents: 'none',
-                      zIndex: 3,
+                      transform: facingMode === 'user' ? 'scaleX(-1)' : 'none',
+                      filter: activeCssFilter !== 'none'
+                        ? activeCssFilter
+                        : undefined,
                     }}
                   />
-                )}
-              </div>
+
+                    {/*random light canvas */}
+                    {selectedFilter === 'random_light' && (
+                      <canvas
+                        ref={glowCanvasRef}
+                        width={640}
+                        height={480}
+                        style={{
+                          position: 'absolute',
+                          inset: 0,
+                          width: '100%',
+                          height: '100%',
+                          pointerEvents: 'none',
+                          zIndex: 2,
+                          mixBlendMode: 'screen',
+                        }}
+                      />
+                    )}
+
+                    {selectedFilter === 'dreamy' && (
+                      <canvas
+                        ref={dreamyCanvasRef}
+                        width={640}
+                        height={480}
+                        style={{
+                          position: 'absolute',
+                          inset: 0,
+                          width: '100%',
+                          height: '100%',
+                          pointerEvents: 'none',
+                          zIndex: 2,
+                          mixBlendMode: 'screen',
+                        }}
+                      />
+                    )}
+                    {/* Backend filter overlay — INSIDE the relative div */}
+                    {filteredFrame && isBackendFilter(selectedFilter) && (
+                      <img
+                        src={filteredFrame}
+                        alt=""
+                        style={{
+                          position: 'absolute',
+                          inset: 0,
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          pointerEvents: 'none',
+                          zIndex: 2,
+                        }}
+                      />
+                    )}
+
+                    {/* Sparkle overlay */}
+                    {selectedFilter === 'sparkle' && !allDone && (
+                      <img
+                        src={sparkleOverlay}
+                        alt=""
+                        style={{
+                          position: 'absolute',
+                          inset: 0,
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          pointerEvents: 'none',
+                          zIndex: 3,
+                        }}
+                      />
+                    )}
+                </div>
             {filteredFrame && isBackendFilter(selectedFilter) && (
               <img
                 src={filteredFrame}
@@ -1197,7 +1198,7 @@ export default function Camera() {
             flexWrap: 'wrap',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: 14,
+            gap: 8,
             minHeight: 0,
             maxHeight: 'calc(100vh - 100px)',
           }}>
@@ -1210,6 +1211,7 @@ export default function Camera() {
               alignItems: 'center',
               margin: 0,
               padding: 0,
+              className: "strip-preview-container"
             }}>
               {isProcessing && (
                 <div style={{
@@ -1243,52 +1245,53 @@ export default function Camera() {
               justifyContent: 'center',
               alignItems: 'stretch',
               gap: 10,
+              className: "strip-action-buttons"
             }}>
-              <button type="button" onClick={retake} style={{
-                fontFamily: "'Cause',serif", fontSize: '13px', fontWeight: '700',
-                letterSpacing: '1.5px', textTransform: 'uppercase',
-                color: '#917264', background: 'rgba(255,255,255,0.75)',
-                border: '2px solid #D4C49A', borderRadius: '100px',
-                padding: '11px 24px', cursor: 'pointer',
-                boxShadow: HOME_BTN_SHADOW, transition: 'all 0.2s',
-                whiteSpace: 'nowrap',
-              }}
-                onMouseEnter={e => { e.currentTarget.style.background = '#F4B8CC'; e.currentTarget.style.borderColor = '#DF82A3' }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.75)'; e.currentTarget.style.borderColor = '#D4C49A' }}
-              >Retake</button>
+<button type="button" onClick={retake} className="strip-button" style={{
+                 fontFamily: "'Cause',serif", fontSize: '13px', fontWeight: '700',
+                 letterSpacing: '1.5px', textTransform: 'uppercase',
+                 color: '#917264', background: 'rgba(255,255,255,0.75)',
+                 border: '2px solid #D4C49A', borderRadius: '100px',
+                 padding: '11px 24px', cursor: 'pointer',
+                 boxShadow: HOME_BTN_SHADOW, transition: 'all 0.2s',
+                 whiteSpace: 'nowrap',
+               }}
+                 onMouseEnter={e => { e.currentTarget.style.background = '#F4B8CC'; e.currentTarget.style.borderColor = '#DF82A3' }}
+                 onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.75)'; e.currentTarget.style.borderColor = '#D4C49A' }}
+               >Retake</button>
 
-              <button type="button" onClick={handleDownload} style={{
-                fontFamily: "'Cause',serif", fontSize: '13px', fontWeight: '700',
-                letterSpacing: '1.5px', textTransform: 'uppercase',
-                color: '#F2E7B4', background: '#917264',
-                border: 'none', borderRadius: '100px',
-                padding: '11px 24px', cursor: 'pointer',
-                boxShadow: HOME_BTN_SHADOW,
-                transition: 'transform 0.12s, box-shadow 0.12s', whiteSpace: 'nowrap',
-              }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = HOME_BTN_SHADOW_HOVER }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = HOME_BTN_SHADOW }}
-              >Download</button>
+<button type="button" onClick={handleDownload} className="strip-button" style={{
+                 fontFamily: "'Cause',serif", fontSize: '13px', fontWeight: '700',
+                 letterSpacing: '1.5px', textTransform: 'uppercase',
+                 color: '#F2E7B4', background: '#917264',
+                 border: 'none', borderRadius: '100px',
+                 padding: '11px 24px', cursor: 'pointer',
+                 boxShadow: HOME_BTN_SHADOW,
+                 transition: 'transform 0.12s, box-shadow 0.12s', whiteSpace: 'nowrap',
+               }}
+                 onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = HOME_BTN_SHADOW_HOVER }}
+                 onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = HOME_BTN_SHADOW }}
+               >Download</button>
 
-              <button type="button" onClick={handleCustomise} style={{
-                fontFamily: "'Cause',serif", fontSize: '13px', fontWeight: '700',
-                letterSpacing: '1.5px', textTransform: 'uppercase',
-                color: '#F2E7B4', background: '#DF82A3',
-                border: 'none', borderRadius: '100px',
-                padding: '11px 24px', cursor: 'pointer',
-                boxShadow: HOME_BTN_SHADOW,
-                transition: 'transform 0.12s, box-shadow 0.12s', whiteSpace: 'nowrap',
-              }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = HOME_BTN_SHADOW_HOVER }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = HOME_BTN_SHADOW }}
-              >Customise</button>
+<button type="button" onClick={handleCustomise} className="strip-button" style={{
+                 fontFamily: "'Cause',serif", fontSize: '13px', fontWeight: '700',
+                 letterSpacing: '1.5px', textTransform: 'uppercase',
+                 color: '#F2E7B4', background: '#DF82A3',
+                 border: 'none', borderRadius: '100px',
+                 padding: '11px 24px', cursor: 'pointer',
+                 boxShadow: HOME_BTN_SHADOW,
+                 transition: 'transform 0.12s, box-shadow 0.12s', whiteSpace: 'nowrap',
+               }}
+                 onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = HOME_BTN_SHADOW_HOVER }}
+                 onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = HOME_BTN_SHADOW }}
+               >Customise</button>
             </div>
           </div>
         )}
 
         {/* ══ CONTROLS ══ */}
         {!allDone ? (
-          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+          <div className="camera-controls-container" style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
 
             {/* Upload | Flip | Capture | Timer */}
             <div className="camera-controls-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '24px', width: '100%' }}>
@@ -1296,6 +1299,7 @@ export default function Camera() {
               {/* Upload */}
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
                 <button
+                  className="camera-button"
                   type="button"
                   onClick={() => openUploadForSlot()}
                   disabled={capturing}
@@ -1322,6 +1326,7 @@ export default function Camera() {
               {/* Flip */}
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
                 <button
+                  className="camera-button"
                   type="button"
                   onClick={flipCamera}
                   disabled={capturing}
@@ -1346,17 +1351,22 @@ export default function Camera() {
               </div>
 
               {/* Capture — clean circle, NO emoji */}
-              <button onClick={startCapture} disabled={!cameraReady || capturing || nextCaptureIndex < 0} style={{
-                width: '72px', height: '72px', borderRadius: '50%',
-                background: capturing ? '#C4A882' : '#DF82A3',
-                border: '4px solid #ffffff',
-                cursor: !cameraReady || capturing ? 'not-allowed' : 'pointer',
-                boxShadow: capturing ? 'none' : '0 6px 20px rgba(223,130,163,0.5)',
-                transition: 'all 0.2s',
-                opacity: !cameraReady ? 0.5 : 1,
-                position: 'relative',
-                padding: 0,
-              }} aria-label="Capture">
+              <button
+                className="camera-button"
+                onClick={startCapture}
+                disabled={!cameraReady || capturing || nextCaptureIndex < 0}
+                style={{
+                  width: '72px', height: '72px', borderRadius: '50%',
+                  background: capturing ? '#C4A882' : '#DF82A3',
+                  border: '4px solid #ffffff',
+                  cursor: !cameraReady || capturing ? 'not-allowed' : 'pointer',
+                  boxShadow: capturing ? 'none' : '0 6px 20px rgba(223,130,163,0.5)',
+                  transition: 'all 0.2s',
+                  opacity: !cameraReady ? 0.5 : 1,
+                  position: 'relative',
+                  padding: 0,
+                }}
+                aria-label="Capture">
                 {/* Inner ring decoration — no emoji / no text */}
                 <div style={{
                   position: 'absolute', inset: '12px',
@@ -1404,7 +1414,7 @@ export default function Camera() {
             </p>
 
             {/* Filter strip */}
-            <div style={{ width: '100%', display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px', scrollbarWidth: 'none' }}>
+            <div className="camera-filter-strip" style={{ width: '100%', display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px', scrollbarWidth: 'none' }}>
               {getVisibleFilters().map(f => (
                 <button key={f.id} onClick={() => {
                   if (capturing) return

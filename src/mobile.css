@@ -5,7 +5,9 @@
    ============================================ */
 
 /* Root & layout overflow guards */
-html, body, #root {
+html,
+body,
+#root {
   max-width: 100vw;
   overflow-x: hidden;
 }
@@ -30,43 +32,38 @@ html, body, #root {
     padding-right: 12px !important;
   }
 
-  /* Fixed Top Buttons (Support & Feedback) */
-  .feedback-button {
-    padding: 5px 10px !important;
-    font-size: 10px !important;
-    top: 10px !important;
-    right: 10px !important;
-    min-width: 36px !important;
-    min-height: 32px !important;
-    border-width: 1.5px !important;
-  }
-  .feedback-button svg {
-    width: 13px !important;
-    height: 13px !important;
+  /* ── Top padding for ALL pages so content clears navbar ── */
+  .home-page-wrapper,
+  .layout-page-wrapper,
+  .camera-page-wrapper,
+  .customise-page-wrapper {
+    padding-top: 52px !important;
   }
 
-  .support-button {
-    top: 10px !important;
-    right: 50px !important;
-    padding: 4px 8px !important;
-    min-height: 32px !important;
-    font-size: 9px !important;
-    gap: 4px !important;
-    border-width: 1.5px !important;
+  /* Navbar buttons on mobile — emoji only, no text */
+  .nav-btn-text {
+    display: none !important;
   }
-  .support-button span {
-    font-size: 11px !important;
+
+  .nav-support-btn,
+  .nav-feedback-btn,
+  .nav-contact-btn {
+    padding: 6px 10px !important;
+    min-height: 32px !important;
+    font-size: 14px !important;
+    gap: 0 !important;
   }
 
   /* Page Header Title spacing on mobile */
   .page-header {
-    padding-top: 6px !important;
-    margin-bottom: 6px !important;
-    min-height: 44px !important;
+    padding-top: 4px !important;
+    margin-bottom: 4px !important;
+    min-height: 40px !important;
     padding-left: 54px !important;
-    padding-right: 104px !important;
+    padding-right: 12px !important;
     box-sizing: border-box;
   }
+
   .page-header-title {
     font-size: clamp(19px, 5vw, 24px) !important;
     margin-top: 0 !important;
@@ -74,10 +71,6 @@ html, body, #root {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-  .page-header-back button {
-    padding: 5px 12px !important;
-    font-size: 11px !important;
   }
 
   /* ───────── HOME PAGE ───────── */
@@ -87,66 +80,73 @@ html, body, #root {
     margin-top: 4px !important;
     line-height: 1.05 !important;
   }
+
   .home-subtitle {
     font-size: 12px !important;
     margin-top: 4px !important;
   }
 
-  /* Frame scatter container — stay strictly within screen bounds */
   .home-frames-wrap {
     transform: none !important;
-    margin: 8px auto 20px !important;
+    margin: 30px auto 20px !important;
     height: clamp(240px, 58vw, 320px) !important;
     width: 100% !important;
     max-width: 100% !important;
     position: relative !important;
   }
+
   .home-frame {
     position: absolute !important;
     border-radius: 12px !important;
   }
+
   .home-frame.frame-1 {
     left: 50% !important;
-    top: 2% !important;
+    top: -10% !important;
     transform: translateX(-50%) rotate(0deg) !important;
     width: clamp(125px, 33vw, 150px) !important;
     z-index: 2 !important;
   }
+
   .home-frame.frame-2 {
     left: 2% !important;
     top: 48% !important;
     width: clamp(95px, 25vw, 110px) !important;
   }
+
   .home-frame.frame-3 {
     left: 3% !important;
     top: 10% !important;
     width: clamp(85px, 22vw, 100px) !important;
   }
+
   .home-frame.frame-4 {
-    left: 50% !important;
-    bottom: 2% !important;
+    left: 52% !important;
+    bottom: -2% !important;
     transform: translateX(-50%) rotate(0deg) !important;
     width: clamp(135px, 35vw, 160px) !important;
     z-index: 1 !important;
   }
+
   .home-frame.frame-5 {
     right: 2% !important;
     bottom: 12% !important;
     width: clamp(85px, 22vw, 100px) !important;
   }
+
   .home-frame.frame-6 {
     right: 3% !important;
     top: 10% !important;
     width: clamp(85px, 22vw, 100px) !important;
   }
 
-  /* Footer — remove extra space below */
-  .page-wrapper > footer {
+  /* Footer */
+  .page-wrapper>footer {
     margin-top: auto !important;
     padding: 16px 16px !important;
   }
 
-  /* Curved loop reference bar — smaller on mobile */
+  /* Curved loop reference bar */
   .curved-loop-reference {
     height: 28px !important;
     left: 4% !important;
@@ -155,148 +155,256 @@ html, body, #root {
 
   /* ───────── LAYOUT PAGE ───────── */
 
-  .layout-header {
-    margin-bottom: 6px !important;
-    min-height: 48px !important;
+  .layout-page-content {
+    padding-top: 8px !important;
+    padding-bottom: 12px !important;
+    height: auto !important;
+    overflow-y: auto !important;
+    gap: 4px !important;
   }
+
+  .layout-header {
+    margin-bottom: 2px !important;
+    min-height: 40px !important;
+  }
+
   .layout-title {
     font-size: clamp(20px, 5.5vw, 26px) !important;
     margin-top: 0 !important;
     line-height: 1.08 !important;
   }
+
   .layout-subtitle {
-    font-size: 12px !important;
-    margin-bottom: 8px !important;
+    font-size: 11px !important;
+    margin: 0 0 4px !important;
   }
+
+  /* Tab switcher (Templates / Build Your Own) */
   .layout-carousel-wrap {
-    margin-top: 2px !important;
-    margin-bottom: 8px !important;
+    margin-top: 0 !important;
+    margin-bottom: 4px !important;
+    padding: 3px !important;
   }
+
   .layout-carousel-wrap button {
-    padding: 6px 14px !important;
-    font-size: 12px !important;
+    padding: 6px 12px !important;
+    font-size: 11px !important;
   }
+
+  /* Carousel itself — reduce height on mobile */
+  .layout-page-content>div:last-child {
+    overflow: visible !important;
+  }
+
 
   /* ───────── CAMERA PAGE ───────── */
 
-  .camera-header {
-    margin-bottom: 6px !important;
-    min-height: 48px !important;
+  .camera-page-content {
+    padding: 8px 10px 20px !important;
+    gap: 8px !important;
+    overflow-y: auto !important;
   }
+
+  .camera-header {
+    margin-bottom: 2px !important;
+    min-height: 40px !important;
+  }
+
   .camera-title {
     font-size: clamp(20px, 5.5vw, 26px) !important;
     margin-top: 0 !important;
     line-height: 1.08 !important;
   }
-  .camera-controls-row {
-    gap: 8px !important;
-    justify-content: space-evenly !important;
-    width: 100% !important;
-    flex-wrap: wrap !important;
-  }
-  .camera-controls-row > button,
-  .camera-controls-row > div {
-    flex: 0 1 auto !important;
-    min-width: 40px !important;
-  }
-  .camera-page-wrapper {
-    height: auto !important;
-    min-height: 100dvh !important;
-    overflow-y: auto !important;
-  }
-  .camera-page-content {
-    padding: 12px 10px 24px !important;
-    overflow-y: auto !important;
-  }
+
+  /* Camera preview box — smaller on mobile */
   .camera-strip-preview {
-    max-height: 50vh !important;
+    max-height: 38vh !important;
+    border-radius: 10px !important;
   }
+
+  /* Controls row — flip, capture, timer */
+  .camera-controls-row {
+    gap: 10px !important;
+    justify-content: center !important;
+    width: 100% !important;
+    flex-wrap: nowrap !important;
+    margin-top: 4px !important;
+  }
+
+  /* Flip and upload buttons — smaller */
+  .camera-flip-btn,
+  .camera-upload-btn {
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 16px !important;
+  }
+
+  /* Capture button — slightly smaller */
+  .camera-capture-btn {
+    width: 58px !important;
+    height: 58px !important;
+  }
+
+  /* Timer buttons */
+  .camera-timer-group button {
+    width: 26px !important;
+    height: 24px !important;
+    font-size: 9px !important;
+  }
+
+  /* Filter strip — smaller buttons */
+  .camera-filter-strip {
+    gap: 5px !important;
+  }
+
+  .camera-filter-strip>button {
+    min-width: 50px !important;
+    padding: 5px 4px !important;
+    font-size: 9px !important;
+  }
+
+  /* ── Your Strip page (allDone) ── */
+
+  /* Gap between curved text and strip */
+  .camera-curved-wrap {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* Action buttons row — retake, download, customise */
   .camera-actions-row {
-    margin-bottom: 12px !important;
+    gap: 6px !important;
+    flex-wrap: wrap !important;
+    margin-bottom: 8px !important;
     padding-bottom: 8px !important;
+    justify-content: center !important;
+  }
+
+  .camera-actions-row>a,
+  .camera-actions-row>button {
+    padding: 9px 16px !important;
+    font-size: 11px !important;
+    letter-spacing: 0.8px !important;
+    min-width: 80px !important;
+    flex: 1 1 auto !important;
+    max-width: 120px !important;
+    text-align: center !important;
+    justify-content: center !important;
   }
 
   /* ───────── CUSTOMISE PAGE ───────── */
+
+  .customise-page-content {
+    padding: 8px 8px 16px !important;
+    overflow-y: auto !important;
+  }
 
   .customise-title {
     font-size: clamp(19px, 5vw, 24px) !important;
     margin-top: 0 !important;
     line-height: 1.08 !important;
   }
+
   .customise-header {
     padding-top: 0 !important;
-    margin-bottom: 6px !important;
-  }
-  .customise-page-wrapper {
-    height: auto !important;
-    min-height: 100dvh !important;
-    overflow-y: auto !important;
-  }
-  .customise-page-content {
-    padding: 12px 8px 16px !important;
+    margin-bottom: 4px !important;
   }
 
-  /* Switch main layout from horizontal row to vertical column on mobile */
+  /* Main 3-column layout → vertical on mobile */
   .customise-main-row {
     flex-direction: column-reverse !important;
-    gap: 10px !important;
+    gap: 8px !important;
     width: 100% !important;
   }
 
-  /* Tools Bar becomes horizontal bottom bar */
+  /* Tool panel — compact horizontal bar */
   .customise-toolbar {
     width: 100% !important;
     flex-direction: row !important;
     flex-wrap: wrap !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 6px 10px !important;
-    padding: 8px 10px !important;
+    gap: 4px 8px !important;
+    padding: 6px 8px !important;
     align-self: stretch !important;
-  }
-  .customise-toolbar > span {
-    display: none !important; /* Hide label text to keep toolbar compact */
-  }
-  .customise-toolbar > div {
-    flex-direction: row !important;
-    gap: 4px !important;
+    min-height: auto !important;
+    max-height: 80px !important;
+    overflow: hidden !important;
   }
 
+  /* Hide label text in toolbar to keep it compact */
+  .customise-toolbar>span,
+  .customise-toolbar>p,
+  .customise-toolbar>label {
+    display: none !important;
+  }
+
+  /* Tool buttons — smaller on mobile */
+  .customise-toolbar button {
+    width: 30px !important;
+    height: 30px !important;
+    padding: 4px !important;
+    font-size: 14px !important;
+  }
+
+  /* Color swatches — smaller */
+  .customise-toolbar .color-swatch {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  /* Canvas container */
   .customise-canvas-container {
     width: 100% !important;
     max-width: 100% !important;
   }
+
 }
 
+/* ── Tablet (641px–1024px) ── */
 @media (min-width: 641px) and (max-width: 1024px) {
-  html, body, #root {
+
+  html,
+  body,
+  #root {
     min-height: 100%;
   }
+
   .page-wrapper {
     min-height: 100dvh;
     display: flex;
     flex-direction: column;
   }
+
   .page-content {
     flex: 1;
     display: flex;
     flex-direction: column;
   }
-  .page-wrapper > footer {
+
+  .page-wrapper>footer {
     margin-top: auto !important;
+  }
+
+  /* Hide nav link text on tablet too */
+  .nav-btn-text {
+    display: none;
   }
 
   .layout-header {
     margin-bottom: 6px !important;
   }
+
   .layout-title {
     font-size: clamp(26px, 4vw, 32px) !important;
     margin-top: 0 !important;
     line-height: 1.08 !important;
   }
+
   .layout-subtitle {
     margin-bottom: 6px !important;
   }
+
   .layout-carousel-wrap {
     margin-top: 4px !important;
   }
