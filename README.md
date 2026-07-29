@@ -14,8 +14,8 @@ A web-based photobooth built with React + Vite. Pick a template, capture photos 
 - **Frontend:** React + Vite
 - **Styling:** Inline styles + CSS filters
 - **Canvas:** HTML5 Canvas API
-- **Routing:** React Router v7
 - **Camera:** WebRTC (MediaDevices API)
+- **Routing:** React Router v7
 - **Filter API:** FastAPI + OpenCV (separate repo)
 
 ## Local development
