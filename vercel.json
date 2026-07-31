@@ -1,5 +1,20 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "errors": [
+    {
+      "statusCode": 404,
+      "destination": "/404.html"
+    },
+    {
+      "statusCode": 500,
+      "destination": "/500.html"
+    }
+  ],
   "headers": [
     {
       "source": "/assets/(.*)",
@@ -26,13 +41,6 @@
           "key": "Cache-Control",
           "value": "public, max-age=31536000, immutable"
         }
-      ]
-    },
-    {
-      "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
-      "errors": [
-        { "statusCode": 404, "destination": "/404.html" },
-        { "statusCode": 500, "destination": "/404.html" }
       ]
     }
   ]
