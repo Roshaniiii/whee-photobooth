@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Whee! Photobooth — Be Right Back</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: #F2E7B4;
+      font-family: 'Georgia', serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+      background-image: repeating-linear-gradient(
+        90deg,
+        rgba(145,114,100,0.12) 0px,
+        rgba(145,114,100,0.12) 10px,
+        transparent 10px,
+        transparent 60px
+      );
+    }
+
+    .card {
+      background: rgba(255,255,255,0.65);
+      border-radius: 24px;
+      border: 2px solid rgba(223,130,163,0.3);
+      padding: 48px 36px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(145,114,100,0.15);
+    }
+
+    .emoji {
+      font-size: 64px;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    h1 {
+      font-size: 28px;
+      color: #DF82A3;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+    }
+
+    p {
+      font-size: 15px;
+      color: #917264;
+      line-height: 1.7;
+      margin-bottom: 8px;
+    }
+
+    .tagline {
+      font-size: 12px;
+      color: #917264;
+      opacity: 0.6;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+
+    .btn {
+      display: inline-block;
+      background: #DF82A3;
+      color: #F2E7B4;
+      border: none;
+      border-radius: 100px;
+      padding: 13px 36px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      text-decoration: none;
+      box-shadow: 0 5px 0px #917264;
+      cursor: pointer;
+      transition: transform 0.15s;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .social {
+      font-size: 12px;
+      color: #917264;
+      opacity: 0.7;
+      margin-top: 20px;
+    }
+
+    .social a {
+      color: #DF82A3;
+      text-decoration: none;
+    }
+
+    /* ── Contact Form ── */
+    .contact-toggle {
+      background: none;
+      border: 1.5px dashed rgba(223,130,163,0.5);
+      border-radius: 100px;
+      color: #DF82A3;
+      font-family: 'Georgia', serif;
+      font-size: 13px;
+      letter-spacing: 1px;
+      padding: 9px 24px;
+      cursor: pointer;
+      margin-top: 18px;
+      transition: background 0.2s, border-color 0.2s;
+      width: 100%;
+    }
+
+    .contact-toggle:hover {
+      background: rgba(223,130,163,0.08);
+      border-color: #DF82A3;
+    }
+
+    .contact-form-wrap {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.45s ease, opacity 0.35s ease;
+      opacity: 0;
+    }
+
+    .contact-form-wrap.open {
+      max-height: 700px;
+      opacity: 1;
+    }
+
+    .contact-form {
+      background: rgba(242,231,180,0.35);
+      border-radius: 16px;
+      border: 1.5px solid rgba(223,130,163,0.2);
+      padding: 24px 20px 18px;
+      margin-top: 18px;
+      text-align: left;
+    }
+
+    .contact-form h2 {
+      font-size: 15px;
+      color: #DF82A3;
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 11px;
+      color: #917264;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.75);
+      border: 1.5px solid rgba(145,114,100,0.25);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-family: 'Georgia', serif;
+      font-size: 13px;
+      color: #5a3e35;
+      outline: none;
+      transition: border-color 0.2s;
+      resize: none;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: #DF82A3;
+    }
+
+    .form-group textarea {
+      height: 80px;
+    }
+
+    .form-submit {
+      background: #DF82A3;
+      color: #F2E7B4;
+      border: none;
+      border-radius: 100px;
+      padding: 11px 28px;
+      font-size: 12px;
+      font-family: 'Georgia', serif;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      box-shadow: 0 4px 0px #c0607e;
+      cursor: pointer;
+      transition: transform 0.15s;
+      width: 100%;
+      margin-top: 4px;
+    }
+
+    .form-submit:hover {
+      transform: translateY(-2px);
+    }
+
+    .form-note {
+      font-size: 11px;
+      color: #917264;
+      opacity: 0.7;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .form-success {
+      display: none;
+      color: #DF82A3;
+      font-size: 14px;
+      text-align: center;
+      padding: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <span class="emoji">📷</span>
+
+    <h1>Whee! Be Right Back</h1>
+
+    <p>
+      Our photobooth is taking a quick break —
+      we'll be back up very soon! 🌸
+    </p>
+
+    <p class="tagline">Pose. Capture. Repeat.</p>
+
+    <p style="font-size: 13px; color: #917264; opacity: 0.8;">
+      If the issue continues check our
+      <a href="https://twitter.com/Roshaniii7" 
+         style="color: #DF82A3; text-decoration: none;">
+        Twitter/X
+      </a>
+      for updates
+    </p>
+
+    <!-- Contact Us toggle -->
+    <button class="contact-toggle" id="contactToggle404" onclick="toggleContact('404')">
+      ✉️ Report an Issue
+    </button>
+
+    <div class="contact-form-wrap" id="contactForm404">
+      <div class="contact-form">
+        <h2>📬 Contact Us</h2>
+        <form id="issueForm404" onsubmit="submitForm(event, '404')">
+          <div class="form-group">
+            <label for="name404">Your Name</label>
+            <input type="text" id="name404" name="name" placeholder="e.g. Roshyy" required />
+          </div>
+          <div class="form-group">
+            <label for="email404">Your Email</label>
+            <input type="email" id="email404" name="email" placeholder="you@example.com" required />
+          </div>
+          <div class="form-group">
+            <label for="message404">What happened?</label>
+            <textarea id="message404" name="message" placeholder="Describe the issue you're seeing..." required></textarea>
+          </div>
+          <button type="submit" class="form-submit">Send Report 💌</button>
+          <p class="form-note">We read every message — promise! 🌸</p>
+        </form>
+        <p class="form-success" id="successMsg404">✅ Got it! We'll look into it right away 💖</p>
+      </div>
+    </div>
+
+    <p class="social">
+      wheephotobooth.site
+    </p>
+  </div>
+
+  <script>
+    function toggleContact(id) {
+      const wrap = document.getElementById('contactForm' + id);
+      const btn  = document.getElementById('contactToggle' + id);
+      const isOpen = wrap.classList.toggle('open');
+      btn.textContent = isOpen ? '✕ Close' : '✉️ Report an Issue';
+    }
+
+    function submitForm(e, id) {
+      e.preventDefault();
+      const form    = document.getElementById('issueForm' + id);
+      const success = document.getElementById('successMsg' + id);
+
+      // ── Send via Formspree (replace YOUR_FORM_ID with your actual Formspree form ID) ──
+      const data = new FormData(form);
+      fetch('https://formspree.io/f/mnjegawo', {
+        method: 'POST',
+        body: data,
+        headers: { 'Accept': 'application/json' }
+      })
+      .then(res => {
+        if (res.ok) {
+          form.style.display = 'none';
+          success.style.display = 'block';
+        } else {
+          // Fallback: open mail client
+          const name    = data.get('name');
+          const email   = data.get('email');
+          const message = data.get('message');
+          window.location.href =
+            'mailto:contactroshaniiii@gmail.com'
+            + '?subject=' + encodeURIComponent('[404 Issue] from ' + name)
+            + '&body='    + encodeURIComponent(message + '\n\nFrom: ' + email);
+        }
+      })
+      .catch(() => {
+        // Fallback: open mail client
+        const name    = data.get('name');
+        const email   = data.get('email');
+        const message = data.get('message');
+        window.location.href =
+          'mailto:contactroshaniiii@gmail.com'
+          + '?subject=' + encodeURIComponent('[404 Issue] from ' + name)
+          + '&body='    + encodeURIComponent(message + '\n\nFrom: ' + email);
+      });
+    }
+  </script>
+</body>
+</html>
