@@ -5,16 +5,6 @@
       "destination": "/index.html"
     }
   ],
-  "errors": [
-    {
-      "statusCode": 404,
-      "destination": "/404.html"
-    },
-    {
-      "statusCode": 500,
-      "destination": "/500.html"
-    }
-  ],
   "headers": [
     {
       "source": "/assets/(.*)",
