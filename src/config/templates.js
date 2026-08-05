@@ -22,6 +22,9 @@ import collage_strip1 from '../assets/collage_strip1.png'
 import collage_strip2 from '../assets/collage_strip2.png'
 import collage_strip3 from '../assets/collage_strip3.png'
 import collage_strip4 from '../assets/collage_strip4.png'
+import collage_strip5 from '../assets/collage_strip5.png'
+import collage_strip6 from '../assets/collage_strip6.png'
+import collage_strip7 from '../assets/collage_strip7.png'
 
 const PHOTO_W = 500
 const PHOTO_H = 410
@@ -188,7 +191,7 @@ export const TEMPLATES = [
   },
   {
   id: 'collage_strip1',
-    label: 'Collage — A',
+    label: 'Heart',
     shots: 11,
     file: collage_strip1,
     canvasWidth: 1200,
@@ -209,7 +212,7 @@ export const TEMPLATES = [
   },
   {
     id: 'collage_strip2',
-    label: 'Collage — B',
+    label: 'Grid',
     shots: 9,
     file: collage_strip2,
     canvasWidth: 1200,
@@ -240,7 +243,7 @@ export const TEMPLATES = [
   },
   {
     id: 'collage_strip4',
-    label: 'Collage — D',
+    label: 'Tic Tac Toe',
     shots: 3,
     file: collage_strip4,
     canvasWidth: 600, 
@@ -249,6 +252,50 @@ export const TEMPLATES = [
       slot( 7,  72,  185, 160), 
       slot(210, 255, 185, 160),
       slot(410, 432, 185, 160),
+    ],
+  },
+  {
+    id: 'birthday',
+    label: 'Birthday',
+    tag: 'NEW',
+    shots: 1,
+    file: collage_strip5, 
+    canvasWidth: 1200,
+    canvasHeight: 1200,
+    slots: [
+      slot(48, 48, 1104, 1104),
+    ],
+  },
+  {
+    id: 'collage_strip6',
+    label: 'I can',
+    tag: 'NEW',
+    shots: 6,
+    file: collage_strip6, 
+    canvasWidth: 1200,
+    canvasHeight: 800,
+    slots: [
+      slot(0, 0, 600, 800),
+      slot(600, 0, 600, 800),
+      slot(512, 103, 182, 225),
+      slot(698, 103, 182, 225),
+      slot(512, 335, 182, 225),
+      slot(698, 335, 182, 225),
+    ],
+  },
+  {
+    id: 'collage_strip7',
+    label: 'Hot Mess',
+    tag: 'NEW',
+    shots: 4,
+    file: collage_strip7, 
+    canvasWidth: 600,
+    canvasHeight: 800,
+    slots: [
+      slot(30, 30, 265, 325),
+      slot(305, 30, 265, 325),
+      slot(30, 368, 265, 325),
+      slot(305, 368, 265, 325),
     ],
   },
 ]

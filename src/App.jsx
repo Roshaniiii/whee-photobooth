@@ -9,6 +9,7 @@ import Contact from './pages/Contact'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import FeedbackButton from './components/FeedbackButton'
 import SupportButton from './components/SupportButton'
+import AnnouncementPopup from './components/AnnouncementPopup'
 import './mobile.css'
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       </Routes>
+      <AnnouncementPopup /> 
     </BrowserRouter>
   )
 }

@@ -104,6 +104,28 @@ function ShotBadge({ shots }) {
 // ══════════════════════════════════════════════════════════════
 // TAB 1 — Templates carousel
 // ══════════════════════════════════════════════════════════════
+function TemplateTag({ tag }) {
+  if (!tag) return null
+  return (
+    <div style={{
+      position: 'absolute',
+      top: 8,
+      left: 8,
+      background: '#99c5ff',
+      color: '#fff',
+      borderRadius: '999px',
+      padding: '4px 10px',
+      fontSize: '10px',
+      fontWeight: 700,
+      letterSpacing: '0.8px',
+      zIndex: 3,
+      boxShadow: '0 3px 10px rgba(153,197,255,0.2)',
+    }}>
+      {tag}
+    </div>
+  )
+}
+
 function PickTemplate({ onSelect }) {
   const [current, setCurrent] = useState(0)
 
@@ -183,6 +205,7 @@ function PickTemplate({ onSelect }) {
                 objectFit: 'contain',
                 display: 'block',
               }} />
+              <TemplateTag tag={t.tag} />
               <ShotBadge shots={t.shots} />
             </div>
           )
@@ -202,8 +225,28 @@ function PickTemplate({ onSelect }) {
           textAlign: 'center',
           whiteSpace: 'nowrap',
           zIndex: 4,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
         }}>
           {TEMPLATES[current].label}
+          {TEMPLATES[current].tag && (
+            <span style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '4px 10px',
+              borderRadius: '999px',
+              background: '#99c5ff',
+              color: '#fff',
+              fontSize: '10px',
+              fontWeight: 700,
+              letterSpacing: '0.8px',
+            }}>
+              {TEMPLATES[current].tag}
+            </span>
+          )}
         </p>
 
         {/* Right arrow */}
