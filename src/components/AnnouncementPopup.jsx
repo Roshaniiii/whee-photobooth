@@ -40,7 +40,7 @@ export default function AnnouncementPopup() {
     setFeedback('')
 
     try {
-      const response = await fetch('https://formspree.io/f/xeajqjle', {
+      const response = await fetch('https://formspree.io/f/xljrejoo', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
