@@ -38,6 +38,36 @@ const CROP_ASPECT = 4 / 3
 const FILTERS = [
   { id: 'none', label: 'Normal', source: 'none' },
   {
+    id: 'soft_film',
+    label: 'Soft Film',
+    source: 'css',
+    css: 'brightness(90%) contrast(110%) saturate(80%) sepia(30%)',
+  },
+  {
+    id: 'moody_mono',
+    label: 'Moody Mono',
+    source: 'css',
+    css: 'brightness(90%) saturate(0%) sepia(100%)',
+  },
+  {
+    id: 'dusk_glow',
+    label: 'Dusk Glow',
+    source: 'css',
+    css: 'brightness(60%) contrast(90%)',
+  },
+  {
+    id: 'vivid_pop',
+    label: 'Vivid Pop',
+    source: 'css',
+    css: 'contrast(110%) saturate(200%)',
+  },
+  {
+    id: 'golden_hour',
+    label: 'Golden Hour',
+    source: 'css',
+    css: 'hue-rotate(-20deg) saturate(120%)',
+  },
+  {
     id: 'sunshine',
     label: 'Sunshine',
     source: 'css',
@@ -60,6 +90,12 @@ const FILTERS = [
     label: 'Popular',
     source: 'css',
     css: 'brightness(105%) contrast(115%) saturate(110%) hue-rotate(350deg) drop-shadow(5px 5px 8px #444444)',
+  },
+  {
+    id: 'high_contrast',
+    label: 'High Contrast',
+    source: 'css',
+    css: 'contrast(200%)',
   },
   {
     id: 'grey',
@@ -434,6 +470,27 @@ export default function Camera() {
   function applyCanvasFilter(ctx, w, h, filterId) {
     const filter = FILTERS.find(f => f.id === filterId)
     if (!filter || filter.source === 'none' || !filter.css || filter.css === 'none') return
+
+    const cssFilterIds = ['soft_film', 'moody_mono', 'high_contrast', 'dusk_glow', 'vivid_pop', 'golden_hour']
+    if (cssFilterIds.includes(filterId)) {
+      const sourceCanvas = document.createElement('canvas')
+      sourceCanvas.width = w
+      sourceCanvas.height = h
+      const sourceCtx = sourceCanvas.getContext('2d')
+      const imageData = ctx.getImageData(0, 0, w, h)
+      sourceCtx.putImageData(imageData, 0, 0)
+
+      const targetCanvas = document.createElement('canvas')
+      targetCanvas.width = w
+      targetCanvas.height = h
+      const targetCtx = targetCanvas.getContext('2d')
+      targetCtx.filter = filter.css
+      targetCtx.drawImage(sourceCanvas, 0, 0)
+
+      const filteredImageData = targetCtx.getImageData(0, 0, w, h)
+      ctx.putImageData(filteredImageData, 0, 0)
+      return
+    }
 
     const imageData = ctx.getImageData(0, 0, w, h)
     const d = imageData.data
