@@ -146,7 +146,7 @@ export default function AnnouncementPopup() {
           <p style={{ fontSize: '14px', color: '#917264', margin: 0, lineHeight: 1.6, textAlign: 'left' }}>
             🛠️ Some filters (blush, cat ears & hearts) are temporarily under construction<br></br>
             🍉 New templates are live now! <br></br>
-            🍓 Also — YES you can upload photos from your gallery! Just tap the upload button on the camera page and pick any photo from your device. <br></br>
+            🍓 Also — YES you can upload photos from your gallery! Just tap the upload button on the camera page. <br></br>
             ✦ If you want to be notified when new templates drop, leave your email below and I’ll send a quick note.
           </p>
         </div>
