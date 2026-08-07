@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { playClick } from '../utils/sounds'
 import VerticalStripes from '../components/VerticalStripes'
@@ -5,6 +6,10 @@ import Footer from '../components/Footer'
 
 export default function PrivacyPolicy() {
   const navigate = useNavigate()
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+  }, [])
+
   return (
     <div className="page-wrapper privacy-policy-wrapper" style={{
       minHeight: '100vh',
@@ -23,580 +28,229 @@ export default function PrivacyPolicy() {
         position: 'relative',
         zIndex: 1,
         width: '100%',
-        maxWidth: '800px',
-        padding: '80px 32px',
+        maxWidth: '900px',
+        padding: '56px 24px 40px',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'flex-start',
+        alignItems: 'center',
         flex: 1,
       }}>
 
+        <div style={{ textAlign: 'center', marginBottom: '8px', width: '100%' }}>
+          <h1 style={{
+            fontFamily: "'Cause', serif",
+            fontSize: 'clamp(28px, 4.8vw, 38px)',
+            color: '#DF82A3',
+            margin: '0 0 8px 0',
+            letterSpacing: '0.5px',
+          }}>
+            Privacy Policy
+          </h1>
+        </div>
+
         <div style={{
           width: '100%',
-          padding: '28px',
-          border: '2px solid #D4C49A',
-          borderRadius: '12px',
-          backgroundColor: 'rgba(250, 250, 249, 0.44)',
+          padding: '24px',
+          border: '1px solid rgba(145,114,100,0.16)',
+          borderRadius: '18px',
+          background: 'rgba(255,255,255,0.5)',
+          boxShadow: '0 8px 20px rgba(145,114,100,0.08)',
         }}>
           <div style={{
             width: '100%',
             fontSize: '15px',
-            lineHeight: '1.7',
+            lineHeight: '1.8',
             color: '#917264',
             fontFamily: "'Cause', serif",
           }}>
-
-            <h1 style={{
-              fontFamily: "'Cause', cursive",
-              fontSize: 'clamp(32px, 6vw, 48px)',
-              color: '#DF82A3',
-              margin: '0 0 8px 0',
-              letterSpacing: '1px',
-            }}>
-              Privacy Policy
-            </h1>
-
+            <p style={{ marginBottom: '10px', fontWeight: '600' }}>
+              <strong>Last Updated:</strong> August 7, 2026
+            </p>
 
             <p style={{ marginBottom: '16px' }}>
-              This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your information when You use the Service and tells You about Your privacy rights and how the law protects You.
+              At Whee! Photobooth, accessible from <a href="https://wheephotobooth.site" target="_blank" rel="noopener noreferrer" style={{ color: '#DF82A3', textDecoration: 'none' }}>https://wheephotobooth.site</a>, the privacy of our visitors is one of our main priorities. This Privacy Policy document outlines the types of information collected and recorded by Whee! Photobooth and exactly how we protect and handle it.
             </p>
 
             <p style={{ marginBottom: '24px' }}>
-              We use Your Personal Data to provide and improve the Service. By using the Service, You agree to the collection and use of information in accordance with this Privacy Policy.
+              By using our website, you hereby consent to our Privacy Policy and agree to its terms.
             </p>
 
             <h2 style={{
-              fontFamily: "'Cause', cursive",
-              fontSize: '24px',
+              fontFamily: "'Cause', serif",
+              fontSize: '20px',
               color: '#DF82A3',
-              margin: '32px 0 16px 0',
+              margin: '22px 0 8px 0',
               letterSpacing: '0.5px',
             }}>
-              Interpretation and Definitions
+              1. Camera Access and Image Processing Disclosure
             </h2>
 
-            <h3 style={{
-              fontSize: '18px',
-              color: '#917264',
-              margin: '20px 0 12px 0',
-              fontWeight: '600',
-            }}>
-              Interpretation
-            </h3>
-
-            <p style={{ marginBottom: '16px' }}>
-              The words whose initial letters are capitalized have meanings defined under the following conditions. The following definitions shall have the same meaning regardless of whether they appear in singular or in plural.
-            </p>
-
-            <h3 style={{
-              fontSize: '18px',
-              color: '#917264',
-              margin: '20px 0 12px 0',
-              fontWeight: '600',
-            }}>
-              Definitions
-            </h3>
-
             <p style={{ marginBottom: '12px' }}>
-              For the purposes of this Privacy Policy:
-            </p>
-
-            <ul style={{ marginBottom: '24px', paddingLeft: '24px' }}>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>Account</strong> means a unique account created for You to access our Service or parts of our Service.
-              </li>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>Affiliate</strong> means an entity that controls, is controlled by, or is under common control with a party, where "control" means ownership of 50% or more of the shares, equity interest or other securities entitled to vote for election of directors or other managing authority.
-              </li>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>Company</strong> (referred to as either "the Company", "We", "Us" or "Our" in this Privacy Policy) refers to Whee! Photobooth.
-              </li>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>Cookies</strong> are small files that are placed on Your computer, mobile device or any other device by a website, containing the details of Your browsing history on that website among its many uses.
-              </li>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>Country</strong> refers to: India
-              </li>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>Device</strong> means any device that can access the Service such as a computer, a cell phone or a digital tablet.
-              </li>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>Personal Data</strong> (or "Personal Information") is any information that relates to an identified or identifiable individual.
-                <br />
-                <span style={{ fontSize: '14px' }}>We use "Personal Data" and "Personal Information" interchangeably unless a law uses a specific term.</span>
-              </li>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>Service</strong> refers to the Website.
-              </li>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>Service Provider</strong> means any natural or legal person who processes the data on behalf of the Company. It refers to third-party companies or individuals employed by the Company to facilitate the Service, to provide the Service on behalf of the Company, to perform services related to the Service or to assist the Company in analyzing how the Service is used.
-              </li>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>Usage Data</strong> refers to data collected automatically, either generated by the use of the Service or from the Service infrastructure itself (for example, the duration of a page visit).
-              </li>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>Website</strong> refers to Whee! Photobooth, accessible from <a href="https://wheephotobooth.site" target="_blank" rel="noopener noreferrer" style={{ color: '#DF82A3', textDecoration: 'none' }}>https://wheephotobooth.site</a>.
-              </li>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>You</strong> means the individual accessing or using the Service, or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable.
-              </li>
-            </ul>
-
-            <h2 style={{
-              fontFamily: "'Cause', cursive",
-              fontSize: '24px',
-              color: '#DF82A3',
-              margin: '32px 0 16px 0',
-              letterSpacing: '0.5px',
-            }}>
-              Collecting and Using Your Personal Data
-            </h2>
-
-            <h3 style={{
-              fontSize: '18px',
-              color: '#917264',
-              margin: '20px 0 12px 0',
-              fontWeight: '600',
-            }}>
-              Types of Data Collected
-            </h3>
-
-            <h4 style={{
-              fontSize: '16px',
-              color: '#917264',
-              margin: '16px 0 8px 0',
-              fontWeight: '600',
-            }}>
-              Personal Data
-            </h4>
-
-            <p style={{ marginBottom: '12px' }}>
-              While using Our Service, We may ask You to provide Us with certain personally identifiable information that can be used to contact or identify You. Personally identifiable information may include, but is not limited to:
-            </p>
-
-            <ul style={{ marginBottom: '20px', paddingLeft: '24px' }}>
-              <li>Email address</li>
-            </ul>
-
-            <h4 style={{
-              fontSize: '16px',
-              color: '#917264',
-              margin: '16px 0 8px 0',
-              fontWeight: '600',
-            }}>
-              Usage Data
-            </h4>
-
-            <p style={{ marginBottom: '12px' }}>
-              Usage Data is collected automatically when using the Service.
-            </p>
-
-            <p style={{ marginBottom: '12px' }}>
-              Usage Data may include information such as Your Device's Internet Protocol address (e.g. IP address), browser type, browser version, the pages of our Service that You visit, the time and date of Your visit, the time spent on those pages, unique device identifiers and other diagnostic data.
-            </p>
-
-            <p style={{ marginBottom: '12px' }}>
-              When You access the Service by or through a mobile device, We may collect certain information automatically, including, but not limited to, the type of mobile device You use, Your mobile device's unique ID, the IP address of Your mobile device, Your mobile operating system, the type of mobile Internet browser You use, unique device identifiers and other diagnostic data.
-            </p>
-
-            <p style={{ marginBottom: '24px' }}>
-              We may also collect information that Your browser sends whenever You visit Our Service or when You access the Service by or through a mobile device.
-            </p>
-
-            <h4 style={{
-              fontSize: '16px',
-              color: '#917264',
-              margin: '16px 0 8px 0',
-              fontWeight: '600',
-            }}>
-              Tracking Technologies and Cookies
-            </h4>
-
-            <p style={{ marginBottom: '12px' }}>
-              We use Cookies and similar tracking technologies to track the activity on Our Service and store certain information. Tracking technologies We use include beacons, tags, and scripts to collect and track information and to improve and analyze Our Service. The technologies We use may include:
-            </p>
-
-            <ul style={{ marginBottom: '12px', paddingLeft: '24px' }}>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>Cookies or Browser Cookies.</strong> A cookie is a small file placed on Your Device. You can instruct Your browser to refuse all Cookies or to indicate when a Cookie is being sent. However, if You do not accept Cookies, You may not be able to use some parts of our Service.
-              </li>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>Web Beacons.</strong> Certain sections of our Service and our emails may contain small electronic files known as web beacons (also referred to as clear gifs, pixel tags, and single-pixel gifs) that permit the Company, for example, to count users who have visited those pages or opened an email and for other related website statistics (for example, recording the popularity of a certain section and verifying system and server integrity).
-              </li>
-            </ul>
-
-            <p style={{ marginBottom: '12px' }}>
-              Cookies can be "Persistent" or "Session" Cookies. Persistent Cookies remain on Your personal computer or mobile device when You go offline, while Session Cookies are deleted as soon as You close Your web browser.
-            </p>
-
-            <p style={{ marginBottom: '12px' }}>
-              Where required by law, we use non-essential cookies (such as analytics, advertising, and remarketing cookies) only with Your consent. You can withdraw or change Your consent at any time using Our cookie preferences tool (if available) or through Your browser/device settings. Withdrawing consent does not affect the lawfulness of processing based on consent before its withdrawal.
-            </p>
-
-            <p style={{ marginBottom: '12px' }}>
-              We use both Session and Persistent Cookies for the purposes set out below:
-            </p>
-
-            <ul style={{ marginBottom: '24px', paddingLeft: '24px' }}>
-              <li style={{ marginBottom: '16px' }}>
-                <strong>Necessary / Essential Cookies</strong>
-                <ul style={{ marginTop: '8px', paddingLeft: '20px' }}>
-                  <li>Type: Session Cookies</li>
-                  <li>Administered by: Us</li>
-                  <li>Purpose: These Cookies are essential to provide You with services available through the Website and to enable You to use some of its features. They help to authenticate users and prevent fraudulent use of user accounts. Without these Cookies, the services that You have asked for cannot be provided, and We only use these Cookies to provide You with those services.</li>
-                </ul>
-              </li>
-              <li style={{ marginBottom: '16px' }}>
-                <strong>Cookies Policy / Notice Acceptance Cookies</strong>
-                <ul style={{ marginTop: '8px', paddingLeft: '20px' }}>
-                  <li>Type: Persistent Cookies</li>
-                  <li>Administered by: Us</li>
-                  <li>Purpose: These Cookies identify if users have accepted the use of cookies on the Website.</li>
-                </ul>
-              </li>
-              <li style={{ marginBottom: '16px' }}>
-                <strong>Functionality Cookies</strong>
-                <ul style={{ marginTop: '8px', paddingLeft: '20px' }}>
-                  <li>Type: Persistent Cookies</li>
-                  <li>Administered by: Us</li>
-                  <li>Purpose: These Cookies allow Us to remember choices You make when You use the Website, such as remembering your login details or language preference. The purpose of these Cookies is to provide You with a more personal experience and to avoid You having to re-enter your preferences every time You use the Website.</li>
-                </ul>
-              </li>
-            </ul>
-
-            <p style={{ marginBottom: '24px' }}>
-              For more information about the cookies we use and your choices regarding cookies, please visit our Cookies Policy or the Cookies section of Our Privacy Policy.
-            </p>
-
-            <h3 style={{
-              fontSize: '18px',
-              color: '#917264',
-              margin: '20px 0 12px 0',
-              fontWeight: '600',
-            }}>
-              Use of Your Personal Data
-            </h3>
-
-            <p style={{ marginBottom: '12px' }}>
-              The Company may use Personal Data for the following purposes:
+              Whee! Photobooth is a free online photobooth and virtual photo booth app that operates directly within your web browser. To deliver our core interactive features, our application requires explicit hardware permission to access your device’s built-in camera or webcam.
             </p>
 
             <ul style={{ marginBottom: '16px', paddingLeft: '24px' }}>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>To provide and maintain our Service</strong>, including to monitor the usage of our Service.
-              </li>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>To manage Your Account:</strong> to manage Your registration as a user of the Service. The Personal Data You provide can give You access to different functionalities of the Service that are available to You as a registered user.
-              </li>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>For the performance of a contract:</strong> the development, compliance and undertaking of the purchase contract for the products, items or services You have purchased or of any other contract with Us through the Service.
-              </li>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>To contact You:</strong> To contact You by email, telephone calls, SMS, or other equivalent forms of electronic communication, such as a mobile application's push notifications regarding updates or informative communications related to the functionalities, products or contracted services, including the security updates, when necessary or reasonable for their implementation.
-              </li>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>To provide You</strong> with news, special offers, and general information about other goods, services and events which We offer that are similar to those that you have already purchased or inquired about unless You have opted not to receive such information.
-              </li>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>To manage Your requests:</strong> To attend and manage Your requests to Us.
-              </li>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>For business transfers:</strong> We may use Your Personal Data to evaluate or conduct a merger, divestiture, restructuring, reorganization, dissolution, or other sale or transfer of some or all of Our assets, whether as a going concern or as part of bankruptcy, liquidation, or similar proceeding, in which Personal Data held by Us about our Service users is among the assets transferred.
-              </li>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>For other purposes</strong>: We may use Your information for other purposes, such as data analysis, identifying usage trends, determining the effectiveness of our promotional campaigns and to evaluate and improve our Service, products, services, marketing and your experience.
-              </li>
+              <li style={{ marginBottom: '10px' }}><strong>Local, Client-Side Processing:</strong> All camera data streams, countdown captures, filter rendering (including CSS filters like grayscale and rose gold), and photo strip creation happen entirely locally inside your web browser.</li>
+              <li style={{ marginBottom: '10px' }}><strong>No Server Storage:</strong> We do not upload, collect, monitor, or save your captured image files, video streams, or photos on our external web servers. Once you close your browser tab or complete your download, all temporary visual cache data is permanently erased.</li>
+              <li style={{ marginBottom: '10px' }}><strong>Photo Upload Alternative:</strong> For users utilizing our platform without a webcam by uploading a photo directly from their device, these image files are also processed strictly client-side to build the photo strip template and are never saved or retained by us.</li>
             </ul>
 
-            <p style={{ marginBottom: '16px' }}>
-              We may share Your Personal Data in the following situations:
-            </p>
-
-            <ul style={{ marginBottom: '24px', paddingLeft: '24px' }}>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>With Service Providers:</strong> We may share Your Personal Data with Service Providers to monitor and analyze the use of our Service, to contact You.
-              </li>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>For business transfers:</strong> We may share or transfer Your Personal Data in connection with, or during negotiations of, any merger, sale of Company assets, financing, or acquisition of all or a portion of Our business to another company.
-              </li>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>With Affiliates:</strong> We may share Your Personal Data with Our affiliates, in which case we will require those affiliates to honor this Privacy Policy. Affiliates include Our parent company and any other subsidiaries, joint venture partners or other companies that We control or that are under common control with Us.
-              </li>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>With business partners:</strong> We may share Your Personal Data with Our business partners to offer You certain products, services or promotions.
-              </li>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>With other users:</strong> If Our Service offers public areas, when You share Personal Data or otherwise interact in the public areas with other users, such information may be viewed by all users and may be publicly distributed outside.
-              </li>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>With Your consent</strong>: We may disclose Your Personal Data for any other purpose with Your consent.
-              </li>
-            </ul>
-
-            <h3 style={{
-              fontSize: '18px',
-              color: '#917264',
-              margin: '20px 0 12px 0',
-              fontWeight: '600',
+            <h2 style={{
+              fontFamily: "'Cause', serif",
+              fontSize: '20px',
+              color: '#DF82A3',
+              margin: '22px 0 8px 0',
+              letterSpacing: '0.5px',
             }}>
-              Retention of Your Personal Data
-            </h3>
+              2. Augmented Reality (AR) and Face Detection Data
+            </h2>
 
-            <p style={{ marginBottom: '16px' }}>
-              The Company will retain Your Personal Data only for as long as is necessary for the purposes set out in this Privacy Policy. We will retain and use Your Personal Data to the extent necessary to comply with our legal obligations (for example, if We are required to retain Your data to comply with applicable laws), resolve disputes, and enforce our legal agreements and policies.
-            </p>
-
-            <p style={{ marginBottom: '16px' }}>
-              Where possible, We apply shorter retention periods and/or reduce identifiability by deleting, aggregating, or anonymizing data. Unless otherwise stated, the retention periods below are maximum periods ("up to") and We may delete or anonymize data sooner when it is no longer needed for the relevant purpose. We apply different retention periods to different categories of Personal Data based on the purpose of processing and legal obligations:
-            </p>
-
-            <ul style={{ marginBottom: '24px', paddingLeft: '24px' }}>
-              <li style={{ marginBottom: '16px' }}>
-                <strong>Account Information</strong>
-                <ul style={{ marginTop: '8px', paddingLeft: '20px' }}>
-                  <li>User Accounts: retained for the duration of your account relationship plus up to 24 months after account closure to handle any post-termination issues or resolve disputes.</li>
-                </ul>
-              </li>
-              <li style={{ marginBottom: '16px' }}>
-                <strong>Customer Support Data</strong>
-                <ul style={{ marginTop: '8px', paddingLeft: '20px' }}>
-                  <li>Support tickets and correspondence: up to 24 months from the date of ticket closure to resolve follow-up inquiries, track service quality, and defend against potential legal claims</li>
-                  <li>Chat transcripts: up to 24 months for quality assurance and staff training purposes.</li>
-                </ul>
-              </li>
-              <li style={{ marginBottom: '16px' }}>
-                <strong>Usage Data</strong>
-                <ul style={{ marginTop: '8px', paddingLeft: '20px' }}>
-                  <li>Website analytics data (cookies, IP addresses, device identifiers): up to 24 months from the date of collection, which allows us to analyze trends while respecting privacy principles.</li>
-                  <li>Server logs (IP addresses, access times): up to 24 months for security monitoring and troubleshooting purposes.</li>
-                </ul>
-              </li>
-            </ul>
-
-            <p style={{ marginBottom: '16px' }}>
-              Usage Data is retained in accordance with the retention periods described above, and may be retained longer only where necessary for security, fraud prevention, or legal compliance.
-            </p>
-
-            <p style={{ marginBottom: '16px' }}>
-              We may retain Personal Data beyond the periods stated above for different reasons:
+            <p style={{ marginBottom: '12px' }}>
+              Our platform features live AR filters (such as blush marks, cat ears, and hearts) that utilize real-time face detection scripts directly inside your web browser.
             </p>
 
             <ul style={{ marginBottom: '16px', paddingLeft: '24px' }}>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>Legal obligation:</strong> We are required by law to retain specific data (e.g., financial records for tax authorities).
-              </li>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>Legal claims:</strong> Data is necessary to establish, exercise, or defend legal claims.
-              </li>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>Your explicit request:</strong> You ask Us to retain specific information.
-              </li>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>Technical limitations:</strong> Data exists in backup systems that are scheduled for routine deletion.
-              </li>
+              <li style={{ marginBottom: '10px' }}><strong>Zero Biometric Collection:</strong> This automated script only tracks temporary coordinate data points on your face layout to overlay the emoji stickers or digital masks accurately while your camera is active.</li>
+              <li style={{ marginBottom: '10px' }}><strong>No Face Data Retention:</strong> This face detection data is never recorded, never stored, and never shared with third parties. It is processed in real time and vanishes instantly the moment you turn off the filter or exit the browser.</li>
             </ul>
 
-            <p style={{ marginBottom: '16px' }}>
-              You may request information about how long We will retain Your Personal Data by contacting Us.
-            </p>
-
-            <p style={{ marginBottom: '16px' }}>
-              When retention periods expire, We securely delete or anonymize Personal Data according to the following procedures:
-            </p>
-
-            <ul style={{ marginBottom: '24px', paddingLeft: '24px' }}>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>Deletion:</strong> Personal Data is removed from Our systems and no longer actively processed.
-              </li>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>Backup retention:</strong> Residual copies may remain in encrypted backups for a limited period consistent with our backup retention schedule and are not restored except where necessary for security, disaster recovery, or legal compliance.
-              </li>
-              <li style={{ marginBottom: '12px' }}>
-                <strong>Anonymization:</strong> In some cases, We convert Personal Data into anonymous statistical data that cannot be linked back to You. This anonymized data may be retained indefinitely for research and analytics.
-              </li>
-            </ul>
-
-            <h3 style={{
-              fontSize: '18px',
-              color: '#917264',
-              margin: '20px 0 12px 0',
-              fontWeight: '600',
+            <h2 style={{
+              fontFamily: "'Cause', serif",
+              fontSize: '20px',
+              color: '#DF82A3',
+              margin: '22px 0 8px 0',
+              letterSpacing: '0.5px',
             }}>
-              Transfer of Your Personal Data
-            </h3>
+              3. Log Files
+            </h2>
 
             <p style={{ marginBottom: '16px' }}>
-              Your information, including Personal Data, is processed at the Company's operating offices and in any other places where the parties involved in the processing are located. It means that this information may be transferred to — and maintained on — computers located outside of Your state, province, country or other governmental jurisdiction where the data protection laws may differ from those from Your jurisdiction.
+              Whee! Photobooth follows a standard procedure of using log files. These files log visitors when they visit websites. All hosting companies do this as part of hosting services' analytics. The information collected by log files includes internet protocol (IP) addresses, browser type, Internet Service Provider (ISP), date and time stamps, referring/exit pages, and possibly the number of clicks. These are not linked to any information that is personally identifiable. The purpose of this information is for analyzing trends, administering the site, tracking users' movement on the website, and gathering broad demographic information.
             </p>
 
-            <p style={{ marginBottom: '24px' }}>
-              Where required by applicable law, We will ensure that international transfers of Your Personal Data are subject to appropriate safeguards and supplementary measures where appropriate. The Company will take all steps reasonably necessary to ensure that Your data is treated securely and in accordance with this Privacy Policy and no transfer of Your Personal Data will take place to an organization or a country unless there are adequate controls in place including the security of Your data and other personal information.
-            </p>
-
-            <h3 style={{
-              fontSize: '18px',
-              color: '#917264',
-              margin: '20px 0 12px 0',
-              fontWeight: '600',
+            <h2 style={{
+              fontFamily: "'Cause', serif",
+              fontSize: '20px',
+              color: '#DF82A3',
+              margin: '22px 0 8px 0',
+              letterSpacing: '0.5px',
             }}>
-              Delete Your Personal Data
-            </h3>
+              4. Cookies and Web Beacons
+            </h2>
 
             <p style={{ marginBottom: '16px' }}>
-              You have the right to delete or request that We assist in deleting the Personal Data that We have collected about You.
+              Like any other modern web platform, Whee! Photobooth uses "cookies". These cookies are used to store information including visitors' preferences, and the specific pages on the website that the visitor accessed or visited. This information is utilized to optimize the user experience by customizing our web page content based on visitors' browser types and other non-identifiable technical metrics.
             </p>
 
-            <p style={{ marginBottom: '16px' }}>
-              Our Service may give You the ability to delete certain information about You from within the Service.
-            </p>
-
-            <p style={{ marginBottom: '16px' }}>
-              You may update, amend, or delete Your information at any time by signing in to Your Account, if you have one, and visiting the account settings section that allows you to manage Your personal information. You may also contact Us to request access to, correct, or delete any Personal Data that You have provided to Us.
-            </p>
-
-            <p style={{ marginBottom: '24px' }}>
-              Please note, however, that We may need to retain certain information when we have a legal obligation or lawful basis to do so.
-            </p>
-
-            <h3 style={{
-              fontSize: '18px',
-              color: '#917264',
-              margin: '20px 0 12px 0',
-              fontWeight: '600',
+            <h2 style={{
+              fontFamily: "'Cause', serif",
+              fontSize: '20px',
+              color: '#DF82A3',
+              margin: '22px 0 8px 0',
+              letterSpacing: '0.5px',
             }}>
-              Disclosure of Your Personal Data
-            </h3>
-
-            <h4 style={{
-              fontSize: '16px',
-              color: '#917264',
-              margin: '16px 0 8px 0',
-              fontWeight: '600',
-            }}>
-              Business Transactions
-            </h4>
-
-            <p style={{ marginBottom: '16px' }}>
-              If the Company is involved in a merger, acquisition or asset sale, Your Personal Data may be transferred. We will provide notice before Your Personal Data is transferred and becomes subject to a different Privacy Policy.
-            </p>
-
-            <h4 style={{
-              fontSize: '16px',
-              color: '#917264',
-              margin: '16px 0 8px 0',
-              fontWeight: '600',
-            }}>
-              Law enforcement
-            </h4>
-
-            <p style={{ marginBottom: '16px' }}>
-              Under certain circumstances, the Company may be required to disclose Your Personal Data if required to do so by law or in response to valid requests by public authorities (e.g. a court or a government agency).
-            </p>
-
-            <h4 style={{
-              fontSize: '16px',
-              color: '#917264',
-              margin: '16px 0 8px 0',
-              fontWeight: '600',
-            }}>
-              Other legal requirements
-            </h4>
+              5. Google DoubleClick DART Cookie & Advertising Partners
+            </h2>
 
             <p style={{ marginBottom: '12px' }}>
-              The Company may disclose Your Personal Data in the good faith belief that such action is necessary to:
+              Google is one of the third-party vendors utilized on our site. It uses cookies, known as DART cookies, to serve ads to our site visitors based upon their visit to wheephotobooth.site and other domains across the internet. Visitors may choose to decline the use of DART cookies by visiting the Google ad and content network Privacy Policy at the following URL:
             </p>
 
-            <ul style={{ marginBottom: '24px', paddingLeft: '24px' }}>
-              <li style={{ marginBottom: '8px' }}>Comply with a legal obligation</li>
-              <li style={{ marginBottom: '8px' }}>Protect and defend the rights or property of the Company</li>
-              <li style={{ marginBottom: '8px' }}>Prevent or investigate possible wrongdoing in connection with the Service</li>
-              <li style={{ marginBottom: '8px' }}>Protect the personal safety of Users of the Service or the public</li>
-              <li style={{ marginBottom: '8px' }}>Protect against legal liability</li>
+            <p style={{ marginBottom: '12px' }}>- google.com</p>
+
+            <p style={{ marginBottom: '16px' }}>
+              Third-party ad servers or ad networks use technologies like cookies, JavaScript, or Web Beacons that are used in their respective advertisements and links that appear on Whee! Photobooth, which are sent directly to users' browsers. They automatically receive your IP address when this occurs. These technologies are used to measure the effectiveness of their advertising campaigns and/or to personalize the advertising content that you see on websites that you visit. Please note that Whee! Photobooth has no access to or control over these cookies that are used by third-party advertisers.
+            </p>
+
+            <h2 style={{
+              fontFamily: "'Cause', serif",
+              fontSize: '20px',
+              color: '#DF82A3',
+              margin: '22px 0 8px 0',
+              letterSpacing: '0.5px',
+            }}>
+              6. Third-Party Privacy Policies
+            </h2>
+
+            <p style={{ marginBottom: '16px' }}>
+              Whee! Photobooth's Privacy Policy does not apply to other advertisers or external websites. Thus, we are advising you to consult the respective Privacy Policies of these third-party ad servers for more detailed information regarding their deployment data practices and opt-out instructions. You can choose to disable cookies through your individual browser options. To know more detailed information about cookie management with specific web browsers, it can be found at the browsers' respective websites.
+            </p>
+
+            <h2 style={{
+              fontFamily: "'Cause', serif",
+              fontSize: '20px',
+              color: '#DF82A3',
+              margin: '22px 0 8px 0',
+              letterSpacing: '0.5px',
+            }}>
+              7. GDPR Data Protection Rights (UK & European Users)
+            </h2>
+
+            <p style={{ marginBottom: '12px' }}>
+              We want to ensure you are fully aware of all of your data protection rights. Every user is entitled to the following:
+            </p>
+
+            <ul style={{ marginBottom: '16px', paddingLeft: '24px' }}>
+              <li style={{ marginBottom: '10px' }}><strong>The right to access:</strong> You have the right to request copies of your personal data.</li>
+              <li style={{ marginBottom: '10px' }}><strong>The right to rectification:</strong> You have the right to request that we correct any information you believe is inaccurate.</li>
+              <li style={{ marginBottom: '10px' }}><strong>The right to erasure:</strong> You have the right to request that we erase your personal data, under certain conditions.</li>
+              <li style={{ marginBottom: '10px' }}><strong>The right to restrict/object to processing:</strong> You have the right to object to or restrict our processing of your personal data, under certain conditions.</li>
             </ul>
 
-            <h3 style={{
-              fontSize: '18px',
-              color: '#917264',
-              margin: '20px 0 12px 0',
-              fontWeight: '600',
-            }}>
-              Security of Your Personal Data
-            </h3>
-
-            <p style={{ marginBottom: '24px' }}>
-              The security of Your Personal Data is important to Us, but remember that no method of transmission over the Internet, or method of electronic storage is 100% secure. While We strive to use commercially reasonable means to protect Your Personal Data, We cannot guarantee its absolute security.
+            <p style={{ marginBottom: '16px' }}>
+              Since our webcam photo booth online tool processes no personal identity data or images on our servers, we hold no user image databases to modify or erase.
             </p>
 
             <h2 style={{
-              fontFamily: "'Cause', cursive",
-              fontSize: '24px',
+              fontFamily: "'Cause', serif",
+              fontSize: '20px',
               color: '#DF82A3',
-              margin: '32px 0 16px 0',
+              margin: '22px 0 8px 0',
               letterSpacing: '0.5px',
             }}>
-              Children's Privacy
+              8. CCPA Privacy Rights (California / US Users)
             </h2>
 
-            <p style={{ marginBottom: '16px' }}>
-              Our Service does not address anyone under the age of 16. We do not knowingly collect personally identifiable information from anyone under the age of 16. If You are a parent or guardian and You are aware that Your child has provided Us with Personal Data, please contact Us. If We become aware that We have collected Personal Data from anyone under the age of 16 without verification of parental consent, We take steps to remove that information from Our servers.
+            <p style={{ marginBottom: '12px' }}>
+              Under the CCPA, among other rights, California consumers have the right to:
             </p>
 
-            <p style={{ marginBottom: '24px' }}>
-              If We need to rely on consent as a legal basis for processing Your information and Your country requires consent from a parent, We may require Your parent's consent before We collect and use that information.
+            <ul style={{ marginBottom: '16px', paddingLeft: '24px' }}>
+              <li style={{ marginBottom: '10px' }}>Request that a business that collects a consumer's personal data disclose the categories and specific pieces of personal data that a business has collected about consumers.</li>
+              <li style={{ marginBottom: '10px' }}>Request that a business delete any personal data about the consumer that a business has collected.</li>
+              <li style={{ marginBottom: '10px' }}>Request that a business that sells a consumer's personal data, not sell the consumer's personal data.</li>
+            </ul>
+
+            <p style={{ marginBottom: '16px' }}>
+              If you make a data request, we have one month to respond to you. If you would like to exercise any of these rights, please contact us.
             </p>
 
             <h2 style={{
-              fontFamily: "'Cause', cursive",
-              fontSize: '24px',
+              fontFamily: "'Cause', serif",
+              fontSize: '20px',
               color: '#DF82A3',
-              margin: '32px 0 16px 0',
+              margin: '22px 0 8px 0',
               letterSpacing: '0.5px',
             }}>
-              Links to Other Websites
+              9. Children's Information
             </h2>
 
             <p style={{ marginBottom: '16px' }}>
-              Our Service may contain links to other websites that are not operated by Us. If You click on a third party link, You will be directed to that third party's site. We strongly advise You to review the Privacy Policy of every site You visit.
-            </p>
-
-            <p style={{ marginBottom: '24px' }}>
-              We have no control over and assume no responsibility for the content, privacy policies or practices of any third party sites or services.
+              Another part of our priority is adding protection for children while using the internet. We encourage parents and guardians to observe, participate in, and/or monitor and guide their online activity. Whee! Photobooth does not knowingly collect any Personal Identifiable Information from children under the age of 13. If you think that your child provided this kind of information on our website, we strongly encourage you to contact us immediately and we will do our best efforts to promptly remove such information from our records.
             </p>
 
             <h2 style={{
-              fontFamily: "'Cause', cursive",
-              fontSize: '24px',
+              fontFamily: "'Cause', serif",
+              fontSize: '20px',
               color: '#DF82A3',
-              margin: '32px 0 16px 0',
+              margin: '22px 0 8px 0',
               letterSpacing: '0.5px',
             }}>
-              Changes to this Privacy Policy
-            </h2>
-
-            <p style={{ marginBottom: '16px' }}>
-              We may update Our Privacy Policy from time to time. We will notify You of any changes by posting the new Privacy Policy on this page.
-            </p>
-
-            <p style={{ marginBottom: '16px' }}>
-              We will let You know via email and/or a prominent notice on Our Service, prior to the change becoming effective and update the "Last updated" date at the top of this Privacy Policy.
-            </p>
-
-            <p style={{ marginBottom: '24px' }}>
-              You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.
-            </p>
-
-            <h2 style={{
-              fontFamily: "'Cause', cursive",
-              fontSize: '24px',
-              color: '#DF82A3',
-              margin: '32px 0 16px 0',
-              letterSpacing: '0.5px',
-            }}>
-              Contact Us
+              10. Contact Us
             </h2>
 
             <p style={{ marginBottom: '24px' }}>
-              If you have any questions about this Privacy Policy, You can contact us:
+              If you have additional questions, require more information about our Privacy Policy, or wish to make an analytical data inquiry, please do not hesitate to contact us.
             </p>
 
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '32px' }}>

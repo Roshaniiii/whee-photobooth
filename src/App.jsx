@@ -7,6 +7,7 @@ import Camera from './pages/Camera'
 import Customise from './pages/Customise'
 import Contact from './pages/Contact'
 import PrivacyPolicy from './pages/PrivacyPolicy'
+import TermsOfService from './pages/TermsOfService'
 import FeedbackButton from './components/FeedbackButton'
 import SupportButton from './components/SupportButton'
 import AnnouncementPopup from './components/AnnouncementPopup'
@@ -35,6 +36,7 @@ function App() {
         <Route path="/customise" element={<Customise />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-of-service" element={<TermsOfService />} />
       </Routes>
       <AnnouncementPopup /> 
     </BrowserRouter>

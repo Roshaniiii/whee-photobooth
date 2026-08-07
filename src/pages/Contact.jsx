@@ -1,10 +1,16 @@
+import { useEffect } from 'react'
 import { useForm, ValidationError } from '@formspree/react'
+import { Link } from 'react-router-dom'
 import { playClick } from '../utils/sounds'
 import VerticalStripes from '../components/VerticalStripes'
 import Footer from '../components/Footer'
 
 export default function Contact() {
   const [state, handleSubmit] = useForm('mnjegawo')
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+  }, [])
 
   const handleFormSubmit = (e) => {
     playClick()
@@ -29,8 +35,8 @@ export default function Contact() {
         position: 'relative',
         zIndex: 1,
         width: '100%',
-        maxWidth: '600px',
-        padding: '80px 32px',
+        maxWidth: '700px',
+        padding: '56px 24px 40px',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -56,6 +62,18 @@ export default function Contact() {
             fontWeight: '500',
           }}>
             Have a question, suggestion, or just want to say hello? Fill in the form below and we'll get back to you as soon as possible.
+          </p>
+          <p style={{
+            fontFamily: "'Cause', serif",
+            fontSize: '13px',
+            color: '#917264',
+            margin: '10px 0 0',
+            lineHeight: '1.6',
+          }}>
+            You can also email us at{' '}
+            <a href="mailto:wheephotobooth@gmail.com" style={{ color: '#DF82A3', textDecoration: 'none' }}>wheephotobooth@gmail.com</a>
+            {' '}or review our{' '}
+            <Link to="/terms-of-service" style={{ color: '#DF82A3', textDecoration: 'none' }}>Terms of Service</Link>.
           </p>
         </div>
 

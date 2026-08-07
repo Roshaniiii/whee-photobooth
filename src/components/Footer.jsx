@@ -64,7 +64,7 @@ export default function Footer() {
           onMouseEnter={(e) => { e.target.style.opacity = '1' }}
           onMouseLeave={(e) => { e.target.style.opacity = '0.9' }}
         >
-          Get in Touch
+          Contact Us
         </Link>
         <span style={{ color: '#F2E7B4', opacity: 0.5 }}>•</span>
         <Link to="/privacy-policy" style={{
@@ -78,6 +78,19 @@ export default function Footer() {
           onMouseLeave={(e) => { e.target.style.opacity = '0.9' }}
         >
           Privacy Policy
+        </Link>
+        <span style={{ color: '#F2E7B4', opacity: 0.5 }}>•</span>
+        <Link to="/terms-of-service" style={{
+          color: '#F2E7B4',
+          textDecoration: 'none',
+          opacity: 0.9,
+          transition: 'opacity 0.2s ease',
+          letterSpacing: '0.3px',
+        }}
+          onMouseEnter={(e) => { e.target.style.opacity = '1' }}
+          onMouseLeave={(e) => { e.target.style.opacity = '0.9' }}
+        >
+          Terms of Service
         </Link>
       </div>
 
