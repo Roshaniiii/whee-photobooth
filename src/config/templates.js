@@ -25,6 +25,7 @@ import collage_strip4 from '../assets/collage_strip4.png'
 import collage_strip5 from '../assets/collage_strip5.png'
 import collage_strip6 from '../assets/collage_strip6.png'
 import collage_strip7 from '../assets/collage_strip7.png'
+import collage_strip8 from '../assets/collage_strip8.png'
 
 const PHOTO_W = 500
 const PHOTO_H = 410
@@ -296,6 +297,19 @@ export const TEMPLATES = [
       slot(305, 30, 265, 325),
       slot(30, 368, 265, 325),
       slot(305, 368, 265, 325),
+    ],
+  },
+  {
+    id: 'airdrop',
+    label: 'Airdrop',
+    tag: 'NEW',
+    shots: 2,
+    file: collage_strip8, 
+    canvasWidth: 1200,
+    canvasHeight: 1200,
+    slots: [
+      slot(52.1, 92.3, 1070.4, 629.7),
+      slot(52.1, 706.9, 483.8, 384.1)
     ],
   },
 ]
