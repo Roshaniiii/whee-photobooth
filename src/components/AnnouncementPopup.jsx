@@ -40,7 +40,7 @@ export default function AnnouncementPopup() {
     setFeedback('')
 
     try {
-      const response = await fetch('https://formspree.io/f/xljrewye', {
+      const response = await fetch('https://formspree.io/f/mrpzegkj', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -129,9 +129,9 @@ export default function AnnouncementPopup() {
           New Updates
         </h2>
 
-        <p style={{ fontSize: '12px', color: '#917264', margin: '0 0 14px', lineHeight: 1.7 }}>
+        {/* <p style={{ fontSize: '12px', color: '#917264', margin: '0 0 14px', lineHeight: 1.7 }}>
           Thank you SO much for all the love! Your support means a lot to me — I’m reading every bit of feedback and adding new features little by little.
-        </p>
+        </p> */}
         
         <div
           style={{
@@ -143,10 +143,9 @@ export default function AnnouncementPopup() {
             border: '1px solid rgba(223,130,163,0.16)',
           }}
         >
-          <p style={{ fontSize: '14px', color: '#917264', margin: 0, lineHeight: 1.6, textAlign: 'left' }}>
-            🛠️ Some filters (blush, cat ears & hearts) are temporarily under construction<br></br>
+          <p style={{ fontSize: '14px', color: '#917264', margin: 0, lineHeight: 1.6, textAlign: 'center' }}>
             🍉 New templates are live now! <br></br>
-            🍓 Also — YES you can upload photos from your gallery! Just tap the upload button on the camera page. <br></br>
+            🛠️ Some filters are temporarily under construction<br></br>
             ✦ If you want to be notified when new templates drop, leave your email below and I’ll send a quick note.
           </p>
         </div>
