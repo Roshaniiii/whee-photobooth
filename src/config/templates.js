@@ -13,6 +13,7 @@ import template1_strip4 from '../assets/template1_strip4.png'
 import template1_strip3 from '../assets/template1_strip3.png'
 import template1_strip6 from '../assets/template1_strip6.png'
 import template2_strip3 from '../assets/template2_strip3.png'
+import template2_strip5 from '../assets/template2_strip5.png'
 import template3_strip3 from '../assets/template3_strip3.png'
 import template3_strip4 from '../assets/template3_strip4.png'
 import template2_strip4 from '../assets/template2_strip4.png'
@@ -96,6 +97,19 @@ export const TEMPLATES = [
     file: template1_strip5,
     canvasWidth: 600, canvasHeight: 700,
     slots: [slot(50, 60)],
+  },
+  {
+    id: 'so cute',
+    label: 'So Cute',
+    tag: 'NEW',
+    shots: 2,
+    file: template2_strip5,
+    canvasWidth: 600,
+    canvasHeight: 1100,
+    slots: [
+    slot(47, 111.5, 434.8, 376.8),
+    slot(179.3, 630.2, 381, 337.8),
+    ],
   },
  {
     id: 'template2_strip1',
