@@ -11,6 +11,7 @@ import template4_strip2 from '../assets/template4_strip2.png'
 // ── Different dimension template imports ──────────────────────────────────
 import template1_strip4 from '../assets/template1_strip4.png'
 import template1_strip3 from '../assets/template1_strip3.png'
+import template1_strip6 from '../assets/template1_strip6.png'
 import template2_strip3 from '../assets/template2_strip3.png'
 import template3_strip3 from '../assets/template3_strip3.png'
 import template3_strip4 from '../assets/template3_strip4.png'
@@ -44,6 +45,16 @@ function slot(x, y, w = PHOTO_W, h = PHOTO_H, rotation = 0, clipShape = null) {
 }
 
 export const TEMPLATES = [
+  {
+    id: '#@%&!',
+    label: '#@%&!',
+    tag: 'NEW',
+    shots: 1,
+    file: template1_strip6,
+    canvasWidth: 600,
+    canvasHeight: 700,
+    slots: [slot(95.7, 150.4, 423.6, 336)],
+  },
   {
     id: 'template1_strip1',
     label: 'Solo — A',
