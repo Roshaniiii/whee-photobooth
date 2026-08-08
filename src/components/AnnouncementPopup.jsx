@@ -129,9 +129,9 @@ export default function AnnouncementPopup() {
           New Updates
         </h2>
 
-        {/* <p style={{ fontSize: '12px', color: '#917264', margin: '0 0 14px', lineHeight: 1.7 }}>
+        <p style={{ fontSize: '12px', color: '#917264', margin: '0 0 14px', lineHeight: 1.7 }}>
           Thank you SO much for all the love! Your support means a lot to me — I’m reading every bit of feedback and adding new features little by little.
-        </p> */}
+        </p>
         
         <div
           style={{
