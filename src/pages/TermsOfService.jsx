@@ -49,7 +49,7 @@ export default function TermsOfService() {
             margin: 0,
             opacity: 0.9,
           }}>
-            Last Updated: August 7, 2026
+            Last Updated: August 10, 2026
           </p>
         </div>
 

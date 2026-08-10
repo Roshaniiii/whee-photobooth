@@ -64,7 +64,7 @@ export default function PrivacyPolicy() {
             fontFamily: "'Cause', serif",
           }}>
             <p style={{ marginBottom: '10px', fontWeight: '600' }}>
-              <strong>Last Updated:</strong> August 7, 2026
+              <strong>Last Updated:</strong> August 10, 2026
             </p>
 
             <p style={{ marginBottom: '16px' }}>

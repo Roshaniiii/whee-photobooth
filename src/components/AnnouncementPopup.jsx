@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { X } from 'lucide-react'
 
 export default function AnnouncementPopup() {
@@ -9,10 +9,22 @@ export default function AnnouncementPopup() {
   const [feedback, setFeedback] = useState('')
   const firstRender = useRef(true)
   const navigate = useNavigate()
+  const location = useLocation()
+
+  // Auto-open only on the initial page load when the path is '/'.
+  // Do not auto-open when navigating to '/' during client-side routing (e.g., clicking the logo).
+  const initialLocation = useRef(location.pathname)
+  const initialized = useRef(false)
 
   useEffect(() => {
-    setOpen(true)
-  }, [])
+    if (!initialized.current) {
+      initialized.current = true
+      if (initialLocation.current === '/') setOpen(true)
+    } else {
+      // Subsequent navigations: close the popup when leaving home, but do not auto-open when returning
+      if (location && location.pathname !== '/') setOpen(false)
+    }
+  }, [location])
 
   useEffect(() => {
     firstRender.current = false
