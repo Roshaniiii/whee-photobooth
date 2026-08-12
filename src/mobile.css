@@ -328,8 +328,8 @@ body,
     padding: 6px 8px !important;
     align-self: stretch !important;
     min-height: auto !important;
-    max-height: 80px !important;
-    overflow: hidden !important;
+    max-height: 110px !important;
+    overflow-y: auto !important;
   }
 
   /* Hide label text in toolbar to keep it compact */
@@ -339,18 +339,24 @@ body,
     display: none !important;
   }
 
-  /* Tool buttons — smaller on mobile */
-  .customise-toolbar button {
+  /* Tool buttons — smaller on mobile, excluding color picker compact buttons */
+  .customise-toolbar button:not(.color-swatch-compact):not(.color-swatch-custom-compact) {
     width: 30px !important;
     height: 30px !important;
     padding: 4px !important;
     font-size: 14px !important;
   }
 
-  /* Color swatches — smaller */
-  .customise-toolbar .color-swatch {
-    width: 18px !important;
-    height: 18px !important;
+  /* Color picker compact swatches on mobile */
+  .customise-toolbar .color-picker-wrapper.compact {
+    width: auto !important;
+    max-width: 100% !important;
+    flex: 1 1 auto !important;
+  }
+
+  .customise-toolbar .color-swatch-compact {
+    width: 15px !important;
+    height: 15px !important;
   }
 
   /* Canvas container */

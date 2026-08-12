@@ -6,6 +6,7 @@ export default function ColorPicker({
   onChange,
   presets = [],
   compact = false,
+  className = '',
 }) {
   const inputRef = useRef(null)
 
@@ -34,14 +35,15 @@ export default function ColorPicker({
 
   if (compact) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px', justifyContent: 'center', maxWidth: '80px' }}>
+      <div className={`color-picker-wrapper compact ${className}`} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+        <div className="color-picker-compact-grid" style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', justifyContent: 'center', width: '100%', maxWidth: '100%' }}>
           {normalizedPresets.map((p) => {
             const isSelected = currentHex.toLowerCase() === p.hex.toLowerCase()
             return (
               <button
                 key={p.id || p.hex}
                 type="button"
+                className="color-swatch-compact"
                 aria-label={`Color ${p.label || p.hex}`}
                 onClick={() => handleSelectPreset(p)}
                 style={{
@@ -62,6 +64,7 @@ export default function ColorPicker({
           <div style={{ position: 'relative', display: 'inline-block' }}>
             <button
               type="button"
+              className="color-swatch-custom-compact"
               title="Pick custom color"
               onClick={() => inputRef.current?.click()}
               style={{
@@ -92,14 +95,15 @@ export default function ColorPicker({
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', justifyContent: 'center', maxWidth: '400px' }}>
+    <div className={`color-picker-wrapper standard ${className}`} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+      <div className="color-picker-grid" style={{ display: 'flex', flexWrap: 'wrap', gap: 'clamp(4px, 1.8vw, 8px)', justifyContent: 'center', width: '100%', maxWidth: '420px' }}>
         {normalizedPresets.map((p) => {
           const isSelected = currentHex.toLowerCase() === p.hex.toLowerCase()
           return (
             <div
               key={p.id || p.hex}
               onClick={() => handleSelectPreset(p)}
+              className="color-picker-item"
               style={{
                 cursor: 'pointer',
                 display: 'flex',
@@ -109,9 +113,10 @@ export default function ColorPicker({
               }}
             >
               <div
+                className="color-swatch"
                 style={{
-                  width: '30px',
-                  height: '30px',
+                  width: 'clamp(24px, 5.5vw, 30px)',
+                  height: 'clamp(24px, 5.5vw, 30px)',
                   borderRadius: '8px',
                   background: p.hex,
                   border: isSelected ? '3px solid #917264' : '3px solid transparent',
@@ -140,6 +145,7 @@ export default function ColorPicker({
         {/* Custom color picker swatch */}
         <div
           onClick={() => inputRef.current?.click()}
+          className="color-picker-item custom"
           style={{
             cursor: 'pointer',
             display: 'flex',
@@ -149,9 +155,10 @@ export default function ColorPicker({
           }}
         >
           <div
+            className="color-swatch custom"
             style={{
-              width: '30px',
-              height: '30px',
+              width: 'clamp(24px, 5.5vw, 30px)',
+              height: 'clamp(24px, 5.5vw, 30px)',
               borderRadius: '8px',
               background: 'conic-gradient(red, yellow, lime, aqua, blue, magenta, red)',
               border: '3px solid transparent',

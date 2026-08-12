@@ -388,7 +388,7 @@ export default function Customise() {
 
         <PageHeader onBack={() => navigate('/camera')} title="Doodle your strip" className="customise-header" titleClassName="customise-title" />
 
-        <div style={{
+        <div className="customise-main-row" style={{
           flex: 1,
           minHeight: 0,
           display: 'flex',
@@ -399,7 +399,7 @@ export default function Customise() {
         }}>
 
           {/* Left — framed tools */}
-          <div style={{
+          <div className="customise-toolbar" style={{
             flexShrink: 0,
             width: '80px',
             display: 'flex',
