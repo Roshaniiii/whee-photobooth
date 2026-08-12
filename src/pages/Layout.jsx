@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { playClick } from '../utils/sounds'
 import VerticalStripes from '../components/VerticalStripes'
 import PageHeader from '../components/PageHeader'
+import ColorPicker from '../components/ColorPicker'
 
 import { TEMPLATES } from '../config/templates'
 
@@ -432,20 +433,11 @@ function BuildOwn({ onSelect }) {
         <p style={{ fontFamily: "'Cause',serif", fontSize: '10px', fontWeight: '700', letterSpacing: '2px', textTransform: 'uppercase', color: '#917264', margin: 0 }}>
           Frame Color
         </p>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', justifyContent: 'center', maxWidth: '400px' }}>
-          {FRAME_COLORS.map(c => (
-            <div key={c.id} onClick={() => setSelectedColor(c)} style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
-              <div style={{
-                width: '30px', height: '30px', borderRadius: '8px', background: c.hex,
-                border: selectedColor.id === c.id ? '3px solid #917264' : '3px solid transparent',
-                boxShadow: selectedColor.id === c.id ? '0 0 0 2px rgba(145,114,100,0.35)' : '0 2px 5px rgba(0,0,0,0.08)',
-                transform: selectedColor.id === c.id ? 'scale(1.1)' : 'scale(1)',
-                transition: 'transform 0.2s, box-shadow 0.2s, border 0.2s',
-              }} />
-              <span style={{ fontSize: '8px', color: '#917264', fontWeight: selectedColor.id === c.id ? '700' : '400' }}>{c.label}</span>
-            </div>
-          ))}
-        </div>
+        <ColorPicker
+          value={selectedColor}
+          onChange={(hex, colorObj) => setSelectedColor(colorObj || { id: 'custom', label: 'Custom', hex })}
+          presets={FRAME_COLORS}
+        />
       </div>
 
       {/* ── Next button ── */}

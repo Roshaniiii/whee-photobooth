@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PageHeader from '../components/PageHeader'
 import VerticalStripes from '../components/VerticalStripes'
+import ColorPicker from '../components/ColorPicker'
 import { Eraser, PenLine, Sparkles, Undo2, Redo2 } from 'lucide-react'
 import { createHeartClipPath, drawImageWithRotation } from '../utils/canvasUtils'
 
@@ -446,26 +447,12 @@ export default function Customise() {
             <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: THEME.text, textAlign: 'center' }}>
               Color
             </span>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px', justifyContent: 'center' }}>
-              {PALETTE.map(c => (
-                <button
-                  key={c}
-                  type="button"
-                  aria-label={`Color ${c}`}
-                  onClick={() => setColor(c)}
-                  style={{
-                    width: color === c ? 16 : 12,
-                    height: color === c ? 16 : 12,
-                    borderRadius: '50%',
-                    background: c,
-                    border: color === c ? `2px solid ${THEME.accent}` : '1px solid rgba(145,114,100,0.25)',
-                    padding: 0,
-                    cursor: 'pointer',
-                    flexShrink: 0,
-                  }}
-                />
-              ))}
-            </div>
+            <ColorPicker
+              value={color}
+              onChange={(hex) => setColor(hex)}
+              presets={PALETTE}
+              compact
+            />
           </div>
 
           {/* Center — canvas + download */}
