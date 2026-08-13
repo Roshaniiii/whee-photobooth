@@ -1,5 +1,6 @@
-import React, { useRef } from 'react'
-import { Pipette } from 'lucide-react'
+import React, { useState, useRef, useEffect } from 'react'
+import { SketchPicker } from 'react-color'
+import { Pipette, SlidersHorizontal } from 'lucide-react'
 
 export default function ColorPicker({
   value,
@@ -8,7 +9,8 @@ export default function ColorPicker({
   compact = false,
   className = '',
 }) {
-  const inputRef = useRef(null)
+  const [isOpen, setIsOpen] = useState(false)
+  const popoverRef = useRef(null)
 
   // Standardize presets array into objects { hex, label }
   const normalizedPresets = presets.map((p) => {
@@ -18,11 +20,14 @@ export default function ColorPicker({
     return p
   })
 
-  // Normalize current selected hex value
-  const currentHex = typeof value === 'string' ? value : value?.hex || '#000000'
+  // Preset hex strings for SketchPicker
+  const presetHexes = normalizedPresets.map((p) => p.hex)
 
-  const handleCustomChange = (e) => {
-    const hex = e.target.value
+  // Current selected hex color string
+  const currentHex = typeof value === 'string' ? value : value?.hex || '#DF82A3'
+
+  const handleChange = (colorResult) => {
+    const hex = colorResult.hex
     const matchedPreset = normalizedPresets.find(
       (p) => p.hex.toLowerCase() === hex.toLowerCase()
     )
@@ -33,154 +38,162 @@ export default function ColorPicker({
     onChange(p.hex, p)
   }
 
+  // Close popover when clicking outside
+  useEffect(() => {
+    if (!isOpen) return
+    const handleClickOutside = (event) => {
+      if (popoverRef.current && !popoverRef.current.contains(event.target)) {
+        setIsOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('touchstart', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('touchstart', handleClickOutside)
+    }
+  }, [isOpen])
+
   if (compact) {
     return (
-      <div className={`color-picker-wrapper compact ${className}`} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-        <div className="color-picker-compact-grid" style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', justifyContent: 'center', width: '100%', maxWidth: '100%' }}>
-          {normalizedPresets.map((p) => {
-            const isSelected = currentHex.toLowerCase() === p.hex.toLowerCase()
-            return (
-              <button
-                key={p.id || p.hex}
-                type="button"
-                className="color-swatch-compact"
-                aria-label={`Color ${p.label || p.hex}`}
-                onClick={() => handleSelectPreset(p)}
-                style={{
-                  width: isSelected ? 16 : 12,
-                  height: isSelected ? 16 : 12,
-                  borderRadius: '50%',
-                  background: p.hex,
-                  border: isSelected ? '2px solid #DF82A3' : '1px solid rgba(145,114,100,0.25)',
-                  padding: 0,
-                  cursor: 'pointer',
-                  flexShrink: 0,
-                  transition: 'all 0.15s ease',
-                }}
-              />
-            )
-          })}
-          {/* Custom color picker input */}
-          <div style={{ position: 'relative', display: 'inline-block' }}>
-            <button
-              type="button"
-              className="color-swatch-custom-compact"
-              title="Pick custom color"
-              onClick={() => inputRef.current?.click()}
-              style={{
-                width: 14,
-                height: 14,
-                borderRadius: '50%',
-                background: 'conic-gradient(red, yellow, lime, aqua, blue, magenta, red)',
-                border: '1px solid rgba(145,114,100,0.3)',
-                padding: 0,
-                cursor: 'pointer',
-                flexShrink: 0,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            />
-            <input
-              ref={inputRef}
-              type="color"
-              value={currentHex}
-              onChange={handleCustomChange}
-              style={{ position: 'absolute', opacity: 0, width: 0, height: 0, pointerEvents: 'none' }}
+      <div
+        ref={popoverRef}
+        className={`color-picker-wrapper compact ${className}`}
+        style={{ position: 'relative', display: 'inline-block' }}
+      >
+        <button
+          type="button"
+          aria-label="Open color picker"
+          title="Pick color"
+          onClick={() => setIsOpen(!isOpen)}
+          style={{
+            width: '28px',
+            height: '28px',
+            borderRadius: '50%',
+            background: currentHex,
+            border: '2px solid #DF82A3',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+            cursor: 'pointer',
+            padding: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'transform 0.15s ease',
+          }}
+        >
+          <Pipette size={14} style={{ color: '#fff', filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.6))' }} />
+        </button>
+
+        {isOpen && (
+          <div
+            style={{
+              position: 'absolute',
+              zIndex: 100,
+              top: '34px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              boxShadow: '0 10px 25px rgba(0,0,0,0.25)',
+              borderRadius: '8px',
+            }}
+          >
+            <SketchPicker
+              color={currentHex}
+              onChangeComplete={handleChange}
+              presetColors={presetHexes.length ? presetHexes : undefined}
+              disableAlpha
+              width="200px"
             />
           </div>
-        </div>
+        )}
       </div>
     )
   }
 
   return (
-    <div className={`color-picker-wrapper standard ${className}`} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-      <div className="color-picker-grid" style={{ display: 'flex', flexWrap: 'wrap', gap: 'clamp(4px, 1.8vw, 8px)', justifyContent: 'center', width: '100%', maxWidth: '420px' }}>
+    <div
+      ref={popoverRef}
+      className={`color-picker-wrapper standard ${className}`}
+      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', gap: '8px', position: 'relative' }}
+    >
+      {/* Preset Swatches row + Sliders toggle button */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', justifyContent: 'center', maxWidth: '360px', alignItems: 'center' }}>
         {normalizedPresets.map((p) => {
           const isSelected = currentHex.toLowerCase() === p.hex.toLowerCase()
           return (
             <div
               key={p.id || p.hex}
               onClick={() => handleSelectPreset(p)}
-              className="color-picker-item"
               style={{
                 cursor: 'pointer',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                gap: '2px',
+                gap: '1px',
               }}
             >
               <div
-                className="color-swatch"
                 style={{
-                  width: 'clamp(24px, 5.5vw, 30px)',
-                  height: 'clamp(24px, 5.5vw, 30px)',
-                  borderRadius: '8px',
+                  width: '24px',
+                  height: '24px',
+                  borderRadius: '6px',
                   background: p.hex,
-                  border: isSelected ? '3px solid #917264' : '3px solid transparent',
-                  boxShadow: isSelected ? '0 0 0 2px rgba(145,114,100,0.35)' : '0 2px 5px rgba(0,0,0,0.08)',
+                  border: isSelected ? '2px solid #917264' : '2px solid transparent',
+                  boxShadow: isSelected ? '0 0 0 2px rgba(145,114,100,0.3)' : '0 1px 3px rgba(0,0,0,0.1)',
                   transform: isSelected ? 'scale(1.1)' : 'scale(1)',
-                  transition: 'transform 0.2s, box-shadow 0.2s, border 0.2s',
+                  transition: 'transform 0.15s ease',
                 }}
               />
-              <span
-                style={{
-                  fontSize: '8px',
-                  color: '#917264',
-                  fontWeight: isSelected ? '700' : '400',
-                  maxWidth: '36px',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {p.label}
-              </span>
             </div>
           )
         })}
 
-        {/* Custom color picker swatch */}
-        <div
-          onClick={() => inputRef.current?.click()}
-          className="color-picker-item custom"
+        {/* Sliders toggle button */}
+        <button
+          type="button"
+          onClick={() => setIsOpen(!isOpen)}
+          title="Custom Color Sliders"
           style={{
+            height: '24px',
+            padding: '0 8px',
+            borderRadius: '6px',
+            background: isOpen ? '#DF82A3' : 'rgba(255,255,255,0.8)',
+            color: isOpen ? '#fff' : '#917264',
+            border: '1.5px solid #DF82A3',
             cursor: 'pointer',
             display: 'flex',
-            flexDirection: 'column',
             alignItems: 'center',
-            gap: '2px',
+            gap: '4px',
+            fontSize: '10px',
+            fontWeight: '700',
+            fontFamily: "'Cause',serif",
+            transition: 'all 0.15s ease',
           }}
         >
-          <div
-            className="color-swatch custom"
-            style={{
-              width: 'clamp(24px, 5.5vw, 30px)',
-              height: 'clamp(24px, 5.5vw, 30px)',
-              borderRadius: '8px',
-              background: 'conic-gradient(red, yellow, lime, aqua, blue, magenta, red)',
-              border: '3px solid transparent',
-              boxShadow: '0 2px 5px rgba(0,0,0,0.08)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#fff',
-            }}
-          >
-            <Pipette size={14} style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.6))' }} />
-          </div>
-          <span style={{ fontSize: '8px', color: '#917264', fontWeight: '500' }}>Custom</span>
-          <input
-            ref={inputRef}
-            type="color"
-            value={currentHex}
-            onChange={handleCustomChange}
-            style={{ position: 'absolute', opacity: 0, width: 0, height: 0, pointerEvents: 'none' }}
+          <SlidersHorizontal size={12} />
+          <span>Sliders</span>
+        </button>
+      </div>
+
+      {/* Popover / Collapsible SketchPicker */}
+      {isOpen && (
+        <div
+          style={{
+            position: 'absolute',
+            zIndex: 100,
+            top: '36px',
+            boxShadow: '0 10px 25px rgba(0,0,0,0.25)',
+            borderRadius: '8px',
+          }}
+        >
+          <SketchPicker
+            color={currentHex}
+            onChangeComplete={handleChange}
+            presetColors={presetHexes.length ? presetHexes : undefined}
+            disableAlpha
+            width="210px"
           />
         </div>
-      </div>
+      )}
     </div>
   )
 }

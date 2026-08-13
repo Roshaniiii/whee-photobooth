@@ -469,13 +469,13 @@ export default function Layout() {
 
   return (
     <div className="page-wrapper layout-page-wrapper" style={{
-      height: '100vh', width: '100%', backgroundColor: '#f2e7b4',
-      position: 'relative', overflow: 'hidden', fontFamily: "'Cause',serif",
+      minHeight: '100vh', width: '100%', backgroundColor: '#f2e7b4',
+      position: 'relative', overflowY: 'auto', fontFamily: "'Cause',serif",
     }}>
       <VerticalStripes />
       <div className="page-content layout-page-content" style={{
         position: 'relative', zIndex: 1, width: '100%', maxWidth: '680px',
-        height: '100%', margin: '0 auto', padding: '24px 16px 16px',
+        minHeight: '100vh', margin: '0 auto', padding: '24px 16px 16px',
         boxSizing: 'border-box',
         display: 'flex', flexDirection: 'column', alignItems: 'center',
       }}>
@@ -499,7 +499,7 @@ export default function Layout() {
           ))}
         </div>
 
-        <div style={{ flex: 1, minHeight: 0, width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }}>
+        <div style={{ flex: 1, minHeight: 0, width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'visible' }}>
           {tab === 'template' ? <PickTemplate onSelect={handleSelect} /> : <BuildOwn onSelect={handleSelect} />}
         </div>
       </div>

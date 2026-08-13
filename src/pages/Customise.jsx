@@ -360,9 +360,9 @@ export default function Customise() {
 
   return (
     <div className="page-wrapper customise-page-wrapper" style={{
-      height: '100dvh',
+      minHeight: '100dvh',
       width: '100%',
-      overflow: 'hidden',
+      overflowY: 'auto',
       backgroundColor: THEME.pageBg,
       position: 'relative',
       fontFamily: "'Cause',serif",

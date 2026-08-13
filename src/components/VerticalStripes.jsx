@@ -1,7 +1,7 @@
 export default function VerticalStripes() {
   return (
     <div style={{
-      position: 'absolute',
+      position: 'fixed',
       inset: 0,
       pointerEvents: 'none',
       zIndex: 0,
