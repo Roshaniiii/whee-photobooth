@@ -92,7 +92,7 @@ export default function Navbar() {
                     onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
                 >
                     <span style={{ fontSize: '14px' }}>🧁</span>
-                    <span className="nav-btn-text">Support</span>
+                    <span className="nav-btn-text">Donate</span>
                 </button>
 
                 {/* Feedback button — opens Tally */}
