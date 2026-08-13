@@ -315,55 +315,6 @@ body,
     margin-bottom: 4px !important;
   }
 
-  /* Main 3-column layout → vertical on mobile */
-  .customise-main-row {
-    flex-direction: column-reverse !important;
-    gap: 8px !important;
-    width: 100% !important;
-  }
-
-  /* Tool panel — compact horizontal bar */
-  .customise-toolbar {
-    width: 100% !important;
-    flex-direction: row !important;
-    flex-wrap: wrap !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 4px 8px !important;
-    padding: 6px 8px !important;
-    align-self: stretch !important;
-    min-height: auto !important;
-    max-height: 110px !important;
-    overflow-y: auto !important;
-  }
-
-  /* Hide label text in toolbar to keep it compact */
-  .customise-toolbar>span,
-  .customise-toolbar>p,
-  .customise-toolbar>label {
-    display: none !important;
-  }
-
-  /* Tool buttons — smaller on mobile, excluding color picker compact buttons */
-  .customise-toolbar button:not(.color-swatch-compact):not(.color-swatch-custom-compact) {
-    width: 30px !important;
-    height: 30px !important;
-    padding: 4px !important;
-    font-size: 14px !important;
-  }
-
-  /* Color picker compact swatches on mobile */
-  .customise-toolbar .color-picker-wrapper.compact {
-    width: auto !important;
-    max-width: 100% !important;
-    flex: 1 1 auto !important;
-  }
-
-  .customise-toolbar .color-swatch-compact {
-    width: 15px !important;
-    height: 15px !important;
-  }
-
   /* Canvas container */
   .customise-canvas-container {
     width: 100% !important;
