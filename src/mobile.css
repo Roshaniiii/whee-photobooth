@@ -324,6 +324,15 @@ body,
 }
 
 /* ── Tablet (641px–1024px) ── */
+
+@media (max-width: 640px) {
+  /* Make SketchPicker slightly smaller on mobile */
+  .sketch-picker {
+    width: 200px !important;
+    padding: 8px !important;
+  }
+}
+
 @media (min-width: 641px) and (max-width: 1024px) {
 
   html,

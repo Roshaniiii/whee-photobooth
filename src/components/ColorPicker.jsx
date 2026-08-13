@@ -54,6 +54,7 @@ export default function ColorPicker({
     }
   }, [isOpen])
 
+  // ── COMPACT VERSION ───────────────────────────────────────
   if (compact) {
     return (
       <div
@@ -61,62 +62,102 @@ export default function ColorPicker({
         className={`color-picker-wrapper compact ${className}`}
         style={{ position: 'relative', display: 'inline-block' }}
       >
+        {/* Trigger button */}
         <button
           type="button"
           aria-label="Open color picker"
           title="Pick color"
           onClick={() => setIsOpen(!isOpen)}
           style={{
-            width: '28px',
-            height: '28px',
+            width:        '28px',
+            height:       '28px',
             borderRadius: '50%',
-            background: currentHex,
-            border: '2px solid #DF82A3',
-            boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-            cursor: 'pointer',
-            padding: 0,
-            display: 'flex',
-            alignItems: 'center',
+            background:   currentHex,
+            border:       '2px solid #DF82A3',
+            boxShadow:    '0 2px 6px rgba(0,0,0,0.15)',
+            cursor:       'pointer',
+            padding:      0,
+            display:      'flex',
+            alignItems:   'center',
             justifyContent: 'center',
-            transition: 'transform 0.15s ease',
+            transition:   'transform 0.15s ease',
           }}
         >
-          <Pipette size={14} style={{ color: '#fff', filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.6))' }} />
+          <Pipette
+            size={14}
+            style={{
+              color:  '#fff',
+              filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.6))',
+            }}
+          />
         </button>
 
+        {/* Compact picker popover */}
         {isOpen && (
-          <div
-            style={{
-              position: 'absolute',
-              zIndex: 100,
-              top: '34px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              boxShadow: '0 10px 25px rgba(0,0,0,0.25)',
-              borderRadius: '8px',
-            }}
-          >
-            <SketchPicker
-              color={currentHex}
-              onChangeComplete={handleChange}
-              presetColors={presetHexes.length ? presetHexes : undefined}
-              disableAlpha
-              width="200px"
+          <>
+            {/* Tap outside overlay */}
+            <div
+              onClick={() => setIsOpen(false)}
+              style={{
+                position:   'fixed',
+                inset:      0,
+                zIndex:     9998,
+                background: 'rgba(145,114,100,0.3)',
+              }}
             />
-          </div>
+            {/* Picker — fixed centered above toolbar */}
+            <div
+              style={{
+                position:     'fixed',
+                zIndex:       9999,
+                bottom:       '80px',
+                left:         '50%',
+                transform:    'translateX(-50%)',
+                boxShadow:    '0 10px 25px rgba(0,0,0,0.25)',
+                borderRadius: '12px',
+                background:   '#fff',
+                padding:      '4px',
+              }}
+            >
+              <SketchPicker
+                color={currentHex}
+                onChangeComplete={handleChange}
+                presetColors={presetHexes.length ? presetHexes : undefined}
+                disableAlpha
+                width="200px"
+              />
+            </div>
+          </>
         )}
       </div>
     )
   }
 
+  // ── STANDARD VERSION ──────────────────────────────────────
   return (
     <div
       ref={popoverRef}
       className={`color-picker-wrapper standard ${className}`}
-      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', gap: '8px', position: 'relative' }}
+      style={{
+        display:        'flex',
+        flexDirection:  'column',
+        alignItems:     'center',
+        width:          '100%',
+        gap:            '8px',
+        position:       'relative',
+      }}
     >
-      {/* Preset Swatches row + Sliders toggle button */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', justifyContent: 'center', maxWidth: '360px', alignItems: 'center' }}>
+      {/* Preset swatches row + Sliders toggle button */}
+      <div
+        style={{
+          display:        'flex',
+          flexWrap:       'wrap',
+          gap:            '6px',
+          justifyContent: 'center',
+          maxWidth:       '360px',
+          alignItems:     'center',
+        }}
+      >
         {normalizedPresets.map((p) => {
           const isSelected = currentHex.toLowerCase() === p.hex.toLowerCase()
           return (
@@ -124,23 +165,27 @@ export default function ColorPicker({
               key={p.id || p.hex}
               onClick={() => handleSelectPreset(p)}
               style={{
-                cursor: 'pointer',
-                display: 'flex',
+                cursor:        'pointer',
+                display:       'flex',
                 flexDirection: 'column',
-                alignItems: 'center',
-                gap: '1px',
+                alignItems:    'center',
+                gap:           '1px',
               }}
             >
               <div
                 style={{
-                  width: '24px',
-                  height: '24px',
+                  width:        '24px',
+                  height:       '24px',
                   borderRadius: '6px',
-                  background: p.hex,
-                  border: isSelected ? '2px solid #917264' : '2px solid transparent',
-                  boxShadow: isSelected ? '0 0 0 2px rgba(145,114,100,0.3)' : '0 1px 3px rgba(0,0,0,0.1)',
-                  transform: isSelected ? 'scale(1.1)' : 'scale(1)',
-                  transition: 'transform 0.15s ease',
+                  background:   p.hex,
+                  border:       isSelected
+                    ? '2px solid #917264'
+                    : '2px solid transparent',
+                  boxShadow:    isSelected
+                    ? '0 0 0 2px rgba(145,114,100,0.3)'
+                    : '0 1px 3px rgba(0,0,0,0.1)',
+                  transform:    isSelected ? 'scale(1.1)' : 'scale(1)',
+                  transition:   'transform 0.15s ease',
                 }}
               />
             </div>
@@ -153,20 +198,20 @@ export default function ColorPicker({
           onClick={() => setIsOpen(!isOpen)}
           title="Custom Color Sliders"
           style={{
-            height: '24px',
-            padding: '0 8px',
+            height:       '24px',
+            padding:      '0 8px',
             borderRadius: '6px',
-            background: isOpen ? '#DF82A3' : 'rgba(255,255,255,0.8)',
-            color: isOpen ? '#fff' : '#917264',
-            border: '1.5px solid #DF82A3',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px',
-            fontSize: '10px',
-            fontWeight: '700',
-            fontFamily: "'Cause',serif",
-            transition: 'all 0.15s ease',
+            background:   isOpen ? '#DF82A3' : 'rgba(255,255,255,0.8)',
+            color:        isOpen ? '#fff' : '#917264',
+            border:       '1.5px solid #DF82A3',
+            cursor:       'pointer',
+            display:      'flex',
+            alignItems:   'center',
+            gap:          '4px',
+            fontSize:     '10px',
+            fontWeight:   '700',
+            fontFamily:   "'Cause', serif",
+            transition:   'all 0.15s ease',
           }}
         >
           <SlidersHorizontal size={12} />
@@ -174,25 +219,42 @@ export default function ColorPicker({
         </button>
       </div>
 
-      {/* Popover / Collapsible SketchPicker */}
+      {/* Standard picker popover */}
       {isOpen && (
-        <div
-          style={{
-            position: 'absolute',
-            zIndex: 100,
-            top: '36px',
-            boxShadow: '0 10px 25px rgba(0,0,0,0.25)',
-            borderRadius: '8px',
-          }}
-        >
-          <SketchPicker
-            color={currentHex}
-            onChangeComplete={handleChange}
-            presetColors={presetHexes.length ? presetHexes : undefined}
-            disableAlpha
-            width="210px"
+        <>
+          {/* Tap outside overlay */}
+          <div
+            onClick={() => setIsOpen(false)}
+            style={{
+              position:   'fixed',
+              inset:      0,
+              zIndex:     9998,
+              background: 'rgba(145,114,100,0.3)',
+            }}
           />
-        </div>
+          {/* Picker — fixed centered above toolbar */}
+          <div
+            style={{
+              position:     'fixed',
+              zIndex:       9999,
+              bottom:       '80px',
+              left:         '50%',
+              transform:    'translateX(-50%)',
+              boxShadow:    '0 10px 25px rgba(0,0,0,0.25)',
+              borderRadius: '12px',
+              background:   '#fff',
+              padding:      '4px',
+            }}
+          >
+            <SketchPicker
+              color={currentHex}
+              onChangeComplete={handleChange}
+              presetColors={presetHexes.length ? presetHexes : undefined}
+              disableAlpha
+              width="210px"
+            />
+          </div>
+        </>
       )}
     </div>
   )
