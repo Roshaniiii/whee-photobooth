@@ -218,7 +218,7 @@ export default function AnnouncementPopup() {
               {status === 'sending' ? 'Sending…' : 'Keep me posted'}
             </button>
             <a
-              href="https://razorpay.me/@wheephotobooth"
+              href="https://www.instagram.com/wheephotobooth/"
               target="_blank"
               rel="noopener noreferrer"
               onClick={handleClose}
@@ -235,9 +235,10 @@ export default function AnnouncementPopup() {
                 padding: '12px 18px',
                 fontSize: '14px',
                 textDecoration: 'none',
+                fontWeight: 700,
               }}
             >
-              🧁 Donate
+              🧁 Instagram 
             </a>
           </div>
           <button
