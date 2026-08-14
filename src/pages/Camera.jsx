@@ -140,17 +140,17 @@ const FILTERS = [
     css: 'saturate(0.7) brightness(1.1) contrast(1.2)',
   },
   {
-    id: 'sparkle',
-    label: 'Sparkle',
+    id: 'danger',
+    label: 'Danger',
     source: 'css',
     css: 'none', // sparkle is a special case — it's a PNG overlay, not a CSS filter
   },
-  { id: 'blush', label: 'Blush', source: 'backend' },
-  { id: 'cat_ears', label: 'Cat', source: 'backend' },
-  { id: 'hearts', label: 'Hearts', source: 'backend' },
-  { id: 'star_face', label: 'Star Face', source: 'backend' },
-  { id: 'pixel', label: 'Pixel', desc: 'CRT retro',source: 'backend' },
-  { id: 'heatmap', label: 'Thermal', desc: 'Heat vision', source: 'backend' },
+  // { id: 'blush', label: 'Blush', source: 'backend' },
+  // { id: 'cat_ears', label: 'Cat', source: 'backend' },
+  // { id: 'hearts', label: 'Hearts', source: 'backend' },
+  // { id: 'star_face', label: 'Star Face', source: 'backend' },
+  // { id: 'pixel', label: 'Pixel', desc: 'CRT retro',source: 'backend' },
+  // { id: 'heatmap', label: 'Thermal', desc: 'Heat vision', source: 'backend' },
 ]
 
 
