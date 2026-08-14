@@ -12,6 +12,7 @@ import template4_strip2 from '../assets/template4_strip2.png'
 import template1_strip4 from '../assets/template1_strip4.png'
 import template1_strip3 from '../assets/template1_strip3.png'
 import template1_strip6 from '../assets/template1_strip6.png'
+import template1_strip7 from '../assets/template1_strip7.png'
 import template2_strip3 from '../assets/template2_strip3.png'
 import template2_strip5 from '../assets/template2_strip5.png'
 import template3_strip3 from '../assets/template3_strip3.png'
@@ -46,6 +47,16 @@ function slot(x, y, w = PHOTO_W, h = PHOTO_H, rotation = 0, clipShape = null) {
 }
 
 export const TEMPLATES = [
+  {
+    id: 'card',
+    label: 'Card',
+    tag: 'NEW',
+    shots: 1,
+    file: template1_strip7,
+    canvasWidth: 600,
+    canvasHeight: 700,
+    slots: [slot(121, 175.2, 355.9, 450.2)],
+  },
   {
     id: '#@%&!',
     label: '#@%&!',
@@ -107,11 +118,11 @@ export const TEMPLATES = [
     canvasWidth: 600,
     canvasHeight: 1100,
     slots: [
-    slot(47, 111.5, 434.8, 376.8),
-    slot(179.3, 630.2, 381, 337.8),
+      slot(47, 111.5, 434.8, 376.8),
+      slot(179.3, 630.2, 381, 337.8),
     ],
   },
- {
+  {
     id: 'template2_strip1',
     label: 'Duo — A',
     shots: 2,
@@ -170,7 +181,7 @@ export const TEMPLATES = [
     file: template3_strip3,
     canvasWidth: 600, canvasHeight: 1600,
     slots: [
-      slot(40, 30,  PHOTO_W3, PHOTO_H3),
+      slot(40, 30, PHOTO_W3, PHOTO_H3),
       slot(40, 490, PHOTO_W3, PHOTO_H3),
       slot(40, 950, PHOTO_W3, PHOTO_H3),
     ],
@@ -209,29 +220,29 @@ export const TEMPLATES = [
     file: template4_strip3,
     canvasWidth: 600, canvasHeight: 2000,
     slots: [
-      slot(30, 30,   PHOTO_W4, PHOTO_H4),
-      slot(30, 470,  PHOTO_W4, PHOTO_H4),
-      slot(30, 910,  PHOTO_W4, PHOTO_H4),
+      slot(30, 30, PHOTO_W4, PHOTO_H4),
+      slot(30, 470, PHOTO_W4, PHOTO_H4),
+      slot(30, 910, PHOTO_W4, PHOTO_H4),
       slot(30, 1350, PHOTO_W4, PHOTO_H4),
     ],
   },
   {
-  id: 'collage_strip1',
+    id: 'collage_strip1',
     label: 'Heart',
     shots: 11,
     file: collage_strip1,
     canvasWidth: 1200,
     canvasHeight: 1200,
     slots: [
-      slot(217.5, 120,   310, 180),
-      slot(672.5, 120,   310, 180),
-      slot(52.5,  309,   320, 300),
-      slot(382.5, 309,   435, 300),
-      slot(827.5, 309,   320, 300),
-      slot(231.5, 618,   240, 140),
-      slot(480.3, 618,   240, 140),
-      slot(729.3, 618,   240, 140),
-      slot(380,   766.6, 220, 140),
+      slot(217.5, 120, 310, 180),
+      slot(672.5, 120, 310, 180),
+      slot(52.5, 309, 320, 300),
+      slot(382.5, 309, 435, 300),
+      slot(827.5, 309, 320, 300),
+      slot(231.5, 618, 240, 140),
+      slot(480.3, 618, 240, 140),
+      slot(729.3, 618, 240, 140),
+      slot(380, 766.6, 220, 140),
       slot(608.5, 766.6, 220, 140),
       slot(528.3, 915.6, 150, 150),
     ],
@@ -244,13 +255,13 @@ export const TEMPLATES = [
     canvasWidth: 1200,
     canvasHeight: 1200,
     slots: [
-      slot(0,   0,   396, 396),
-      slot(402, 0,   396, 396),
-      slot(804, 0,   396, 396),
-      slot(0,   402, 396, 396),
+      slot(0, 0, 396, 396),
+      slot(402, 0, 396, 396),
+      slot(804, 0, 396, 396),
+      slot(0, 402, 396, 396),
       slot(402, 402, 396, 396),
       slot(804, 402, 396, 396),
-      slot(0,   804, 396, 396),
+      slot(0, 804, 396, 396),
       slot(402, 804, 396, 396),
       slot(804, 804, 396, 396),
     ],
@@ -259,7 +270,7 @@ export const TEMPLATES = [
     id: 'heart_duo',
     label: 'Heart Duo',
     shots: 2,
-    file: collage_strip3, 
+    file: collage_strip3,
     canvasWidth: 1200,
     canvasHeight: 1200,
     slots: [
@@ -272,10 +283,10 @@ export const TEMPLATES = [
     label: 'Tic Tac Toe',
     shots: 3,
     file: collage_strip4,
-    canvasWidth: 600, 
+    canvasWidth: 600,
     canvasHeight: 700,
     slots: [
-      slot( 7,  72,  185, 160), 
+      slot(7, 72, 185, 160),
       slot(210, 255, 185, 160),
       slot(410, 432, 185, 160),
     ],
@@ -285,7 +296,7 @@ export const TEMPLATES = [
     label: 'Birthday',
     tag: 'NEW',
     shots: 1,
-    file: collage_strip5, 
+    file: collage_strip5,
     canvasWidth: 1200,
     canvasHeight: 1200,
     slots: [
@@ -297,7 +308,7 @@ export const TEMPLATES = [
     label: 'I can',
     tag: 'NEW',
     shots: 6,
-    file: collage_strip6, 
+    file: collage_strip6,
     canvasWidth: 1200,
     canvasHeight: 800,
     slots: [
@@ -314,7 +325,7 @@ export const TEMPLATES = [
     label: 'Hot Mess',
     tag: 'NEW',
     shots: 4,
-    file: collage_strip7, 
+    file: collage_strip7,
     canvasWidth: 600,
     canvasHeight: 800,
     slots: [
@@ -329,7 +340,7 @@ export const TEMPLATES = [
     label: 'Airdrop',
     tag: 'NEW',
     shots: 2,
-    file: collage_strip8, 
+    file: collage_strip8,
     canvasWidth: 1200,
     canvasHeight: 1200,
     slots: [
