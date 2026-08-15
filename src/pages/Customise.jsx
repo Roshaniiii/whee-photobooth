@@ -407,6 +407,71 @@ export default function Customise() {
   }
 
   // ── Sticker move (drag placed sticker) ───────────────────
+  function handleStickerTouchStart(e, sticker) {
+    e.preventDefault()
+    const touch = e.touches[0]
+
+    // Create a ghost image that follows the finger
+    const ghost = document.createElement('img')
+    ghost.src = sticker.src
+    ghost.style.cssText = `
+      position: fixed;
+      width: 60px;
+      height: 60px;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.8;
+      transform: translate(-50%, -50%);
+      left: ${touch.clientX}px;
+      top: ${touch.clientY}px;
+    `
+    document.body.appendChild(ghost)
+
+    function onTouchMove(ev) {
+      ev.preventDefault()
+      const t = ev.touches[0]
+      ghost.style.left = `${t.clientX}px`
+      ghost.style.top  = `${t.clientY}px`
+    }
+
+    function onTouchEnd(ev) {
+      ev.preventDefault()
+      document.body.removeChild(ghost)
+      window.removeEventListener('touchmove', onTouchMove)
+      window.removeEventListener('touchend', onTouchEnd)
+
+      const t = ev.changedTouches[0]
+
+      // Check if finger is over the canvas wrap
+      const wrap = canvasWrapRef.current
+      if (!wrap) return
+      const rect = wrap.getBoundingClientRect()
+
+      if (
+        t.clientX >= rect.left &&
+        t.clientX <= rect.right &&
+        t.clientY >= rect.top  &&
+        t.clientY <= rect.bottom
+      ) {
+        // Convert touch position to canvas coordinates
+        const pos = getCanvasPos(t.clientX, t.clientY)
+        const newSticker = {
+          uid:  Date.now(),
+          src:  sticker.src,
+          x:    pos.x - DEFAULT_STICKER_SIZE / 2,
+          y:    pos.y - DEFAULT_STICKER_SIZE / 2,
+          size: DEFAULT_STICKER_SIZE,
+        }
+        setPlacedStickers(prev => [...prev, newSticker])
+        setSelectedSticker(newSticker.uid)
+        setTool('sticker')
+      }
+    }
+
+    window.addEventListener('touchmove', onTouchMove, { passive: false })
+    window.addEventListener('touchend',  onTouchEnd,  { passive: false })
+  }
+
   function handleStickerPointerDown(e, uid) {
     e.stopPropagation()
     e.preventDefault()
@@ -886,6 +951,7 @@ export default function Customise() {
                   key={sticker.id}
                   draggable
                   onDragStart={e => handleStickerDragStart(e, sticker)}
+                  onTouchStart={e => handleStickerTouchStart(e, sticker)}
                   style={{
                     aspectRatio:    '1',
                     display:        'flex',
