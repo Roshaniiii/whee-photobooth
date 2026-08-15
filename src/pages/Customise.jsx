@@ -78,14 +78,6 @@ const PALETTE = [
 
 const SIZES = [6, 12, 20]
 
-// function IconEraser({ size = 18, color = '#917264' }) {
-//   return (
-//     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
-//       <path d="M15.5 5.5l3 3L9 18H6v-3l9.5-9.5z" stroke={color} strokeWidth="1.75" strokeLinejoin="round" />
-//       <path d="M13 7l4 4M5 21h14" stroke={color} strokeWidth="1.75" strokeLinecap="round" />
-//     </svg>
-//   )
-// }
 
 function drawImageCover(ctx, img, x, y, w, h) {
   const iw = img.naturalWidth || img.width

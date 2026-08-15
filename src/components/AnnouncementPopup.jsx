@@ -156,8 +156,7 @@ export default function AnnouncementPopup() {
           }}
         >
           <p style={{ fontSize: '14px', color: '#917264', margin: 0, lineHeight: 1.6, textAlign: 'center' }}>
-            🍉 New templates are live now! <br></br>
-            🛠️ Some filters are temporarily under construction<br></br>
+            🚧STICKER PANEL IS UNDER CONSTRUCTION<br></br>
             ✦ If you want to be notified when new templates drop, leave your email below and I’ll send a quick note.
           </p>
         </div>
