@@ -157,6 +157,7 @@ export default function AnnouncementPopup() {
         >
           <p style={{ fontSize: '14px', color: '#917264', margin: 0, lineHeight: 1.6, textAlign: 'center' }}>
             🚧STICKER PANEL IS UNDER CONSTRUCTION<br></br>
+            🩷Also check out: HIDEY<br></br>
             ✦ If you want to be notified when new templates drop, leave your email below and I’ll send a quick note.
           </p>
         </div>
@@ -217,7 +218,7 @@ export default function AnnouncementPopup() {
               {status === 'sending' ? 'Sending…' : 'Keep me posted'}
             </button>
             <a
-              href="https://www.instagram.com/wheephotobooth/"
+              href="https://tryhidey.xyz/"
               target="_blank"
               rel="noopener noreferrer"
               onClick={handleClose}
@@ -237,7 +238,7 @@ export default function AnnouncementPopup() {
                 fontWeight: 700,
               }}
             >
-              🧁 Instagram 
+              HIDEY 
             </a>
           </div>
           <button
