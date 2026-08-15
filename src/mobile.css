@@ -323,75 +323,115 @@ body,
 
   /* ── Fixed bottom bar on mobile: sticker palette + download ── */
   .customise-sticker-panel {
-    position: fixed !important;
-    bottom: 56px !important;        /* sits just above the download button */
-    left: 0 !important;
-    right: 0 !important;
-    width: 100% !important;
-    max-height: 80px !important;
-    overflow-y: hidden !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    padding: 6px 10px !important;
-    gap: 8px !important;
-    background: rgba(255,255,255,0.95) !important;
-    border-top: 2px solid #D4C49A !important;
-    border-radius: 0 !important;
-    box-shadow: 0 -4px 12px rgba(145,114,100,0.15) !important;
-    z-index: 50 !important;
+    position:        fixed !important;
+    bottom:          60px !important;
+    left:            0 !important;
+    right:           0 !important;
+    width:           100% !important;
+    max-height:      none !important;
+    height:          72px !important;
+    overflow:        visible !important;
+    flex-direction:  row !important;
+    align-items:     center !important;
+    padding:         8px 12px !important;
+    gap:             8px !important;
+    background:      rgba(242, 231, 180, 0.97) !important;
+    border-top:      2px solid #D4C49A !important;
+    border-bottom:   none !important;
+    border-left:     none !important;
+    border-right:    none !important;
+    border-radius:   0 !important;
+    box-shadow:      0 -4px 16px rgba(145,114,100,0.18) !important;
+    z-index:         50 !important;
+    box-sizing:      border-box !important;
   }
 
-  /* Sticker label — hide on mobile to save space */
+  /* Hide label text */
   .customise-sticker-panel > span {
     display: none !important;
   }
 
-  /* Hint text — hide on mobile */
+  /* Hide hint text */
   .customise-sticker-panel > p {
     display: none !important;
   }
 
-  /* Sticker grid → horizontal scroll */
+  /* Sticker grid → horizontal scroll row */
   .customise-sticker-panel > div {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    grid-template-columns: unset !important;
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-    gap: 8px !important;
-    padding-bottom: 2px !important;
-    scroll-snap-type: x mandatory !important;
+    display:                  flex !important;
+    flex-direction:           row !important;
+    flex-wrap:                nowrap !important;
+    grid-template-columns:    unset !important;
+    overflow-x:               auto !important;
+    overflow-y:               hidden !important;
+    gap:                      8px !important;
+    padding:                  4px 2px !important;
+    scroll-snap-type:         x mandatory !important;
     -webkit-overflow-scrolling: touch !important;
-    scrollbar-width: none !important;
-    width: 100% !important;
+    scrollbar-width:          none !important;
+    width:                    100% !important;
+    align-items:              center !important;
+    height:                   56px !important;
   }
 
+  /* Hide scrollbar webkit */
   .customise-sticker-panel > div::-webkit-scrollbar {
     display: none !important;
   }
 
-  /* Each sticker item */
+  /* Each sticker item — fixed square size */
   .customise-sticker-panel > div > div {
-    flex-shrink: 0 !important;
-    width: 48px !important;
-    height: 48px !important;
+    flex-shrink:      0 !important;
+    width:            48px !important;
+    height:           48px !important;
+    min-width:        48px !important;
+    min-height:       48px !important;
     scroll-snap-align: start !important;
+    border-radius:    10px !important;
+    border:           2px solid #D4C49A !important;
+    background:       rgba(255,255,255,0.8) !important;
+    display:          flex !important;
+    align-items:      center !important;
+    justify-content:  center !important;
+    padding:          5px !important;
+    box-sizing:       border-box !important;
   }
 
-    /* Fixed download button at very bottom — keeps original styling */
+  /* Sticker image inside each item */
+  .customise-sticker-panel > div > div > img {
+    width:       100% !important;
+    height:      100% !important;
+    object-fit:  contain !important;
+    display:     block !important;
+  }
+
+  /* Left label — "Stickers" — show as rotated pill on left edge */
+  .customise-sticker-label {
+    writing-mode:  vertical-rl !important;
+    font-size:     9px !important;
+    font-weight:   700 !important;
+    letter-spacing:'1px' !important;
+    color:         #917264 !important;
+    text-transform: uppercase !important;
+    flex-shrink:   0 !important;
+    opacity:       0.7 !important;
+  }
+
+  /* Fixed download button at very bottom */
   .customise-canvas-container > button {
-    position: fixed !important;
-    bottom: 10px !important;
-    left: 50% !important;
+    position:  fixed !important;
+    bottom:    10px !important;
+    left:      50% !important;
     transform: translateX(-50%) !important;
-    z-index: 51 !important;
-    margin: 0 !important;
+    z-index:   51 !important;
+    margin:    0 !important;
+    width:     auto !important;
+    min-width: 160px !important;
   }
 
-  /* Add bottom padding to canvas so content isn't hidden behind fixed bar */
+  /* Canvas padding so content clears fixed bottom bars */
   .customise-canvas-container {
-    padding-bottom: 140px !important;
+    padding-bottom: 148px !important;
   }
 }
 
