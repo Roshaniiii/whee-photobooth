@@ -1065,7 +1065,7 @@ export default function Camera() {
   const allDone = !!stripPreview
 
   return (
-    <div className="page-wrapper camera-page-wrapper" style={{ minHeight: '100vh', width: '100%', backgroundColor: '#F2E7B4', position: 'relative', fontFamily: "'Cause',serif", overflow: 'hidden' }}>
+    <div className="page-wrapper camera-page-wrapper" style={{ minHeight: '100vh', width: '100%', backgroundColor: '#F2E7B4', position: 'relative', fontFamily: "'Cause',serif", overflowX: 'hidden', overflowY: 'auto' }}>
       <VerticalStripes />
 
       {/* CurvedLoop shown inline below the PageHeader when the strip is ready */}

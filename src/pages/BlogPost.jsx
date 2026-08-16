@@ -282,7 +282,7 @@ export default function BlogPost() {
   }
 
   return (
-    <div className="page-wrapper blog-post-wrapper" style={{ minHeight: '100vh', width: '100%', backgroundColor: '#f2e7b4', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between' }}>
+    <div className="page-wrapper blog-post-wrapper" style={{ minHeight: '100vh', width: '100%', backgroundColor: '#f2e7b4', position: 'relative', overflowX: 'hidden', overflowY: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between' }}>
       <VerticalStripes />
 
       <div className="page-content blog-post-content" style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: '900px', padding: '56px 24px 40px', display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>

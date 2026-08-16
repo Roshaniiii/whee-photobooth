@@ -40,7 +40,7 @@ export default function Blog() {
 
   return (
     <div className="page-wrapper blog-page-wrapper" style={{
-      minHeight: '100vh', width: '100%', backgroundColor: '#f2e7b4', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between',
+      minHeight: '100vh', width: '100%', backgroundColor: '#f2e7b4', position: 'relative', overflowX: 'hidden', overflowY: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between',
     }}>
 
       <VerticalStripes />
