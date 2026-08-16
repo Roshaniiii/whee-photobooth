@@ -892,10 +892,10 @@ export default function Customise() {
               </div>
             </div>
 
-            {/* Desktop Download button */}
+            {/* Download button */}
             <button
               type="button"
-              className="customise-download-btn customise-download-btn--desktop"
+              className="customise-download-btn"
               onClick={handleDownload}
               style={{
                 fontFamily:    "'Cause',serif",
@@ -911,7 +911,7 @@ export default function Customise() {
                 cursor:        'pointer',
                 boxShadow:     HOME_BTN_SHADOW,
                 flexShrink:    0,
-                marginTop:     '10px',
+                marginTop:     '12px',
                 marginBottom:  '4px',
                 position:      'relative',
                 zIndex:        2,
@@ -1085,34 +1085,6 @@ export default function Customise() {
             </p>
 
           </div>
-
-          {/* Mobile Download button (positioned below tool & sticker panel) */}
-          <button
-            type="button"
-            className="customise-download-btn customise-download-btn--mobile"
-            onClick={handleDownload}
-            style={{
-              fontFamily:    "'Cause',serif",
-              fontSize:      '13px',
-              fontWeight:    700,
-              letterSpacing: '1.5px',
-              textTransform: 'uppercase',
-              color:         '#F2E7B4',
-              background:    '#DF82A3',
-              border:        'none',
-              borderRadius:  '100px',
-              padding:       '11px 32px',
-              cursor:        'pointer',
-              boxShadow:     HOME_BTN_SHADOW,
-              flexShrink:    0,
-              margin:        '12px auto 80px',
-              display:       'none',
-              position:      'relative',
-              zIndex:        2,
-            }}
-          >
-            Download
-          </button>
 
         </div>
       </div>

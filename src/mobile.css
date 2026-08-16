@@ -329,14 +329,28 @@ body,
     display: none !important;
   }
 
-  /* ── Page scrollable on mobile (long templates scroll under the panel) ── */
+  /* ── Page scrollable on mobile (long templates and background scroll under the panel) ── */
   .customise-page-wrapper {
     overflow-y:          auto !important;
     overflow-x:          hidden !important;
     -webkit-overflow-scrolling: touch !important;
-    overscroll-behavior: none !important;
-    height:              auto !important;
-    min-height:          100dvh !important;
+    overscroll-behavior: contain !important;
+    height:              100dvh !important;
+    max-height:          100dvh !important;
+    scrollbar-width:     thin !important;
+    scrollbar-color:     #DF82A3 rgba(212,196,154,0.3) !important;
+  }
+
+  .customise-page-wrapper::-webkit-scrollbar {
+    display: block !important;
+    width:   5px !important;
+  }
+  .customise-page-wrapper::-webkit-scrollbar-track {
+    background: rgba(212,196,154,0.2) !important;
+  }
+  .customise-page-wrapper::-webkit-scrollbar-thumb {
+    background:    #DF82A3 !important;
+    border-radius: 10px !important;
   }
 
   .customise-inner-container {
@@ -357,43 +371,52 @@ body,
     height:         auto !important;
   }
 
-  /* \u2500\u2500 Canvas container: takes remaining space above the panel \u2500\u2500 */
+  /* ── Canvas container: takes remaining space above the panel with clearance for scrolling ── */
   .customise-canvas-container {
     width:          100% !important;
     max-width:      100% !important;
     flex:           unset !important;
-    padding-bottom: 0 !important;       /* no fixed-panel compensation needed */
-    margin-bottom:  12px !important;    /* gap between canvas and sticker panel */
+    padding-bottom: 250px !important;   /* space to scroll strip + download button above floating panel */
+    margin-bottom:  0 !important;
   }
 
-
+  .customise-download-btn {
+    display:       block !important;
+    margin:        14px auto 0 !important;
+  }
 
   /* ══════════════════════════════════════════════
-     MOBILE STICKER PANEL — in-flow card below canvas
+     MOBILE STICKER PANEL — fixed floating card above bottom nav
      Only applies at ≤ 640px. Desktop & tablet
      (≥ 641px) are completely untouched.
   ═══════════════════════════════════════════════ */
 
-  /* ── Panel shell: in-flow card, full width ── */
+  /* ── Panel shell: floating card ── */
   .customise-sticker-panel {
-    position:       static !important;   /* in document flow — no overlap */
-    width:          100% !important;
-    max-width:      100% !important;
-    max-height:     none !important;
-    height:         auto !important;
-    align-self:     auto !important;
-    overflow:       visible !important;
-    flex-direction: column !important;
-    align-items:    stretch !important;
-    padding:        10px 12px 12px !important;
-    gap:            8px !important;
-    background:     rgba(242, 231, 180, 0.98) !important;
-    border:         2px solid #D4C49A !important;
-    border-radius:  18px !important;
-    box-shadow:     0 4px 20px rgba(145,114,100,0.18),
-                    0 1px  6px rgba(145,114,100,0.10) !important;
-    box-sizing:     border-box !important;
-    margin-bottom:  12px !important;
+    position:        fixed !important;
+    bottom:          56px !important;
+    left:            12px !important;
+    right:           12px !important;
+    width:           auto !important;
+    max-width:       calc(100vw - 24px) !important;
+    max-height:      none !important;
+    height:          auto !important;
+    align-self:      auto !important;
+    overflow:        hidden !important;
+    flex-direction:  column !important;
+    align-items:     stretch !important;
+    padding:         8px 10px 10px !important;
+    gap:             6px !important;
+    background:      rgba(242, 231, 180, 0.97) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border:          2px solid #D4C49A !important;
+    border-radius:   18px !important;
+    box-shadow:      0 6px 25px rgba(145, 114, 100, 0.25),
+                     0 1px  6px rgba(145, 114, 100, 0.12) !important;
+    z-index:         60 !important;
+    box-sizing:      border-box !important;
+    margin-bottom:   0 !important;
   }
 
   /* ── Hide desktop-only labels/hints inside panel ── */
@@ -594,14 +617,6 @@ body,
     display: none !important;
   }
 
-  /* ── Download buttons visibility ── */
-  .customise-download-btn--desktop {
-    display: none !important;
-  }
-  .customise-download-btn--mobile {
-    display: block !important;
-    margin:  14px auto 80px !important;
-  }
 }
 
 /* ── Tablet (641px–1024px) ── */
@@ -669,6 +684,4 @@ body,
   /* Draw panel only exists on mobile */
   .mobile-draw-panel    { display: none !important; }
   /* Desktop hint / label use .sticker-panel-desktop-label — keep visible */
-  .customise-download-btn--desktop { display: block !important; }
-  .customise-download-btn--mobile  { display: none !important; }
 }
