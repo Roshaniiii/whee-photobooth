@@ -12,6 +12,14 @@ body,
   overflow-x: hidden;
 }
 
+.sticker-carousel-wrap {
+  display: contents;
+}
+
+.sticker-nav-btn {
+  display: none;
+}
+
 @media (max-width: 640px) {
 
   /* ───────── GLOBAL WRAPPERS & HEADERS ───────── */
@@ -541,45 +549,71 @@ body,
   }
 
   /* ══════════════════════════════════════════════
-     3-ROW HORIZONTAL STICKER SCROLL GRID
+     STICKER CAROUSEL WITH < AND > BUTTONS
   ═══════════════════════════════════════════════ */
 
+  .sticker-carousel-wrap {
+    display:         flex !important;
+    flex-direction:  row !important;
+    align-items:     center !important;
+    justify-content: space-between !important;
+    gap:             6px !important;
+    width:           100% !important;
+    box-sizing:      border-box !important;
+  }
+
+  .sticker-nav-btn {
+    display:         flex !important;
+    align-items:     center !important;
+    justify-content: center !important;
+    width:           28px !important;
+    height:          56px !important;
+    flex-shrink:     0 !important;
+    background:      rgba(255, 255, 255, 0.85) !important;
+    border:          2px solid #D4C49A !important;
+    border-radius:   10px !important;
+    color:           #917264 !important;
+    cursor:          pointer !important;
+    box-shadow:      0 2px 5px rgba(145, 114, 100, 0.12) !important;
+    transition:      all 0.15s ease !important;
+    touch-action:    manipulation !important;
+    padding:         0 !important;
+  }
+
+  .sticker-nav-btn:active:not(:disabled) {
+    transform:    scale(0.92) !important;
+    border-color: #DF82A3 !important;
+    color:        #DF82A3 !important;
+  }
+
+  .sticker-nav-btn:disabled {
+    opacity:        0.3 !important;
+    cursor:         not-allowed !important;
+    pointer-events: none !important;
+    border-color:   #E2D7BE !important;
+  }
+
   .sticker-grid-wrap {
+    flex:                  1 !important;
     display:               grid !important;
     grid-template-rows:    repeat(3, 44px) !important;
     grid-auto-flow:        column !important;
     grid-auto-columns:     44px !important;
     grid-template-columns: unset !important;
-    overflow-x:            auto !important;
+    overflow-x:            hidden !important;
     overflow-y:            hidden !important;
     gap:                   6px !important;
-    padding:               2px 2px 6px !important;
-    scroll-snap-type:      x mandatory !important;
-    -webkit-overflow-scrolling: touch !important;
-    scrollbar-width:       thin !important;
-    scrollbar-color:       #DF82A3 rgba(212,196,154,0.4) !important;
-    width:                 100% !important;
-    height:                154px !important;    /* 3 × 44 + 2 × 6 gaps + 6px scrollbar */
+    padding:               2px !important;
+    scroll-behavior:       smooth !important;
+    scrollbar-width:       none !important;
+    width:                 auto !important;
+    height:                144px !important;    /* 3 × 44 + 2 × 6 gaps */
     box-sizing:            border-box !important;
   }
 
-  /* Visible WebKit scrollbar */
+  /* Hide scrollbar completely */
   .sticker-grid-wrap::-webkit-scrollbar {
-    display: block !important;
-    height:  6px !important;
-  }
-  .sticker-grid-wrap::-webkit-scrollbar-track {
-    background:    rgba(212,196,154,0.4) !important;
-    border-radius: 100px !important;
-    margin:        0 4px !important;
-  }
-  .sticker-grid-wrap::-webkit-scrollbar-thumb {
-    background:    linear-gradient(90deg, #DF82A3, #F4B8CC) !important;
-    border-radius: 100px !important;
-    border:        1px solid rgba(255,255,255,0.5) !important;
-  }
-  .sticker-grid-wrap::-webkit-scrollbar-thumb:active {
-    background: #c9608c !important;
+    display: none !important;
   }
 
   /* Each sticker chip */
@@ -589,7 +623,6 @@ body,
     min-width:         44px !important;
     min-height:        44px !important;
     flex-shrink:       0 !important;
-    scroll-snap-align: start !important;
     border-radius:     10px !important;
     border:            2px solid #D4C49A !important;
     background:        rgba(255,255,255,0.88) !important;

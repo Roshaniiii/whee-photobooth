@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import PageHeader from '../components/PageHeader'
 import VerticalStripes from '../components/VerticalStripes'
 import ColorPicker from '../components/ColorPicker'
-import { Eraser, PenLine, Sparkles, Undo2, Redo2 } from 'lucide-react'
+import { Eraser, PenLine, Sparkles, Undo2, Redo2, ChevronLeft, ChevronRight } from 'lucide-react'
 import { createHeartClipPath, drawImageWithRotation } from '../utils/canvasUtils'
 
 // ── Import your stickers from assets/stickers/ ───────────────
@@ -117,6 +117,35 @@ export default function Customise() {
   const [selectedSticker,   setSelectedSticker]   = useState(null)
   const stickerDragRef      = useRef(null) // for moving placed stickers
   const resizeDragRef       = useRef(null) // for resizing placed stickers
+  const stickerGridRef      = useRef(null)
+  const [canScrollLeft,     setCanScrollLeft]     = useState(false)
+  const [canScrollRight,    setCanScrollRight]    = useState(true)
+
+  const updateScrollButtons = useCallback(() => {
+    const el = stickerGridRef.current
+    if (!el) return
+    const { scrollLeft, scrollWidth, clientWidth } = el
+    setCanScrollLeft(scrollLeft > 2)
+    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 2)
+  }, [])
+
+  const scrollStickers = (direction) => {
+    const el = stickerGridRef.current
+    if (!el) return
+    const step = Math.max(50, Math.floor(el.clientWidth / 50) * 50)
+    el.scrollBy({
+      left: direction === 'left' ? -step : step,
+      behavior: 'smooth'
+    })
+    setTimeout(updateScrollButtons, 350)
+  }
+
+  useEffect(() => {
+    updateScrollButtons()
+    const handleResize = () => updateScrollButtons()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [updateScrollButtons, mobileTab])
 
   // ── Load photos ───────────────────────────────────────────
   useEffect(() => {
@@ -1029,46 +1058,70 @@ export default function Customise() {
               </div>
             </div>
 
-            {/* ── Sticker grid — 2 cols (desktop) / 3-row horiz scroll (mobile) ── */}
-            <div
-              className={`sticker-grid-wrap${mobileTab === 'draw' ? ' mobile-tab--hidden' : ''}`}
-              style={{
-                display:             'grid',
-                gridTemplateColumns: 'repeat(2, 1fr)',
-                gap:                 '5px',
-              }}
-            >
-              {STICKERS.map(sticker => (
-                <div
-                  key={sticker.id}
-                  draggable
-                  onDragStart={e => handleStickerDragStart(e, sticker)}
-                  onTouchStart={e => handleStickerTouchStart(e, sticker)}
-                  style={{
-                    aspectRatio:    '1',
-                    display:        'flex',
-                    alignItems:     'center',
-                    justifyContent: 'center',
-                    background:     'rgba(255,255,255,0.6)',
-                    borderRadius:   '8px',
-                    border:         '2px solid #D4C49A',
-                    cursor:         'grab',
-                    padding:        '4px',
-                    transition:     'border-color 0.15s, transform 0.15s',
-                    userSelect:     'none',
-                    touchAction:    'none',
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#DF82A3'; e.currentTarget.style.transform = 'scale(1.08)' }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = '#D4C49A'; e.currentTarget.style.transform = 'scale(1)' }}
-                >
-                  <img
-                    src={sticker.src}
-                    alt={sticker.label}
-                    draggable={false}
-                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                  />
-                </div>
-              ))}
+            {/* ── Sticker section with < and > arrows (mobile) / grid (desktop) ── */}
+            <div className={`sticker-carousel-wrap${mobileTab === 'draw' ? ' mobile-tab--hidden' : ''}`}>
+              <button
+                type="button"
+                className="sticker-nav-btn sticker-nav-btn--prev"
+                onClick={() => scrollStickers('left')}
+                disabled={!canScrollLeft}
+                aria-label="Previous stickers"
+              >
+                <ChevronLeft size={16} />
+              </button>
+
+              <div
+                ref={stickerGridRef}
+                onScroll={updateScrollButtons}
+                className="sticker-grid-wrap"
+                style={{
+                  display:             'grid',
+                  gridTemplateColumns: 'repeat(2, 1fr)',
+                  gap:                 '5px',
+                }}
+              >
+                {STICKERS.map(sticker => (
+                  <div
+                    key={sticker.id}
+                    draggable
+                    onDragStart={e => handleStickerDragStart(e, sticker)}
+                    onTouchStart={e => handleStickerTouchStart(e, sticker)}
+                    style={{
+                      aspectRatio:    '1',
+                      display:        'flex',
+                      alignItems:     'center',
+                      justifyContent: 'center',
+                      background:     'rgba(255,255,255,0.6)',
+                      borderRadius:   '8px',
+                      border:         '2px solid #D4C49A',
+                      cursor:         'grab',
+                      padding:        '4px',
+                      transition:     'border-color 0.15s, transform 0.15s',
+                      userSelect:     'none',
+                      touchAction:    'none',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = '#DF82A3'; e.currentTarget.style.transform = 'scale(1.08)' }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = '#D4C49A'; e.currentTarget.style.transform = 'scale(1)' }}
+                  >
+                    <img
+                      src={sticker.src}
+                      alt={sticker.label}
+                      draggable={false}
+                      style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <button
+                type="button"
+                className="sticker-nav-btn sticker-nav-btn--next"
+                onClick={() => scrollStickers('right')}
+                disabled={!canScrollRight}
+                aria-label="Next stickers"
+              >
+                <ChevronRight size={16} />
+              </button>
             </div>
 
             {/* Hint — desktop only */}
