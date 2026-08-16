@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { SketchPicker } from 'react-color'
-import { Pipette, SlidersHorizontal } from 'lucide-react'
+import { Pipette, SlidersHorizontal, X } from 'lucide-react'
 
 export default function ColorPicker({
   value,
@@ -10,7 +11,6 @@ export default function ColorPicker({
   className = '',
 }) {
   const [isOpen, setIsOpen] = useState(false)
-  const popoverRef = useRef(null)
 
   // Standardize presets array into objects { hex, label }
   const normalizedPresets = presets.map((p) => {
@@ -38,27 +38,129 @@ export default function ColorPicker({
     onChange(p.hex, p)
   }
 
-  // Close popover when clicking outside
+  // Prevent background scroll when modal popup is open
   useEffect(() => {
-    if (!isOpen) return
-    const handleClickOutside = (event) => {
-      if (popoverRef.current && !popoverRef.current.contains(event.target)) {
-        setIsOpen(false)
+    if (isOpen) {
+      const prevOverflow = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = prevOverflow
       }
     }
-    document.addEventListener('mousedown', handleClickOutside)
-    document.addEventListener('touchstart', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-      document.removeEventListener('touchstart', handleClickOutside)
-    }
   }, [isOpen])
+
+  // ── POPUP MODAL (Rendered to body via React Portal) ────────
+  const renderPopover = () => {
+    if (!isOpen) return null
+
+    return createPortal(
+      <div
+        style={{
+          position:   'fixed',
+          inset:      0,
+          zIndex:     999999,
+          display:    'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding:    '16px',
+          boxSizing:  'border-box',
+        }}
+      >
+        {/* Tap outside overlay */}
+        <div
+          onClick={() => setIsOpen(false)}
+          style={{
+            position:             'fixed',
+            inset:                0,
+            background:           'rgba(50, 30, 20, 0.45)',
+            backdropFilter:       'blur(3px)',
+            WebkitBackdropFilter: 'blur(3px)',
+          }}
+        />
+
+        {/* Picker modal card */}
+        <div
+          onClick={(e) => e.stopPropagation()}
+          style={{
+            position:      'relative',
+            zIndex:        1,
+            boxShadow:     '0 12px 35px rgba(145,114,100,0.35), 0 3px 10px rgba(0,0,0,0.18)',
+            borderRadius:  '16px',
+            background:    '#FFFDF8',
+            border:        '2px solid #D4C49A',
+            padding:       '10px 10px 8px',
+            display:       'flex',
+            flexDirection: 'column',
+            alignItems:    'center',
+            gap:           '8px',
+            maxWidth:      'calc(100vw - 28px)',
+            maxHeight:     'calc(100dvh - 32px)',
+            overflowY:     'auto',
+            boxSizing:     'border-box',
+          }}
+        >
+          {/* Header row with title & close button */}
+          <div
+            style={{
+              width:          '100%',
+              display:        'flex',
+              alignItems:     'center',
+              justifyContent: 'space-between',
+              paddingBottom:  '6px',
+              borderBottom:   '1px solid rgba(212,196,154,0.4)',
+            }}
+          >
+            <span
+              style={{
+                fontFamily:    "'Cause', serif",
+                fontSize:      '12px',
+                fontWeight:    700,
+                letterSpacing: '1px',
+                color:         '#917264',
+                textTransform: 'uppercase',
+              }}
+            >
+              Custom Color
+            </span>
+            <button
+              type="button"
+              onClick={() => setIsOpen(false)}
+              aria-label="Close color picker"
+              style={{
+                background:    'rgba(223, 130, 163, 0.12)',
+                border:        'none',
+                cursor:        'pointer',
+                color:         '#DF82A3',
+                width:         '24px',
+                height:        '24px',
+                display:       'flex',
+                alignItems:    'center',
+                justifyContent:'center',
+                borderRadius:  '50%',
+                padding:       0,
+              }}
+            >
+              <X size={15} />
+            </button>
+          </div>
+
+          <SketchPicker
+            color={currentHex}
+            onChangeComplete={handleChange}
+            presetColors={presetHexes.length ? presetHexes : undefined}
+            disableAlpha
+            width="210px"
+          />
+        </div>
+      </div>,
+      document.body
+    )
+  }
 
   // ── COMPACT VERSION ───────────────────────────────────────
   if (compact) {
     return (
       <div
-        ref={popoverRef}
         className={`color-picker-wrapper compact ${className}`}
         style={{ position: 'relative', display: 'inline-block' }}
       >
@@ -69,18 +171,18 @@ export default function ColorPicker({
           title="Pick color"
           onClick={() => setIsOpen(!isOpen)}
           style={{
-            width:        '28px',
-            height:       '28px',
-            borderRadius: '50%',
-            background:   currentHex,
-            border:       '2px solid #DF82A3',
-            boxShadow:    '0 2px 6px rgba(0,0,0,0.15)',
-            cursor:       'pointer',
-            padding:      0,
-            display:      'flex',
-            alignItems:   'center',
+            width:          '28px',
+            height:         '28px',
+            borderRadius:   '50%',
+            background:     currentHex,
+            border:         '2px solid #DF82A3',
+            boxShadow:      '0 2px 6px rgba(0,0,0,0.15)',
+            cursor:         'pointer',
+            padding:        0,
+            display:        'flex',
+            alignItems:     'center',
             justifyContent: 'center',
-            transition:   'transform 0.15s ease',
+            transition:     'transform 0.15s ease',
           }}
         >
           <Pipette
@@ -92,43 +194,7 @@ export default function ColorPicker({
           />
         </button>
 
-        {/* Compact picker popover */}
-        {isOpen && (
-          <>
-            {/* Tap outside overlay */}
-            <div
-              onClick={() => setIsOpen(false)}
-              style={{
-                position:   'fixed',
-                inset:      0,
-                zIndex:     9998,
-                background: 'rgba(145,114,100,0.3)',
-              }}
-            />
-            {/* Picker — fixed centered above toolbar */}
-            <div
-              style={{
-                position:     'fixed',
-                zIndex:       9999,
-                bottom:       '80px',
-                left:         '50%',
-                transform:    'translateX(-50%)',
-                boxShadow:    '0 10px 25px rgba(0,0,0,0.25)',
-                borderRadius: '12px',
-                background:   '#fff',
-                padding:      '4px',
-              }}
-            >
-              <SketchPicker
-                color={currentHex}
-                onChangeComplete={handleChange}
-                presetColors={presetHexes.length ? presetHexes : undefined}
-                disableAlpha
-                width="200px"
-              />
-            </div>
-          </>
-        )}
+        {renderPopover()}
       </div>
     )
   }
@@ -136,7 +202,6 @@ export default function ColorPicker({
   // ── STANDARD VERSION ──────────────────────────────────────
   return (
     <div
-      ref={popoverRef}
       className={`color-picker-wrapper standard ${className}`}
       style={{
         display:        'flex',
@@ -219,43 +284,7 @@ export default function ColorPicker({
         </button>
       </div>
 
-      {/* Standard picker popover */}
-      {isOpen && (
-        <>
-          {/* Tap outside overlay */}
-          <div
-            onClick={() => setIsOpen(false)}
-            style={{
-              position:   'fixed',
-              inset:      0,
-              zIndex:     9998,
-              background: 'rgba(145,114,100,0.3)',
-            }}
-          />
-          {/* Picker — fixed centered above toolbar */}
-          <div
-            style={{
-              position:     'fixed',
-              zIndex:       9999,
-              bottom:       '80px',
-              left:         '50%',
-              transform:    'translateX(-50%)',
-              boxShadow:    '0 10px 25px rgba(0,0,0,0.25)',
-              borderRadius: '12px',
-              background:   '#fff',
-              padding:      '4px',
-            }}
-          >
-            <SketchPicker
-              color={currentHex}
-              onChangeComplete={handleChange}
-              presetColors={presetHexes.length ? presetHexes : undefined}
-              disableAlpha
-              width="210px"
-            />
-          </div>
-        </>
-      )}
+      {renderPopover()}
     </div>
   )
 }
