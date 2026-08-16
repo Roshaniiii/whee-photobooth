@@ -106,6 +106,7 @@ export default function Customise() {
   const [size,         setSize]         = useState(6)
   const [isGlow,       setIsGlow]       = useState(false)
   const [tool,         setTool]         = useState('sticker')
+  const [mobileTab,    setMobileTab]    = useState('stickers') // 'stickers' | 'draw'
   const [photosLoaded, setPhotosLoaded] = useState(false)
   const [displaySize,  setDisplaySize]  = useState({ w: 0, h: 0 })
   const [dragOver,     setDragOver]     = useState(false)
@@ -144,9 +145,10 @@ export default function Customise() {
         const wrap = canvasWrapRef.current
         const pc   = photoCanvasRef.current
         if (!wrap || !pc || !pc.width || !pc.height) return
-        const maxW  = Math.max(200, wrap.getBoundingClientRect().width)
-        const maxH  = Math.max(200, window.innerHeight - 220)
-        const scale = Math.min(maxW / pc.width, maxH / pc.height, 1)
+        const isMobile = window.innerWidth <= 640
+        const maxW  = Math.max(200, wrap.getBoundingClientRect().width || window.innerWidth - 32)
+        const maxH  = isMobile ? Infinity : Math.max(200, window.innerHeight - 220)
+        const scale = Math.min(maxW / pc.width, isMobile ? 1 : maxH / pc.height)
         setDisplaySize({ w: Math.floor(pc.width * scale), h: Math.floor(pc.height * scale) })
       })
     }
@@ -235,9 +237,10 @@ export default function Customise() {
       const wrap = canvasWrapRef.current
       const pc   = photoCanvasRef.current
       if (!wrap || !pc || !pc.width || !pc.height) return
-      const maxW  = Math.max(200, wrap.getBoundingClientRect().width)
-      const maxH  = Math.max(200, window.innerHeight - 220)
-      const scale = Math.min(maxW / pc.width, maxH / pc.height, 1)
+      const isMobile = window.innerWidth <= 640
+      const maxW  = Math.max(200, wrap.getBoundingClientRect().width || window.innerWidth - 32)
+      const maxH  = isMobile ? Infinity : Math.max(200, window.innerHeight - 220)
+      const scale = Math.min(maxW / pc.width, isMobile ? 1 : maxH / pc.height)
       setDisplaySize({ w: Math.floor(pc.width * scale), h: Math.floor(pc.height * scale) })
     })
     if (canvasWrapRef.current) ro.observe(canvasWrapRef.current)
@@ -269,10 +272,10 @@ export default function Customise() {
   }
 
   function startDraw(e) {
-    e.preventDefault()
     // Block drawing if sticker tool is active or a sticker is selected
     if (tool !== 'pen' && tool !== 'eraser') return
-    if (selectedSticker) return  // ← ADD THIS LINE
+    if (selectedSticker) return
+    if (e.cancelable) e.preventDefault()
     saveHistory()
     isDrawing.current = true
     lastPos.current   = getPos(e)
@@ -280,8 +283,8 @@ export default function Customise() {
   }
 
   function draw(e) {
-    e.preventDefault()
     if (!isDrawing.current) return
+    if (e.cancelable) e.preventDefault()
     const c   = canvasRef.current
     const ctx = c.getContext('2d')
     const pos = getPos(e)
@@ -315,7 +318,8 @@ export default function Customise() {
   }
 
   function stopDraw(e) {
-    e.preventDefault()
+    if (!isDrawing.current) return
+    if (e.cancelable) e.preventDefault()
     isDrawing.current = false
     lastPos.current   = null
     clearCanvasShadow()
@@ -403,17 +407,27 @@ export default function Customise() {
     e.preventDefault()
     const touch = e.touches[0]
 
+    // ── Lock page scroll for the entire drag so the screen doesn't move ──
+    const prevBodyOverflow  = document.body.style.overflow
+    const prevHtmlOverflow  = document.documentElement.style.overflow
+    const prevBodyTouch     = document.body.style.touchAction
+    document.body.style.overflow            = 'hidden'
+    document.documentElement.style.overflow = 'hidden'
+    document.body.style.touchAction         = 'none'
+
     // Create a ghost image that follows the finger
     const ghost = document.createElement('img')
     ghost.src = sticker.src
     ghost.style.cssText = `
       position: fixed;
-      width: 60px;
-      height: 60px;
+      width: 64px;
+      height: 64px;
       pointer-events: none;
       z-index: 9999;
-      opacity: 0.8;
-      transform: translate(-50%, -50%);
+      opacity: 0.88;
+      transform: translate(-50%, -50%) scale(1.12);
+      will-change: transform;
+      transition: none;
       left: ${touch.clientX}px;
       top: ${touch.clientY}px;
     `
@@ -429,8 +443,14 @@ export default function Customise() {
     function onTouchEnd(ev) {
       ev.preventDefault()
       document.body.removeChild(ghost)
+
+      // ── Restore page scroll ──
+      document.body.style.overflow            = prevBodyOverflow
+      document.documentElement.style.overflow = prevHtmlOverflow
+      document.body.style.touchAction         = prevBodyTouch
+
       window.removeEventListener('touchmove', onTouchMove)
-      window.removeEventListener('touchend', onTouchEnd)
+      window.removeEventListener('touchend',  onTouchEnd)
 
       const t = ev.changedTouches[0]
 
@@ -632,7 +652,7 @@ export default function Customise() {
     }}>
       <VerticalStripes />
 
-      <div style={{
+      <div className="customise-inner-container" style={{
         position:      'relative',
         zIndex:        1,
         flex:          1,
@@ -767,7 +787,7 @@ export default function Customise() {
                   height: '100%',
                   display: 'block',
                   borderRadius: '12px',
-                  touchAction: 'none',
+                  touchAction: (tool === 'pen' || tool === 'eraser') ? 'none' : 'pan-y',
                   // ← Pass clicks through to stickers when not in draw mode
                   pointerEvents: (tool === 'pen' || tool === 'eraser') ? 'auto' : 'none',
                   cursor: tool === 'eraser' ? 'cell' : tool === 'pen' ? 'crosshair' : 'default',
@@ -872,9 +892,10 @@ export default function Customise() {
               </div>
             </div>
 
-            {/* Download button */}
+            {/* Desktop Download button */}
             <button
               type="button"
+              className="customise-download-btn customise-download-btn--desktop"
               onClick={handleDownload}
               style={{
                 fontFamily:    "'Cause',serif",
@@ -919,8 +940,26 @@ export default function Customise() {
               maxHeight:      '100%',
             }}
           >
-            {/* Header */}
-            <span style={{
+            {/* ── Mobile-only tab row: Draw | Stickers (hidden on desktop via CSS) ── */}
+            <div className="mobile-panel-tabs">
+              <button
+                type="button"
+                className={`mobile-panel-tab${mobileTab === 'draw' ? ' mobile-panel-tab--active' : ''}`}
+                onClick={() => { setMobileTab('draw'); setTool('pen'); setIsGlow(false); setSelectedSticker(null); glowWasUsedRef.current = false }}
+              >
+                <PenLine size={13} /><span>Draw</span>
+              </button>
+              <button
+                type="button"
+                className={`mobile-panel-tab${mobileTab === 'stickers' ? ' mobile-panel-tab--active' : ''}`}
+                onClick={() => setMobileTab('stickers')}
+              >
+                <Sparkles size={13} /><span>Stickers</span>
+              </button>
+            </div>
+
+            {/* Desktop-only header */}
+            <span className="sticker-panel-desktop-label" style={{
               fontSize:      '9px',
               fontWeight:    700,
               letterSpacing: '1.5px',
@@ -932,12 +971,73 @@ export default function Customise() {
               Stickers
             </span>
 
-            {/* Sticker grid — 2 columns */}
-            <div style={{
-              display:             'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gap:                 '5px',
-            }}>
+            {/* ── Draw tools (mobile: shown when draw tab active; desktop: hidden) ── */}
+            <div className={`mobile-draw-panel${mobileTab === 'draw' ? ' mobile-draw-panel--visible' : ''}`}>
+              {/* Tools row */}
+              <div className="mdp-section">
+                <span className="mdp-label">Tools</span>
+                <div className="mdp-row">
+                  <button type="button" title="Pen"
+                    className={`mdp-btn${tool === 'pen' && !isGlow ? ' mdp-btn--active' : ''}`}
+                    onClick={() => { setTool('pen'); setIsGlow(false); setSelectedSticker(null); glowWasUsedRef.current = false }}>
+                    <PenLine size={16} color={tool === 'pen' && !isGlow ? THEME.accent : THEME.text} />
+                  </button>
+                  <button type="button" title="Eraser"
+                    className={`mdp-btn${tool === 'eraser' ? ' mdp-btn--active' : ''}`}
+                    onClick={() => { setTool('eraser'); setIsGlow(false); setSelectedSticker(null); glowWasUsedRef.current = false }}>
+                    <Eraser size={16} color={tool === 'eraser' ? THEME.accent : THEME.text} />
+                  </button>
+                  <button type="button" title="Glow"
+                    className={`mdp-btn${isGlow ? ' mdp-btn--active' : ''}`}
+                    onClick={toggleGlow}>
+                    <Sparkles size={16} color={isGlow ? THEME.accent : THEME.text} />
+                  </button>
+                  <button type="button" title="Undo" className="mdp-btn" onClick={undo}>
+                    <Undo2 size={16} color={THEME.text} />
+                  </button>
+                  <button type="button" title="Redo" className="mdp-btn" onClick={redo}>
+                    <Redo2 size={16} color={THEME.text} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Size row */}
+              <div className="mdp-section">
+                <span className="mdp-label">Size</span>
+                <div className="mdp-row">
+                  {SIZES.map(s => (
+                    <button key={s} type="button"
+                      className={`mdp-btn mdp-size-btn${size === s ? ' mdp-btn--active' : ''}`}
+                      onClick={() => setSize(s)}>
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Color row with ColorPicker */}
+              <div className="mdp-section">
+                <span className="mdp-label">Color</span>
+                <div className="mdp-row">
+                  <ColorPicker
+                    value={color}
+                    onChange={(hex) => setColor(hex)}
+                    presets={PALETTE}
+                    compact
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* ── Sticker grid — 2 cols (desktop) / 3-row horiz scroll (mobile) ── */}
+            <div
+              className={`sticker-grid-wrap${mobileTab === 'draw' ? ' mobile-tab--hidden' : ''}`}
+              style={{
+                display:             'grid',
+                gridTemplateColumns: 'repeat(2, 1fr)',
+                gap:                 '5px',
+              }}
+            >
               {STICKERS.map(sticker => (
                 <div
                   key={sticker.id}
@@ -956,6 +1056,7 @@ export default function Customise() {
                     padding:        '4px',
                     transition:     'border-color 0.15s, transform 0.15s',
                     userSelect:     'none',
+                    touchAction:    'none',
                   }}
                   onMouseEnter={e => { e.currentTarget.style.borderColor = '#DF82A3'; e.currentTarget.style.transform = 'scale(1.08)' }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = '#D4C49A'; e.currentTarget.style.transform = 'scale(1)' }}
@@ -970,8 +1071,8 @@ export default function Customise() {
               ))}
             </div>
 
-            {/* Hint */}
-            <p style={{
+            {/* Hint — desktop only */}
+            <p className="sticker-panel-desktop-label" style={{
               fontSize:   '8px',
               color:      THEME.text,
               textAlign:  'center',
@@ -982,8 +1083,36 @@ export default function Customise() {
             }}>
               Drag onto strip
             </p>
-            
+
           </div>
+
+          {/* Mobile Download button (positioned below tool & sticker panel) */}
+          <button
+            type="button"
+            className="customise-download-btn customise-download-btn--mobile"
+            onClick={handleDownload}
+            style={{
+              fontFamily:    "'Cause',serif",
+              fontSize:      '13px',
+              fontWeight:    700,
+              letterSpacing: '1.5px',
+              textTransform: 'uppercase',
+              color:         '#F2E7B4',
+              background:    '#DF82A3',
+              border:        'none',
+              borderRadius:  '100px',
+              padding:       '11px 32px',
+              cursor:        'pointer',
+              boxShadow:     HOME_BTN_SHADOW,
+              flexShrink:    0,
+              margin:        '12px auto 80px',
+              display:       'none',
+              position:      'relative',
+              zIndex:        2,
+            }}
+          >
+            Download
+          </button>
 
         </div>
       </div>
