@@ -156,8 +156,8 @@ export default function AnnouncementPopup() {
           }}
         >
           <p style={{ fontSize: '14px', color: '#917264', margin: 0, lineHeight: 1.6, textAlign: 'center' }}>
-            🍓Sticker panel is live nowww!<br></br>
-            🩷ALSO CHECK OUT: HIDEY<br></br>
+            🫧 New Stickers Added<br></br>
+            🩷 ALSO CHECK OUT: HIDEY<br></br>
             ✦ If you want to be notified when new templates drop, leave your email below and I’ll send a quick note.
           </p>
         </div>

@@ -30,6 +30,23 @@ import sticker19 from '../assets/stickers/19.png'
 import sticker20 from '../assets/stickers/20.png'
 import sticker21 from '../assets/stickers/21.png'
 import sticker22 from '../assets/stickers/22.png'
+import sticker23 from '../assets/stickers/23.png'
+import sticker24 from '../assets/stickers/24.png'
+import sticker25 from '../assets/stickers/25.png'
+import sticker26 from '../assets/stickers/26.png'
+import sticker27 from '../assets/stickers/27.png'
+import sticker28 from '../assets/stickers/28.png'
+import sticker29 from '../assets/stickers/29.png'
+import sticker30 from '../assets/stickers/30.png'
+import sticker31 from '../assets/stickers/31.png'
+import sticker32 from '../assets/stickers/32.png'
+import sticker33 from '../assets/stickers/33.png'
+import sticker34 from '../assets/stickers/34.png'
+import sticker35 from '../assets/stickers/35.png'
+import sticker36 from '../assets/stickers/36.png'
+import sticker37 from '../assets/stickers/37.png'
+import sticker38 from '../assets/stickers/38.png'
+import sticker39 from '../assets/stickers/39.png'
 
 // ── Sticker config ────────────────────────────────────────────
 const STICKERS = [
@@ -55,6 +72,23 @@ const STICKERS = [
   { id: 's20', src: sticker20, label: 'Sticker 20' },
   { id: 's21', src: sticker21, label: 'Sticker 21' },
   { id: 's22', src: sticker22, label: 'Sticker 22' },
+  { id: 's23', src: sticker23, label: 'Sticker 23' },
+  { id: 's24', src: sticker24, label: 'Sticker 24' },
+  { id: 's25', src: sticker25, label: 'Sticker 25' },
+  { id: 's26', src: sticker26, label: 'Sticker 26' },
+  { id: 's27', src: sticker27, label: 'Sticker 27' },
+  { id: 's28', src: sticker28, label: 'Sticker 28' },
+  { id: 's29', src: sticker29, label: 'Sticker 29' },
+  { id: 's30', src: sticker30, label: 'Sticker 30' },
+  { id: 's31', src: sticker31, label: 'Sticker 31' },
+  { id: 's32', src: sticker32, label: 'Sticker 32' },
+  { id: 's33', src: sticker33, label: 'Sticker 33' },
+  { id: 's34', src: sticker34, label: 'Sticker 34' },
+  { id: 's35', src: sticker35, label: 'Sticker 35' },
+  { id: 's36', src: sticker36, label: 'Sticker 36' },
+  { id: 's37', src: sticker37, label: 'Sticker 37' },
+  { id: 's38', src: sticker38, label: 'Sticker 38' },
+  { id: 's39', src: sticker39, label: 'Sticker 39' }
 ]
 
 // Default size when sticker is dropped on canvas
@@ -132,7 +166,7 @@ export default function Customise() {
   const scrollStickers = (direction) => {
     const el = stickerGridRef.current
     if (!el) return
-    const step = Math.max(50, Math.floor(el.clientWidth / 50) * 50)
+    const step = el.clientWidth || 150
     el.scrollBy({
       left: direction === 'left' ? -step : step,
       behavior: 'smooth'
@@ -956,7 +990,7 @@ export default function Customise() {
             className="customise-sticker-panel"
             style={{
               flexShrink:     0,
-              width:          '90px',
+              width:          'auto',
               display:        'flex',
               flexDirection:  'column',
               gap:            '6px',
@@ -1075,11 +1109,6 @@ export default function Customise() {
                 ref={stickerGridRef}
                 onScroll={updateScrollButtons}
                 className="sticker-grid-wrap"
-                style={{
-                  display:             'grid',
-                  gridTemplateColumns: 'repeat(2, 1fr)',
-                  gap:                 '5px',
-                }}
               >
                 {STICKERS.map(sticker => (
                   <div
