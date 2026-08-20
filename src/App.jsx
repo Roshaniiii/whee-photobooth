@@ -13,6 +13,7 @@ import Blog from './pages/Blog'
 import BlogPost from './pages/BlogPost'
 import FeedbackButton from './components/FeedbackButton'
 import SupportButton from './components/SupportButton'
+import DynamicCanonical from './components/DynamicCanonical'
 import AnnouncementPopup from './components/AnnouncementPopup'
 import './mobile.css'
 
@@ -30,6 +31,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <DynamicCanonical />
       <Navbar />
       <SupportButton />
       <Routes>
