@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom'
-import { MessageCircleHeart, Mail } from 'lucide-react'
+import { MessageCircleHeart, Mail, BookOpen, Info } from 'lucide-react'
 import logo from '../assets/donate.png'
 
 // Navbar dispatches a custom event to open SupportButton's popup
@@ -14,6 +14,27 @@ export default function Navbar() {
     const hideOn = ['/camera', '/customise']
     if (hideOn.includes(location.pathname)) return null
 
+    const navBtnStyle = (isActive) => ({
+        background: isActive ? 'rgba(223, 130, 163, 0.22)' : 'rgba(223, 130, 163, 0.12)',
+        color: isActive ? '#DF82A3' : 'rgb(145, 114, 100)',
+        border: isActive ? '2px solid rgb(223, 130, 163)' : '2px solid rgba(223, 130, 163, 0.6)',
+        borderRadius: '100px',
+        padding: '7px 14px',
+        minHeight: '36px',
+        fontSize: '12px',
+        fontWeight: '600',
+        fontFamily: "'Cause', serif",
+        cursor: 'pointer',
+        letterSpacing: '0.5px',
+        textTransform: 'uppercase',
+        transition: 'transform 0.2s ease, background 0.2s ease, border-color 0.2s ease',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '6px',
+        whiteSpace: 'nowrap',
+    })
+
     return (
         <nav style={{
             position: 'fixed',
@@ -23,13 +44,15 @@ export default function Navbar() {
             zIndex: 999,
             background: 'transparent',
             backdropFilter: 'none',
+            WebkitBackdropFilter: 'none',
             borderBottom: 'none',
-            padding: '0 20px',
+            padding: '0 16px',
             height: '52px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             fontFamily: "'Cause', serif",
+            boxSizing: 'border-box',
         }}>
 
             {/* ── Left: Logo + Name ── */}
@@ -62,32 +85,49 @@ export default function Navbar() {
             </button>
 
             {/* ── Right: Action buttons ── */}
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
 
-                {/* Support button — opens SupportButton popup */}
+                {/* About button */}
+                <button
+                    className="nav-about-btn"
+                    onClick={() => navigate('/about')}
+                    style={navBtnStyle(location.pathname === '/about')}
+                    onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+                    onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+                >
+                    <Info size={14} strokeWidth={2.2} />
+                    <span className="nav-btn-text">About</span>
+                </button>
+
+                {/* Blog button */}
+                <button
+                    className="nav-blog-btn"
+                    onClick={() => navigate('/blog')}
+                    style={navBtnStyle(location.pathname.startsWith('/blog'))}
+                    onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+                    onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+                >
+                    <BookOpen size={14} strokeWidth={2.2} />
+                    <span className="nav-btn-text">Blog</span>
+                </button>
+
+                {/* Contact button */}
+                <button
+                    className="nav-contact-btn"
+                    onClick={() => navigate('/contact')}
+                    style={navBtnStyle(location.pathname === '/contact')}
+                    onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+                    onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+                >
+                    <Mail size={14} strokeWidth={2.2} />
+                    <span className="nav-btn-text">Contact</span>
+                </button>
+
+                {/* Support button */}
                 <button
                     className="nav-support-btn"
                     onClick={openSupportPopup}
-                    style={{
-                        background: 'rgba(223, 130, 163, 0.12)',
-                        color: 'rgb(145, 114, 100)',
-                        border: '2px solid rgb(223, 130, 163)',
-                        borderRadius: '100px',
-                        padding: '7px 16px',
-                        minHeight: '36px',
-                        fontSize: '12px',
-                        fontWeight: '600',
-                        fontFamily: "'Cause', serif",
-                        cursor: 'pointer',
-                        letterSpacing: '0.5px',
-                        textTransform: 'uppercase',
-                        transition: 'transform 0.2s ease, background 0.2s ease',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '6px',
-                        whiteSpace: 'nowrap',
-                    }}
+                    style={navBtnStyle(false)}
                     onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
                     onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
                 >
@@ -104,62 +144,12 @@ export default function Navbar() {
                     data-tally-emoji-text="💌"
                     data-tally-emoji-animation="none"
                     data-tally-auto-close="3000"
-                    style={{
-                        background: 'rgba(223, 130, 163, 0.12)',
-                        color: 'rgb(145, 114, 100)',
-                        border: '2px solid rgb(223, 130, 163)',
-                        borderRadius: '100px',
-                        padding: '7px 16px',
-                        minHeight: '36px',
-                        fontSize: '12px',
-                        fontWeight: '600',
-                        fontFamily: "'Cause', serif",
-                        cursor: 'pointer',
-                        letterSpacing: '0.5px',
-                        textTransform: 'uppercase',
-                        transition: 'transform 0.2s ease, background 0.2s ease',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '6px',
-                        whiteSpace: 'nowrap',
-                    }}
+                    style={navBtnStyle(false)}
                     onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
                     onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
                 >
                     <MessageCircleHeart size={14} strokeWidth={2.2} />
                     <span className="nav-btn-text">Feedback</span>
-                </button>
-
-                {/* Contact button */}
-                <button
-                    className="nav-contact-btn"
-                    onClick={() => navigate('/contact')}
-                    style={{
-                        background: 'rgba(223, 130, 163, 0.12)',
-                        color: 'rgb(145, 114, 100)',
-                        border: '2px solid rgb(223, 130, 163)',
-                        borderRadius: '100px',
-                        padding: '7px 16px',
-                        minHeight: '36px',
-                        fontSize: '12px',
-                        fontWeight: '600',
-                        fontFamily: "'Cause', serif",
-                        cursor: 'pointer',
-                        letterSpacing: '0.5px',
-                        textTransform: 'uppercase',
-                        transition: 'transform 0.2s ease, background 0.2s ease',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '6px',
-                        whiteSpace: 'nowrap',
-                    }}
-                    onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-                    onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
-                >
-                    <Mail size={14} strokeWidth={2.2} />
-                    <span className="nav-btn-text">Contact</span>
                 </button>
 
             </div>

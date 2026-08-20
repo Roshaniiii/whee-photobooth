@@ -125,10 +125,12 @@ body,
 
   .nav-support-btn,
   .nav-feedback-btn,
-  .nav-contact-btn {
-    padding: 6px 10px !important;
+  .nav-contact-btn,
+  .nav-about-btn,
+  .nav-blog-btn {
+    padding: 6px 8px !important;
     min-height: 32px !important;
-    font-size: 14px !important;
+    font-size: 13px !important;
     gap: 0 !important;
   }
 

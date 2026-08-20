@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
-import { useEffect, useRef } from 'react'
 import { playClick } from '../utils/sounds'
 import VerticalStripes from '../components/VerticalStripes'
+import HomeGuideSection from '../components/HomeGuideSection'
 import Footer from '../components/Footer'
 
 // Import all assets — copy these files into your src/assets/ folder
@@ -14,24 +14,6 @@ import frame6 from '../assets/frame_6.png'
 
 export default function Home() {
   const navigate = useNavigate()
-  const seoContainerRef = useRef(null)
-
-  useEffect(() => {
-    const seo = document.getElementById('homepage-seo-content')
-    const target = seoContainerRef.current
-    let originalParent = null
-    if (seo && target) {
-      originalParent = seo.parentNode
-      seo.style.display = 'flex'
-      target.appendChild(seo)
-    }
-    return () => {
-      if (seo && originalParent) {
-        seo.style.display = 'none'
-        originalParent.appendChild(seo)
-      }
-    }
-  }, [])
 
   return (
     <div className="page-wrapper home-page-wrapper" style={{
@@ -234,7 +216,7 @@ export default function Home() {
 
       </div>
 
-      <div ref={seoContainerRef} />
+      <HomeGuideSection />
       <Footer />
 
     </div>
