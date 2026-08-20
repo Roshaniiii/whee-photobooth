@@ -743,6 +743,7 @@ body,
   body,
   #root {
     min-height: 100%;
+    overscroll-behavior-y: none;
   }
 
   .page-wrapper {
@@ -782,6 +783,30 @@ body,
 
   .layout-carousel-wrap {
     margin-top: 4px !important;
+  }
+
+  /* Customise page on iPad / tablet — keep background steady and layout centered */
+  .customise-page-wrapper {
+    overscroll-behavior-y: contain;
+  }
+
+  .customise-inner-container {
+    padding-top: 18px !important;
+    padding-bottom: 18px !important;
+    max-width: 95vw !important;
+  }
+
+  .customise-main-row {
+    gap: 12px !important;
+    align-items: center !important;
+  }
+
+  .customise-toolbar {
+    width: 72px !important;
+  }
+
+  .customise-sticker-panel {
+    max-height: calc(100vh - 160px) !important;
   }
 }
 

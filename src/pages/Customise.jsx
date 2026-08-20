@@ -422,6 +422,35 @@ export default function Customise() {
     }
   }
 
+  // ── Helper to add sticker to canvas ──────────────────────
+  function addStickerToCanvas(src, customPos = null) {
+    const pc = photoCanvasRef.current
+    const cw = pc?.width || 640
+    const ch = pc?.height || 480
+    
+    let x, y
+    if (customPos) {
+      x = customPos.x - DEFAULT_STICKER_SIZE / 2
+      y = customPos.y - DEFAULT_STICKER_SIZE / 2
+    } else {
+      // Center of canvas with slight random offset
+      const offset = (Math.random() - 0.5) * 40
+      x = Math.max(10, (cw - DEFAULT_STICKER_SIZE) / 2 + offset)
+      y = Math.max(10, (ch - DEFAULT_STICKER_SIZE) / 2 + offset)
+    }
+
+    const newSticker = {
+      uid:  Date.now() + Math.floor(Math.random() * 1000),
+      src,
+      x,
+      y,
+      size: DEFAULT_STICKER_SIZE,
+    }
+    setPlacedStickers(prev => [...prev, newSticker])
+    setSelectedSticker(newSticker.uid)
+    setTool('sticker')
+  }
+
   // ── Sticker drag from panel → canvas ─────────────────────
   function handleStickerDragStart(e, sticker) {
     e.dataTransfer.setData('application/json', JSON.stringify({
@@ -451,71 +480,84 @@ export default function Customise() {
       const payload = JSON.parse(e.dataTransfer.getData('application/json'))
       if (payload.type === 'new-sticker') {
         const pos = getCanvasPos(e.clientX, e.clientY)
-        const newSticker = {
-          uid:  Date.now(),
-          src:  payload.src,
-          x:    pos.x - DEFAULT_STICKER_SIZE / 2,
-          y:    pos.y - DEFAULT_STICKER_SIZE / 2,
-          size: DEFAULT_STICKER_SIZE,
-        }
-        setPlacedStickers(prev => [...prev, newSticker])
-        setSelectedSticker(newSticker.uid)
-        setTool('sticker')   // ← switch to sticker mode on drop
+        addStickerToCanvas(payload.src, pos)
       }
     } catch { }
   }
 
-  // ── Sticker move (drag placed sticker) ───────────────────
+  // ── Sticker touch drag (panel → canvas on iPad / touch) ───
   function handleStickerTouchStart(e, sticker) {
-    e.preventDefault()
+    if (e.cancelable) e.preventDefault()
     const touch = e.touches[0]
+    const startX = touch.clientX
+    const startY = touch.clientY
+    let hasMoved = false
 
     // ── Lock page scroll for the entire drag so the screen doesn't move ──
     const prevBodyOverflow  = document.body.style.overflow
     const prevHtmlOverflow  = document.documentElement.style.overflow
     const prevBodyTouch     = document.body.style.touchAction
+    const pageWrapper       = document.querySelector('.customise-page-wrapper')
+    const prevWrapperOverflow = pageWrapper ? pageWrapper.style.overflowY : ''
+
     document.body.style.overflow            = 'hidden'
     document.documentElement.style.overflow = 'hidden'
     document.body.style.touchAction         = 'none'
+    if (pageWrapper) pageWrapper.style.overflowY = 'hidden'
 
-    // Create a ghost image that follows the finger
+    // Create a GPU-accelerated ghost image that follows the finger smoothly
     const ghost = document.createElement('img')
     ghost.src = sticker.src
     ghost.style.cssText = `
       position: fixed;
+      left: 0;
+      top: 0;
       width: 64px;
       height: 64px;
       pointer-events: none;
-      z-index: 9999;
-      opacity: 0.88;
-      transform: translate(-50%, -50%) scale(1.12);
+      z-index: 99999;
+      opacity: 0.9;
+      transform: translate3d(${startX - 32}px, ${startY - 32}px, 0) scale(1.12);
       will-change: transform;
       transition: none;
-      left: ${touch.clientX}px;
-      top: ${touch.clientY}px;
+      -webkit-user-drag: none;
+      user-select: none;
     `
     document.body.appendChild(ghost)
 
     function onTouchMove(ev) {
-      ev.preventDefault()
+      if (ev.cancelable) ev.preventDefault()
       const t = ev.touches[0]
-      ghost.style.left = `${t.clientX}px`
-      ghost.style.top  = `${t.clientY}px`
+      const dx = t.clientX - startX
+      const dy = t.clientY - startY
+      if (Math.abs(dx) > 6 || Math.abs(dy) > 6) {
+        hasMoved = true
+      }
+      ghost.style.transform = `translate3d(${t.clientX - 32}px, ${t.clientY - 32}px, 0) scale(1.12)`
     }
 
     function onTouchEnd(ev) {
-      ev.preventDefault()
-      document.body.removeChild(ghost)
+      if (ev.cancelable) ev.preventDefault()
+      if (ghost.parentNode) document.body.removeChild(ghost)
 
       // ── Restore page scroll ──
       document.body.style.overflow            = prevBodyOverflow
       document.documentElement.style.overflow = prevHtmlOverflow
       document.body.style.touchAction         = prevBodyTouch
+      if (pageWrapper) pageWrapper.style.overflowY = prevWrapperOverflow
 
       window.removeEventListener('touchmove', onTouchMove)
       window.removeEventListener('touchend',  onTouchEnd)
+      window.removeEventListener('touchcancel', onTouchEnd)
 
-      const t = ev.changedTouches[0]
+      const t = ev.changedTouches ? ev.changedTouches[0] : null
+      if (!t) return
+
+      // If user tapped without dragging, immediately add to center
+      if (!hasMoved) {
+        addStickerToCanvas(sticker.src)
+        return
+      }
 
       // Check if finger is over the canvas wrap
       const wrap = canvasWrapRef.current
@@ -528,47 +570,49 @@ export default function Customise() {
         t.clientY >= rect.top  &&
         t.clientY <= rect.bottom
       ) {
-        // Convert touch position to canvas coordinates
         const pos = getCanvasPos(t.clientX, t.clientY)
-        const newSticker = {
-          uid:  Date.now(),
-          src:  sticker.src,
-          x:    pos.x - DEFAULT_STICKER_SIZE / 2,
-          y:    pos.y - DEFAULT_STICKER_SIZE / 2,
-          size: DEFAULT_STICKER_SIZE,
-        }
-        setPlacedStickers(prev => [...prev, newSticker])
-        setSelectedSticker(newSticker.uid)
-        setTool('sticker')
+        addStickerToCanvas(sticker.src, pos)
       }
     }
 
     window.addEventListener('touchmove', onTouchMove, { passive: false })
     window.addEventListener('touchend',  onTouchEnd,  { passive: false })
+    window.addEventListener('touchcancel', onTouchEnd, { passive: false })
   }
 
   function handleStickerPointerDown(e, uid) {
     e.stopPropagation()
     e.preventDefault()
+    if (e.target.setPointerCapture) {
+      try { e.target.setPointerCapture(e.pointerId) } catch { }
+    }
     setSelectedSticker(uid)
     setTool('sticker') // switch away from pen so canvas doesn't draw
+
+    // Lock page scroll during sticker repositioning
+    document.body.style.overflow = 'hidden'
+    document.body.style.touchAction = 'none'
+
     stickerDragRef.current = {
       uid,
-      startX:  e.clientX,
-      startY:  e.clientY,
-      moved:   false,
+      pointerId: e.pointerId,
+      target:    e.target,
+      startX:    e.clientX,
+      startY:    e.clientY,
+      moved:     false,
     }
-    window.addEventListener('pointermove', handleStickerPointerMove)
+    window.addEventListener('pointermove', handleStickerPointerMove, { passive: false })
     window.addEventListener('pointerup',   handleStickerPointerUp)
+    window.addEventListener('pointercancel', handleStickerPointerUp)
   }
 
   function handleStickerPointerMove(e) {
     if (!stickerDragRef.current) return
+    if (e.cancelable) e.preventDefault()
     const { uid, startX, startY } = stickerDragRef.current
     const dx = e.clientX - startX
     const dy = e.clientY - startY
-    // Only move if actually dragging (moved more than 3px)
-    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+    if (Math.abs(dx) > 1 || Math.abs(dy) > 1) {
       stickerDragRef.current.moved = true
       const scaleX = (photoCanvasRef.current?.width  || 1) / (displaySize.w || 1)
       const scaleY = (photoCanvasRef.current?.height || 1) / (displaySize.h || 1)
@@ -584,33 +628,51 @@ export default function Customise() {
 
   function handleStickerPointerUp(e) {
     const ref = stickerDragRef.current
+    if (ref) {
+      if (ref.target?.releasePointerCapture && ref.pointerId !== undefined) {
+        try { ref.target.releasePointerCapture(ref.pointerId) } catch { }
+      }
+      if (!ref.moved) {
+        setSelectedSticker(ref.uid)
+      }
+    }
     stickerDragRef.current = null
+    document.body.style.overflow = ''
+    document.body.style.touchAction = ''
     window.removeEventListener('pointermove', handleStickerPointerMove)
     window.removeEventListener('pointerup',   handleStickerPointerUp)
-    // If user just tapped (didn't drag) → keep selected to show resize/delete
-    if (ref && !ref.moved) {
-      setSelectedSticker(ref.uid)
-    }
+    window.removeEventListener('pointercancel', handleStickerPointerUp)
   }
 
   // ── Sticker resize (corner handle) ───────────────────────
   function handleResizePointerDown(e, uid) {
     e.stopPropagation()
     e.preventDefault()
+    if (e.target.setPointerCapture) {
+      try { e.target.setPointerCapture(e.pointerId) } catch { }
+    }
     const sticker = placedStickers.find(s => s.uid === uid)
     if (!sticker) return
+
+    document.body.style.overflow = 'hidden'
+    document.body.style.touchAction = 'none'
+
     resizeDragRef.current = {
       uid,
+      pointerId: e.pointerId,
+      target:    e.target,
       startX:    e.clientX,
       startY:    e.clientY,
       startSize: sticker.size,
     }
-    window.addEventListener('pointermove', handleResizePointerMove)
+    window.addEventListener('pointermove', handleResizePointerMove, { passive: false })
     window.addEventListener('pointerup',   handleResizePointerUp)
+    window.addEventListener('pointercancel', handleResizePointerUp)
   }
 
   function handleResizePointerMove(e) {
     if (!resizeDragRef.current) return
+    if (e.cancelable) e.preventDefault()
     const { uid, startX, startY, startSize } = resizeDragRef.current
     const scaleX = (photoCanvasRef.current?.width  || 1) / (displaySize.w || 1)
     const scaleY = (photoCanvasRef.current?.height || 1) / (displaySize.h || 1)
@@ -623,10 +685,19 @@ export default function Customise() {
     ))
   }
 
-  function handleResizePointerUp() {
+  function handleResizePointerUp(e) {
+    const ref = resizeDragRef.current
+    if (ref) {
+      if (ref.target?.releasePointerCapture && ref.pointerId !== undefined) {
+        try { ref.target.releasePointerCapture(ref.pointerId) } catch { }
+      }
+    }
     resizeDragRef.current = null
+    document.body.style.overflow = ''
+    document.body.style.touchAction = ''
     window.removeEventListener('pointermove', handleResizePointerMove)
     window.removeEventListener('pointerup',   handleResizePointerUp)
+    window.removeEventListener('pointercancel', handleResizePointerUp)
   }
 
   // ── Delete selected sticker ───────────────────────────────
@@ -637,12 +708,12 @@ export default function Customise() {
   }
 
   // ── Deselect when clicking canvas background ─────────────
-  function handleCanvasClick() {
+  function handleCanvasClick(e) {
     if (e.target === canvasRef.current || e.target === canvasWrapRef.current) {
-    setSelectedSticker(null)
-    if (tool === 'sticker') setTool('pen')
+      setSelectedSticker(null)
+      if (tool === 'sticker') setTool('pen')
+    }
   }
-}
 
   // ── Download — bake stickers into canvas then download ────
   function handleDownload() {
@@ -876,17 +947,19 @@ export default function Customise() {
                     <div
                       key={sticker.uid}
                       style={{
-                        position:  'absolute',
-                        left:      `${dispX}px`,
-                        top:       `${dispY}px`,
-                        width:     `${dispSize}px`,
-                        height:    `${dispSize}px`,
-                        cursor:    'move',
-                        userSelect:'none',
-                        outline:   isSel ? '2px dashed #DF82A3' : 'none',
-                        outlineOffset: '2px',
-                        borderRadius: '4px',
-                        zIndex:    10,
+                        position:         'absolute',
+                        left:             `${dispX}px`,
+                        top:              `${dispY}px`,
+                        width:            `${dispSize}px`,
+                        height:           `${dispSize}px`,
+                        cursor:           'move',
+                        userSelect:       'none',
+                        WebkitUserSelect: 'none',
+                        touchAction:      'none',
+                        outline:          isSel ? '2px dashed #DF82A3' : 'none',
+                        outlineOffset:    '2px',
+                        borderRadius:     '4px',
+                        zIndex:           10,
                       }}
                       onPointerDown={e => handleStickerPointerDown(e, sticker.uid)}
                     >
@@ -894,12 +967,22 @@ export default function Customise() {
                         src={sticker.src}
                         alt="sticker"
                         draggable={false}
-                        style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block', pointerEvents: 'none' }}
+                        style={{
+                          width:              '100%',
+                          height:             '100%',
+                          objectFit:          'contain',
+                          display:            'block',
+                          pointerEvents:      'none',
+                          userSelect:         'none',
+                          WebkitUserSelect:   'none',
+                          WebkitUserDrag:     'none',
+                        }}
                       />
 
                       {/* Delete button — only when selected */}
                       {isSel && (
                         <button
+                          type="button"
                           onPointerDown={e => { e.stopPropagation(); deleteSelectedSticker() }}
                           style={{
                             position:       'absolute',
@@ -919,6 +1002,7 @@ export default function Customise() {
                             lineHeight:     1,
                             zIndex:         20,
                             boxShadow:      '0 2px 6px rgba(0,0,0,0.2)',
+                            touchAction:    'none',
                           }}
                         >
                           ✕
@@ -930,19 +1014,20 @@ export default function Customise() {
                         <div
                           onPointerDown={e => handleResizePointerDown(e, sticker.uid)}
                           style={{
-                            position:     'absolute',
-                            bottom:       '-8px',
-                            right:        '-8px',
-                            width:        '16px',
-                            height:       '16px',
-                            borderRadius: '4px',
-                            background:   '#DF82A3',
-                            cursor:       'se-resize',
-                            zIndex:       20,
-                            boxShadow:    '0 2px 6px rgba(0,0,0,0.2)',
-                            display:      'flex',
-                            alignItems:   'center',
-                            justifyContent:'center',
+                            position:       'absolute',
+                            bottom:         '-8px',
+                            right:          '-8px',
+                            width:          '18px',
+                            height:         '18px',
+                            borderRadius:   '4px',
+                            background:     '#DF82A3',
+                            cursor:         'se-resize',
+                            zIndex:         20,
+                            boxShadow:      '0 2px 6px rgba(0,0,0,0.2)',
+                            display:        'flex',
+                            alignItems:     'center',
+                            justifyContent: 'center',
+                            touchAction:    'none',
                           }}
                         >
                           <svg width="8" height="8" viewBox="0 0 8 8">
@@ -1116,19 +1201,21 @@ export default function Customise() {
                     draggable
                     onDragStart={e => handleStickerDragStart(e, sticker)}
                     onTouchStart={e => handleStickerTouchStart(e, sticker)}
+                    onClick={() => addStickerToCanvas(sticker.src)}
                     style={{
-                      aspectRatio:    '1',
-                      display:        'flex',
-                      alignItems:     'center',
-                      justifyContent: 'center',
-                      background:     'rgba(255,255,255,0.6)',
-                      borderRadius:   '8px',
-                      border:         '2px solid #D4C49A',
-                      cursor:         'grab',
-                      padding:        '4px',
-                      transition:     'border-color 0.15s, transform 0.15s',
-                      userSelect:     'none',
-                      touchAction:    'none',
+                      aspectRatio:      '1',
+                      display:          'flex',
+                      alignItems:       'center',
+                      justifyContent:   'center',
+                      background:       'rgba(255,255,255,0.6)',
+                      borderRadius:     '8px',
+                      border:           '2px solid #D4C49A',
+                      cursor:           'grab',
+                      padding:          '4px',
+                      transition:       'border-color 0.15s, transform 0.15s',
+                      userSelect:       'none',
+                      WebkitUserSelect: 'none',
+                      touchAction:      'none',
                     }}
                     onMouseEnter={e => { e.currentTarget.style.borderColor = '#DF82A3'; e.currentTarget.style.transform = 'scale(1.08)' }}
                     onMouseLeave={e => { e.currentTarget.style.borderColor = '#D4C49A'; e.currentTarget.style.transform = 'scale(1)' }}
@@ -1137,7 +1224,15 @@ export default function Customise() {
                       src={sticker.src}
                       alt={sticker.label}
                       draggable={false}
-                      style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                      style={{
+                        width:            '100%',
+                        height:           '100%',
+                        objectFit:        'contain',
+                        pointerEvents:    'none',
+                        userSelect:       'none',
+                        WebkitUserSelect: 'none',
+                        WebkitUserDrag:   'none',
+                      }}
                     />
                   </div>
                 ))}
